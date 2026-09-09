@@ -1,0 +1,3229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Olympiad Circuit Lab - Division B Intro Course</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for rendering LaTeX formulas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    /* ==========================================
+       Design System & Core Variables
+       ========================================== */
+    :root {
+      --color-bg: #0b0f19;
+      --color-surface: #131a2c;
+      --color-surface-hover: #1e2942;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-text-primary: #f3f4f6;
+      --color-text-secondary: #9ca3af;
+      
+      /* Neon Electric Theme Colors */
+      --color-primary: hsl(195, 100%, 50%); /* Electric Blue */
+      --color-accent: hsl(280, 100%, 65%);  /* Neon Purple */
+      --color-success: hsl(145, 100%, 45%); /* Neon Green */
+      --color-warning: hsl(35, 100%, 50%);  /* Neon Amber */
+      --color-danger: hsl(0, 100%, 60%);    /* Neon Red */
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      
+      --transition-speed: 0.3s;
+      --border-radius: 16px;
+      --shadow-neon: 0 0 20px rgba(0, 210, 255, 0.2);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      outline: none;
+      color: inherit;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* ==========================================
+       Layout Structure
+       ========================================== */
+    header {
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.6));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .class-switcher-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border: 1px dashed var(--color-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .class-switcher-link:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(0, 210, 255, 0.05);
+    }
+
+    /* Progress bar */
+    .progress-container {
+      width: 250px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    }
+
+    /* Presenter Mode Toggle Button */
+    .btn-toggle-presenter {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-toggle-presenter:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.25);
+    }
+
+    .btn-toggle-presenter.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Main Workspace Split */
+    .main-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Slide Deck Panel */
+    .slide-deck {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #111827 0%, #070a12 100%);
+      overflow-y: auto;
+      padding: 2rem;
+      transition: flex-basis 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Slide Layouts */
+    .slide {
+      display: none;
+      flex-direction: column;
+      margin: auto;
+      width: 100%;
+      max-width: 1380px;
+      min-height: 640px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-title-wrapper {
+      margin-bottom: 2rem;
+    }
+
+    .slide-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-accent);
+      margin-bottom: 0.25rem;
+      display: inline-block;
+    }
+
+    .slide-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Presenter Notes Panel */
+    .presenter-panel {
+      width: 0%;
+      background: #0f1422;
+      border-left: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .presenter-panel.active {
+      width: 360px;
+    }
+
+    .presenter-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .presenter-header h3 {
+      font-size: 1.1rem;
+      color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presenter-body {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .script-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+    }
+
+    .script-section h4 {
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .script-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-text-primary);
+      font-style: italic;
+    }
+
+    .teacher-action-card {
+      background: rgba(0, 210, 255, 0.03);
+      border-left: 4px solid var(--color-primary);
+      padding: 1rem;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+
+    .teacher-action-card h4 {
+      font-size: 0.85rem;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .teacher-action-card p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* Bottom Control Bar */
+    .control-bar {
+      background: rgba(11, 15, 25, 0.9);
+      border-top: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide-indicators {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .indicator-dot.active {
+      background: var(--color-primary);
+      box-shadow: 0 0 8px var(--color-primary);
+      transform: scale(1.2);
+    }
+
+    .navigation-controls {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--color-text-primary);
+      transition: fill 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+    }
+
+    .btn-nav:hover svg {
+      fill: var(--color-primary);
+    }
+
+    .btn-nav:active {
+      transform: scale(0.95);
+    }
+
+    /* ==========================================
+       Specific Components & UI Styling
+       ========================================== */
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(25, 30, 50, 0.45);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .glass-panel:hover {
+      border-color: rgba(0, 210, 255, 0.2);
+    }
+
+    /* Alerts and Traps */
+    .trap-alert {
+      background: rgba(255, 77, 77, 0.05);
+      border: 1px dashed var(--color-danger);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-top: 1rem;
+    }
+
+    .trap-icon {
+      font-size: 1.5rem;
+      color: var(--color-danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    .trap-text h4 {
+      font-size: 0.9rem;
+      color: var(--color-danger);
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    .trap-text p {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Slide 1 Grid Welcome */
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .welcome-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .welcome-card-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(0, 210, 255, 0.05);
+      border: 1px solid rgba(0, 210, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-card-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: var(--color-primary);
+    }
+
+    .welcome-card:nth-child(2) .welcome-card-icon {
+      background: rgba(176, 38, 255, 0.05);
+      border-color: rgba(176, 38, 255, 0.15);
+    }
+
+    .welcome-card:nth-child(2) .welcome-card-icon svg {
+      fill: var(--color-accent);
+    }
+
+    .welcome-card:nth-child(3) .welcome-card-icon {
+      background: rgba(255, 170, 0, 0.05);
+      border-color: rgba(255, 170, 0, 0.15);
+    }
+
+    .welcome-card:nth-child(3) .welcome-card-icon svg {
+      fill: var(--color-warning);
+    }
+
+    .welcome-card h3 {
+      font-size: 1.25rem;
+      color: var(--color-text-primary);
+    }
+
+    .welcome-card p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Slide 2 Logistics & Safety Grid */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .rule-card {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      padding: 1.5rem;
+    }
+
+    .rule-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--color-accent);
+      opacity: 0.5;
+      line-height: 1;
+    }
+
+    .rule-details h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-primary);
+    }
+
+    .rule-details p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Slide 3: War of the Currents Timeline & AC/DC Simulator */
+    .split-layout-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      flex: 1;
+    }
+
+    /* Historical Timeline Mini-widget */
+    .pioneer-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.01);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      cursor: pointer;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .timeline-item:hover, .timeline-item.active {
+      background: rgba(0, 210, 255, 0.04);
+      border-color: var(--color-primary);
+      transform: translateX(4px);
+    }
+
+    .timeline-year {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--color-primary);
+      width: 70px;
+      flex-shrink: 0;
+    }
+
+    .timeline-content h4 {
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+    }
+
+    .timeline-content p {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* History pioneer bio detail card */
+    .bio-panel {
+      margin-top: 1rem;
+      min-height: 90px;
+      background: rgba(176, 38, 255, 0.02);
+      border: 1px solid rgba(176, 38, 255, 0.1);
+      border-left: 4px solid var(--color-accent);
+      padding: 0.75rem 1rem;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .bio-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .bio-desc {
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--color-text-secondary);
+    }
+
+    /* AC/DC interactive visualization */
+    .acdc-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .control-header-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toggle-group {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-border);
+      border-radius: 30px;
+      padding: 3px;
+    }
+
+    .btn-toggle-option {
+      padding: 0.5rem 1.25rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .btn-toggle-option.active {
+      background: var(--color-primary);
+      color: #0b0f19;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+    }
+
+    .visualizer-canvas {
+      flex: 1;
+      min-height: 200px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      background: #090c15;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Interactive AC/DC diagram with electron dots animating */
+    .circuit-svg-diagram {
+      width: 100%;
+      height: 180px;
+    }
+
+    .current-dot {
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 4px var(--color-primary));
+    }
+
+    .conventional-arrow {
+      fill: var(--color-warning);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .conventional-arrow.visible {
+      opacity: 1;
+    }
+
+    .versus-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .versus-card {
+      padding: 1rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+    }
+
+    .versus-card.active {
+      border-color: var(--color-primary);
+      background: rgba(0, 210, 255, 0.02);
+    }
+
+    .versus-card h4 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .versus-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.45;
+    }
+
+    .bullet-points {
+      margin-left: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    /* Slide 4: Ohm's Law Calculator */
+    .split-layout-4 {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2rem;
+      flex: 1;
+    }
+
+    .ohms-triangle-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    /* Big interactive Ohm's Triangle SVG */
+    .triangle-svg {
+      width: 250px;
+      height: 220px;
+      cursor: pointer;
+    }
+
+    .triangle-part {
+      fill: #192035;
+      stroke: var(--color-border);
+      stroke-width: 2;
+      transition: all 0.3s ease;
+    }
+
+    .triangle-part:hover {
+      fill: rgba(0, 210, 255, 0.08);
+      stroke: var(--color-primary);
+    }
+
+    .triangle-part.selected {
+      fill: rgba(0, 210, 255, 0.15);
+      stroke: var(--color-primary);
+      filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.2));
+    }
+
+    .triangle-text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 42px;
+      fill: var(--color-text-primary);
+      pointer-events: none;
+      transition: fill 0.3s ease;
+    }
+
+    .triangle-part.selected + .triangle-text,
+    .triangle-part.selected + g .triangle-text {
+      fill: var(--color-primary);
+    }
+
+    .triangle-divider {
+      stroke: var(--color-border);
+      stroke-width: 3;
+    }
+
+    .formula-display {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 30px;
+      color: var(--color-primary);
+      text-align: center;
+      min-width: 220px;
+      text-shadow: 0 0 10px rgba(0,210,255,0.25);
+    }
+
+    .ohms-calculator {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .slider-val {
+      font-family: var(--font-display);
+      color: var(--color-primary);
+    }
+
+    .slider-input {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      transition: background 0.3s ease;
+    }
+
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.8);
+      transition: transform 0.1s ease;
+    }
+
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider-input-red::-webkit-slider-thumb {
+      background: var(--color-accent);
+      box-shadow: 0 0 8px rgba(176, 38, 255, 0.8);
+    }
+
+    .ohms-live-circuit {
+      border: 1px solid var(--color-border);
+      background: #090c15;
+      padding: 1rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .live-circuit-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .short-circuit-alert {
+      display: none;
+      background: rgba(255, 77, 77, 0.15);
+      border: 1px solid var(--color-danger);
+      color: var(--color-danger);
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      animation: flash-red 1s infinite alternate;
+    }
+
+    @keyframes flash-red {
+      from { background: rgba(255,77,77,0.05); }
+      to { background: rgba(255,77,77,0.2); }
+    }
+
+    /* Slide 5: Circuit Pathways (Series vs. Parallel) */
+    .split-layout-5 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.25rem;
+      flex: 1;
+    }
+
+    .circuit-control-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .circuit-type-selector {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-circuit-type {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-circuit-type.active {
+      border-color: var(--color-primary);
+      background: rgba(0, 210, 255, 0.05);
+      color: var(--color-primary);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+    }
+
+    .interactive-board {
+      flex: 1;
+      border: 1px solid var(--color-border);
+      background: #090c15;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .board-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      gap: 1rem;
+    }
+
+    .btn-board-action {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-board-action:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--color-text-secondary);
+    }
+
+    .btn-board-action.cut {
+      border-color: var(--color-danger);
+      color: var(--color-danger);
+    }
+
+    .btn-board-action.cut:hover {
+      background: rgba(255, 77, 77, 0.1);
+    }
+
+    .btn-board-action.reconnect {
+      border-color: var(--color-success);
+      color: var(--color-success);
+    }
+
+    .btn-board-action.reconnect:hover {
+      background: rgba(77, 255, 145, 0.1);
+    }
+
+    .pathway-stats {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--color-border);
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .wire-line {
+      stroke: #374151;
+      stroke-width: 4;
+      stroke-linecap: round;
+      fill: none;
+      transition: stroke 0.3s ease;
+    }
+
+    .wire-line.active {
+      stroke: var(--color-warning);
+    }
+
+    .wire-line.cut {
+      stroke-dasharray: 8 8;
+      stroke: var(--color-danger);
+      opacity: 0.5;
+    }
+
+    .schematic-bulb {
+      fill: #1f2937;
+      stroke: #4b5563;
+      stroke-width: 2;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .schematic-bulb.on {
+      fill: #fef08a;
+      stroke: var(--color-warning);
+      filter: drop-shadow(0 0 15px rgba(253, 224, 71, 0.6));
+    }
+
+    .schematic-bulb.broken {
+      stroke: var(--color-danger);
+      stroke-dasharray: 4 2;
+    }
+
+    /* Slide 6: Component Lab */
+    .split-layout-6 {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2rem;
+      flex: 1;
+      min-height: 380px;
+    }
+
+    .component-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow-y: auto;
+      max-height: 400px;
+      padding-right: 0.5rem;
+    }
+
+    .component-tab-item {
+      padding: 0.85rem 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .component-tab-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--color-primary);
+    }
+
+    .component-tab-item.active {
+      background: rgba(0, 210, 255, 0.05);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.15);
+    }
+
+    .component-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--color-text-secondary);
+    }
+
+    .component-tab-item.active .component-badge {
+      background: var(--color-primary);
+      color: #0b0f19;
+    }
+
+    .component-display-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .comp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 1rem;
+    }
+
+    .comp-title-group h3 {
+      font-size: 1.75rem;
+      color: var(--color-text-primary);
+    }
+
+    .comp-title-group p {
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .comp-symbols-showcase {
+      display: flex;
+      gap: 2rem;
+      background: rgba(0,0,0,0.15);
+      border-radius: 12px;
+      padding: 1.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .comp-symbol-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .comp-symbol-card span {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+    }
+
+    .comp-info-details p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+    }
+
+    /* Slide 7: Quiz layout */
+    .quiz-container {
+      max-width: 750px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .quiz-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .quiz-question-num {
+      color: var(--color-accent);
+    }
+
+    .quiz-score-val {
+      color: var(--color-success);
+    }
+
+    .quiz-timer-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .quiz-timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--color-warning);
+      transition: width 1s linear;
+    }
+
+    .quiz-card {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .quiz-question {
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--color-text-primary);
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .quiz-btn-option {
+      padding: 1.25rem 1.5rem;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .quiz-btn-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .quiz-btn-option.selected {
+      border-color: var(--color-accent);
+      background: rgba(176, 38, 255, 0.05);
+    }
+
+    .quiz-btn-option.correct {
+      border-color: var(--color-success);
+      background: rgba(77, 255, 145, 0.08);
+      color: var(--color-success);
+    }
+
+    .quiz-btn-option.incorrect {
+      border-color: var(--color-danger);
+      background: rgba(255, 77, 77, 0.08);
+      color: var(--color-danger);
+    }
+
+    .quiz-btn-option:disabled {
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .quiz-explanation-card {
+      display: none;
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 4px solid var(--color-primary);
+      border-radius: 0 12px 12px 0;
+      padding: 1.25rem;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .quiz-explanation-card.correct {
+      border-left-color: var(--color-success);
+    }
+
+    .quiz-explanation-card.incorrect {
+      border-left-color: var(--color-danger);
+    }
+
+    .quiz-explanation-card h4 {
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .quiz-explanation-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.45;
+    }
+
+    .quiz-action-area {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-quiz-next {
+      padding: 0.75rem 1.75rem;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      font-weight: 700;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+      display: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-quiz-next:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+    }
+
+    .quiz-finished-panel {
+      display: none;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 3rem 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .quiz-finished-icon {
+      font-size: 4rem;
+      animation: bounce-win 1s infinite alternate;
+    }
+
+    @keyframes bounce-win {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    .btn-restart-quiz {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      font-weight: 700;
+      border-radius: 30px;
+      margin-top: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-restart-quiz:hover {
+      background: rgba(0, 210, 255, 0.05);
+      box-shadow: 0 0 12px rgba(0,210,255,0.2);
+    }
+
+    /* Base fade-in anim */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       Header
+       ========================================== -->
+  <header>
+    <a href="index.html" class="brand">
+      <!-- Lightning bolt logo -->
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 14h9v8l10-12h-9z"/>
+      </svg>
+      <span class="brand-title">CIRCUIT LAB ⚡ DIV B</span>
+    </a>
+    
+    <div class="header-actions">
+      <a href="class2.html" class="class-switcher-link">Class 2</a>
+      <a href="class3.html" class="class-switcher-link">Class 3</a>
+      <a href="class4.html" class="class-switcher-link">Class 4</a>
+      <div class="progress-container" title="Course Progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <button class="btn-toggle-presenter" id="presenterToggleBtn" onclick="togglePresenterMode()">
+        <!-- Panel icon -->
+        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Panel</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       Main Workspace
+       ========================================== -->
+  <div class="main-workspace">
+    
+    <!-- Slide Deck Container -->
+    <div class="slide-deck" id="slideDeck">
+
+      <!-- SLIDE 1: Welcome & Overview -->
+      <div class="slide active" id="slide1">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 01: Welcome</span>
+          <h2 class="slide-title">Unleash the Power: Intro to Circuit Lab</h2>
+        </div>
+        <div class="slide-content">
+          <div class="glass-panel" style="background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), rgba(176, 38, 255, 0.05));">
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-primary);">Welcome, Future Gold Medalists! 🏆</h3>
+            <p style="font-size: 1rem; line-height: 1.6; color: var(--color-text-secondary);">
+              This is the official kickoff for the **Science Olympiad Division B (6th–8th Grade) Circuit Lab** course. 
+              In this course, we bridge the gap between theoretical physics (written tests) and practical engineering (hands-on components). 
+              Our ultimate goal? Building the speed, accuracy, and intuitive system understanding required to dominate the competition.
+            </p>
+          </div>
+          
+          <div class="welcome-grid">
+            <div class="glass-panel welcome-card">
+              <div class="welcome-card-icon">
+                <!-- Book icon -->
+                <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+              </div>
+              <h3>Theoretical Physics</h3>
+              <p>Master DC concepts, Ohm's law, equivalent resistance calculations, and electrical history.</p>
+            </div>
+            <div class="glass-panel welcome-card">
+              <div class="welcome-card-icon">
+                <!-- Wrench icon -->
+                <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.3C.5 6.7.9 9.8 2.9 11.8c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.6z"/></svg>
+              </div>
+              <h3>Hands-On Engineering</h3>
+              <p>Build confidence identifying physical components, decoding values, and using breadboards and multimeters.</p>
+            </div>
+            <div class="glass-panel welcome-card">
+              <div class="welcome-card-icon">
+                <!-- Trophy icon -->
+                <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.2 1.8 4 4 4h1.7c.8 1.6 2.2 2.8 3.9 3.2V21H8v2h8v-2h-3.6v-3.8c1.7-.4 3.1-1.6 3.9-3.2H19c2.2 0 4-1.8 4-4V7c0-1.1-.9-2-2-2zm-12 5H5V7h2v3zm12 0h-2V7h2v3z"/></svg>
+              </div>
+              <h3>Competition Drills</h3>
+              <p>Learn to identify hidden traps, solve problems at lightning speed, and perfect test-taking strategies.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Rules & Logistics -->
+      <div class="slide" id="slide2">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 01: Setup</span>
+          <h2 class="slide-title">Lab Rules & Online Classroom Protocols</h2>
+        </div>
+        <div class="slide-content">
+          <p style="font-size: 1rem; color: var(--color-text-secondary);">
+            To simulate the high-intensity, structured environment of a Science Olympiad tournament, we follow strict lab codes during our online sessions:
+          </p>
+          <div class="rules-grid">
+            <div class="glass-panel rule-card">
+              <div class="rule-num">01</div>
+              <div class="rule-details">
+                <h3>Live Cameras: Stay Present</h3>
+                <p>Keep your video feeds active. Science Olympiad partners must work together seamlessly, and face-to-face feedback helps us debug circuits faster.</p>
+              </div>
+            </div>
+            <div class="glass-panel rule-card">
+              <div class="rule-num">02</div>
+              <div class="rule-details">
+                <h3>Muted by Default</h3>
+                <p>Prevent ambient feedback. Press the spacebar or use zoom controls to speak. Use the "Raise Hand" function for questions during live lectures.</p>
+              </div>
+            </div>
+            <div class="glass-panel rule-card">
+              <div class="rule-num">03</div>
+              <div class="rule-details">
+                <h3>Interactive Response</h3>
+                <p>We use live polls and competitive quizzes (like Kahoot!). All students are expected to answer every check-for-understanding prompt.</p>
+              </div>
+            </div>
+            <div class="glass-panel rule-card">
+              <div class="rule-num">04</div>
+              <div class="rule-details">
+                <h3>The Safe Zone: Fail Forward</h3>
+                <p>In electrical engineering, "magic smoke" or broken pathways are valuable data. Do not be afraid to answer incorrectly. Every mistake is a learning data point.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Pioneers & War of the Currents -->
+      <div class="slide" id="slide3">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 02: History</span>
+          <h2 class="slide-title">Pioneers & The War of the Currents</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-3">
+            
+            <!-- Left Side: Pioneers Timeline -->
+            <div class="pioneer-timeline" style="max-height: 480px; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem; color: var(--color-primary); position: sticky; top: 0; background: var(--color-bg); z-index: 2; padding-bottom: 0.5rem;">Pioneers of Electricity</h3>
+              
+              <div class="timeline-item active" onclick="showPioneer('franklin', this)">
+                <span class="timeline-year">1752</span>
+                <div class="timeline-content">
+                  <h4>Benjamin Franklin</h4>
+                  <p>Kite experiment & charge conservation</p>
+                </div>
+              </div>
+              <div class="timeline-item" onclick="showPioneer('coulomb', this)">
+                <span class="timeline-year">1785</span>
+                <div class="timeline-content">
+                  <h4>Charles Coulomb</h4>
+                  <p>Torsion balance & electrostatic forces</p>
+                </div>
+              </div>
+              <div class="timeline-item" onclick="showPioneer('volta', this)">
+                <span class="timeline-year">1800</span>
+                <div class="timeline-content">
+                  <h4>Alessandro Volta</h4>
+                  <p>Chemical battery invention</p>
+                </div>
+              </div>
+              <div class="timeline-item" onclick="showPioneer('ampere', this)">
+                <span class="timeline-year">1820</span>
+                <div class="timeline-content">
+                  <h4>André-Marie Ampère</h4>
+                  <p>Electrodynamics & wire attraction</p>
+                </div>
+              </div>
+              <div class="timeline-item" onclick="showPioneer('ohm', this)">
+                <span class="timeline-year">1827</span>
+                <div class="timeline-content">
+                  <h4>Georg Ohm</h4>
+                  <p>Ohm's Law (proportional ratio)</p>
+                </div>
+              </div>
+              <div class="timeline-item" onclick="showPioneer('faraday', this)">
+                <span class="timeline-year">1831</span>
+                <div class="timeline-content">
+                  <h4>Michael Faraday</h4>
+                  <p>Electromagnetic induction & generators</p>
+                </div>
+              </div>
+              
+              <!-- Pioneer details card -->
+              <div class="bio-panel" style="display: flex; gap: 1rem; align-items: center; background: rgba(176, 38, 255, 0.03); border: 1px solid rgba(176, 38, 255, 0.1); border-left: 4px solid var(--color-accent); padding: 1rem; border-radius: 0 10px 10px 0; margin-top: 1rem; min-height: 150px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
+                  <div class="bio-title" id="pioneerName" style="font-weight: 700; color: var(--color-accent); font-size: 1.05rem;">Benjamin Franklin</div>
+                  <div id="pioneerExperiment" style="font-size: 0.8rem; font-weight: 600; color: var(--color-primary); text-transform: uppercase;">Kite Experiment</div>
+                  <div class="bio-desc" id="pioneerDesc" style="font-size: 0.85rem; line-height: 1.45; color: var(--color-text-secondary);">Proved that lightning is electrical, coined the terms positive and negative charges, and laid down the law of charge conservation.</div>
+                </div>
+                <svg id="pioneerSVG" viewBox="0 0 120 120" style="width: 110px; height: 110px; flex-shrink: 0; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);"></svg>
+              </div>
+            </div>
+            
+            <!-- Right Side: AC/DC Simulator -->
+            <div class="acdc-container">
+              <div class="control-header-panel">
+                <h3 style="font-size: 1.15rem; color: var(--color-primary);">AC vs. DC Flow Visualizer</h3>
+                <div class="toggle-group">
+                  <button class="btn-toggle-option active" id="btnDC" onclick="setACDC('DC')">Direct Current (DC)</button>
+                  <button class="btn-toggle-option" id="btnAC" onclick="setACDC('AC')">Alternating Current (AC)</button>
+                </div>
+              </div>
+              
+              <div class="visualizer-canvas">
+                <!-- SVG Current Loop -->
+                <svg class="circuit-svg-diagram" id="acdcSVG" viewBox="0 0 400 180">
+                  <!-- Wire pathway -->
+                  <path d="M 50 90 L 350 90" stroke="#2a3554" stroke-width="6" fill="none" stroke-linecap="round"/>
+                  
+                  <!-- Battery icons at ends -->
+                  <rect x="25" y="70" width="15" height="40" rx="3" fill="#ef4444" />
+                  <text x="32" y="95" font-family="monospace" font-size="12" fill="#000" text-anchor="middle" font-weight="bold">+</text>
+                  
+                  <rect x="360" y="70" width="15" height="40" rx="3" fill="#3b82f6" />
+                  <text x="367" y="95" font-family="monospace" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">-</text>
+                  
+                  <!-- Electron dot paths -->
+                  <circle class="current-dot" id="dot1" cx="80" cy="90" r="6" />
+                  <circle class="current-dot" id="dot2" cx="160" cy="90" r="6" />
+                  <circle class="current-dot" id="dot3" cx="240" cy="90" r="6" />
+                  <circle class="current-dot" id="dot4" cx="320" cy="90" r="6" />
+
+                  <!-- Conventional current arrow -->
+                  <g class="conventional-arrow" id="convArrows">
+                    <path d="M 120 70 L 140 70 M 135 65 L 140 70 L 135 75" stroke="var(--color-warning)" stroke-width="3" fill="none"/>
+                    <text x="130" y="55" font-size="11" fill="var(--color-warning)" text-anchor="middle">Conventional Current (I)</text>
+                    
+                    <path d="M 280 110 L 260 110 M 265 105 L 260 110 L 265 115" stroke="var(--color-primary)" stroke-width="3" fill="none"/>
+                    <text x="270" y="130" font-size="11" fill="var(--color-primary)" text-anchor="middle">Electron Flow (e⁻)</text>
+                  </g>
+                </svg>
+                
+                <div style="position: absolute; bottom: 8px; left: 8px; display: flex; gap: 8px;">
+                  <button class="btn-toggle-option" style="padding: 4px 8px; font-size: 0.75rem;" id="btnShowConv" onclick="toggleConventionalCurrent()">Show Directions</button>
+                </div>
+              </div>
+              
+              <div class="versus-container">
+                <div class="versus-card active" id="cardDC">
+                  <h4>🔋 Edison's Direct Current (DC)</h4>
+                  <p>Current flows constantly in <strong>one direction</strong>. Safe at low voltages, but cannot travel long distances without massive power loss.</p>
+                </div>
+                <div class="versus-card" id="cardAC">
+                  <h4>⚡ Tesla's Alternating Current (AC)</h4>
+                  <p>Current periodically <strong>reverses direction</strong>. Easy to scale up or down using transformers, making it perfect for long-distance power lines.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Voltage, Current, Resistance (V, I, R) -->
+      <div class="slide" id="slide4">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 03: Basic Laws</span>
+          <h2 class="slide-title">The Big Three & Ohm's Law</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-4">
+            
+            <!-- Left Panel: Interactive Ohm's Triangle -->
+            <div class="ohms-triangle-container">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary);">Select a Variable to Reveal Formula</h3>
+              
+              <svg class="triangle-svg" viewBox="0 0 200 180">
+                <!-- Top Section (V) -->
+                <polygon id="triV" class="triangle-part selected" points="100,10 40,90 160,90" onclick="selectOhmVariable('V')"/>
+                
+                <!-- Bottom Left (I) -->
+                <polygon id="triI" class="triangle-part" points="40,90 100,90 100,170 10,170" onclick="selectOhmVariable('I')"/>
+                
+                <!-- Bottom Right (R) -->
+                <polygon id="triR" class="triangle-part" points="100,90 160,90 190,170 100,170" onclick="selectOhmVariable('R')"/>
+                
+                <!-- Dividing Lines -->
+                <line x1="40" y1="90" x2="160" y2="90" class="triangle-divider"/>
+                <line x1="100" y1="90" x2="100" y2="170" class="triangle-divider"/>
+                
+                <!-- Text elements -->
+                <text x="100" y="70" class="triangle-text" text-anchor="middle">V</text>
+                <text x="55" y="140" class="triangle-text" text-anchor="middle">I</text>
+                <text x="145" y="140" class="triangle-text" text-anchor="middle">R</text>
+              </svg>
+              
+              <div class="formula-display" id="formulaDisplay">
+                V = I × R
+              </div>
+              <div style="font-size: 0.85rem; color: var(--color-text-secondary); text-align: center; max-width: 280px;" id="formulaDesc">
+                <strong>Voltage (V)</strong>: The electric pressure that pushes current through the circuit.
+              </div>
+            </div>
+            
+            <!-- Right Panel: Dynamic Live Circuit Sandbox -->
+            <div class="ohms-calculator">
+              <div class="ohms-live-circuit">
+                <div class="live-circuit-title">
+                  <span>Interactive Ohm's Law Sandbox</span>
+                  <span id="calcCurrentDisplay" style="color: var(--color-success); font-family: var(--font-display); font-weight: bold;">Current: 60.0 mA</span>
+                </div>
+                
+                <div class="short-circuit-alert" id="shortCircuitWarning">
+                  🔥 SHORT CIRCUIT ALERT! Resistance is too low! Dangerously high current.
+                </div>
+                
+                <!-- Visual bulb and dot speed circuit schematic -->
+                <div style="height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; position: relative;">
+                  <svg width="100%" height="100%" viewBox="0 0 300 100" style="position: absolute; top:0; left:0;">
+                    <!-- Simple wire path -->
+                    <rect x="50" y="25" width="200" height="50" rx="4" fill="none" stroke="#222f47" stroke-width="4"/>
+                    
+                    <!-- Battery icon (left side) -->
+                    <g transform="translate(40, 40)">
+                      <line x1="0" y1="0" x2="0" y2="20" stroke="var(--color-primary)" stroke-width="5"/>
+                      <line x1="10" y1="5" x2="10" y2="15" stroke="var(--color-primary)" stroke-width="2"/>
+                      <line x1="20" y1="0" x2="20" y2="20" stroke="var(--color-primary)" stroke-width="5"/>
+                    </g>
+                    
+                    <!-- Resistor squiggly line (top side) -->
+                    <path d="M 120 25 L 125 15 L 130 35 L 135 15 L 140 35 L 145 15 L 150 35 L 155 25" fill="none" stroke="var(--color-accent)" stroke-width="3" />
+                    
+                    <!-- Bulb circle (right side) -->
+                    <circle cx="250" cy="50" r="16" fill="#1f2937" stroke="#4b5563" stroke-width="2" id="sandboxBulb"/>
+                    <path d="M 244 50 Q 250 40 256 50 M 244 50 L 256 50" fill="none" stroke="#9ca3af" stroke-width="2" id="sandboxBulbFilament"/>
+                    
+                    <!-- Current Flowing Dots -->
+                    <circle class="current-dot" id="sbDot1" cx="80" cy="25" r="4" />
+                    <circle class="current-dot" id="sbDot2" cx="190" cy="25" r="4" />
+                    <circle class="current-dot" id="sbDot3" cx="250" cy="75" r="4" />
+                    <circle class="current-dot" id="sbDot4" cx="150" cy="75" r="4" />
+                  </svg>
+                </div>
+                
+                <!-- Voltage Slider -->
+                <div class="slider-group">
+                  <div class="slider-label">
+                    <span>Voltage (V) — The Push</span>
+                    <span class="slider-val" id="valVDisplay">6.0 V</span>
+                  </div>
+                  <input type="range" class="slider-input" id="sliderV" min="1" max="12" step="0.5" value="6" oninput="updateOhmsLaw()">
+                </div>
+                
+                <!-- Resistance Slider -->
+                <div class="slider-group">
+                  <div class="slider-label">
+                    <span>Resistance (R) — The Pinch</span>
+                    <span class="slider-val" id="valRDisplay" style="color: var(--color-accent);">100 Ω</span>
+                  </div>
+                  <input type="range" class="slider-input slider-input-red" id="sliderR" min="0" max="200" step="5" value="100" oninput="updateOhmsLaw()">
+                </div>
+              </div>
+              
+              <!-- Science Olympiad test trap warning card -->
+              <div class="trap-alert">
+                <span class="trap-icon">⚠️</span>
+                <div class="trap-text">
+                  <h4>Science Olympiad Test Trap Alert!</h4>
+                  <p>Beware of metric conversions! Tests will throw current at you in milliamperes (mA). Remember: <strong>1 A = 1000 mA</strong>. Always convert to Amperes before applying Ohm's Law formulas!</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Circuit Pathways (Series vs. Parallel) -->
+      <div class="slide" id="slide5">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 04: Configurations</span>
+          <h2 class="slide-title">Pathways: Series vs. Parallel Circuits</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-5">
+            
+            <!-- Left Side: Interactive Circuit Board -->
+            <div class="interactive-board">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary);" id="boardTitle">Series Circuit Simulator</h3>
+              
+              <!-- SVG schematic diagram -->
+              <div style="flex: 1; min-height: 180px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); border-radius: 8px;">
+                <svg width="100%" height="160" viewBox="0 0 350 160" id="pathwaySVG">
+                  <!-- Dynamic SVG will be rendered by JS based on selection -->
+                </svg>
+              </div>
+              
+              <div class="board-controls">
+                <button class="btn-board-action cut" id="btnToggleBulbA" onclick="toggleBulbState('A')">Break Bulb A</button>
+                <button class="btn-board-action cut" id="btnToggleBulbB" onclick="toggleBulbState('B')">Break Bulb B</button>
+                <button class="btn-board-action reconnect" id="btnResetBoard" onclick="resetBoard()">Reset Path</button>
+              </div>
+            </div>
+            
+            <!-- Right Side: Comparison & Controls -->
+            <div class="circuit-control-panel">
+              <div class="circuit-type-selector">
+                <button class="btn-circuit-type active" id="btnTypeSeries" onclick="switchPathwayType('Series')">Series Configuration</button>
+                <button class="btn-circuit-type" id="btnTypeParallel" onclick="switchPathwayType('Parallel')">Parallel Configuration</button>
+              </div>
+              
+              <div class="glass-panel" id="pathwayDescPanel">
+                <h3 style="font-size: 1.1rem; color: var(--color-accent); margin-bottom: 0.5rem;" id="pathwayTitleText">Series Pathway</h3>
+                <p style="font-size: 0.85rem; line-height: 1.5; color: var(--color-text-secondary);" id="pathwayBodyText">
+                  All components are chained in a single continuous path. 
+                  If any single part is broken or open, the entire path halts and all currents drop to zero immediately!
+                </p>
+                <ul class="bullet-points" id="pathwayList">
+                  <li>Current (I) remains identical through all components.</li>
+                  <li>Total Voltage divides across each bulb proportional to resistance.</li>
+                  <li>Equivalent Resistance: $R_{eq} = R_1 + R_2$.</li>
+                </ul>
+              </div>
+              
+              <div class="pathway-stats">
+                <div class="stat-box">
+                  <div class="stat-label">Total Resistance</div>
+                  <div class="stat-value" id="statReq">200 Ω</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Bulb A Voltage Drop</div>
+                  <div class="stat-value" id="statVdrop">4.5 V</div>
+                </div>
+              </div>
+              
+              <div class="trap-alert" style="background: rgba(255, 170, 0, 0.03); border-color: var(--color-warning);">
+                <span class="trap-icon" style="color: var(--color-warning);">💡</span>
+                <div class="trap-text">
+                  <h4 style="color: var(--color-warning);">Olympiad Quick Math Trap</h4>
+                  <p>In parallel, equivalent resistance is ALWAYS smaller than the smallest individual resistor. If you calculate $R_{eq}$ for a parallel loop and it is larger than a single branch, recalculate!</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: Component Lab -->
+      <div class="slide" id="slide6">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 05: Practical Lab</span>
+          <h2 class="slide-title">Component Lab & Cheat Sheet Tips</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-6">
+            
+            <!-- Left Side: Tabs for components -->
+            <div class="component-list">
+              <button class="component-tab-item active" onclick="selectComponent('resistor', this)">
+                <span>Resistor (Fixed)</span>
+                <span class="component-badge">R</span>
+              </button>
+              <button class="component-tab-item" onclick="selectComponent('switch', this)">
+                <span>Switches (SPST vs SPDT)</span>
+                <span class="component-badge">SW</span>
+              </button>
+              <button class="component-tab-item" onclick="selectComponent('led', this)">
+                <span>LED (Polarity Matters)</span>
+                <span class="component-badge">LED</span>
+              </button>
+              <button class="component-tab-item" onclick="selectComponent('capacitor', this)">
+                <span>Capacitor</span>
+                <span class="component-badge">C</span>
+              </button>
+              <button class="component-tab-item" onclick="selectComponent('potentiometer', this)">
+                <span>Potentiometer</span>
+                <span class="component-badge">POT</span>
+              </button>
+              <button class="component-tab-item" onclick="selectComponent('logic', this)">
+                <span>Logic Gates</span>
+                <span class="component-badge">GATE</span>
+              </button>
+            </div>
+            
+            <!-- Right Side: Details Display -->
+            <div class="glass-panel component-display-panel">
+              <div class="comp-header">
+                <div class="comp-title-group">
+                  <h3 id="compName">Resistor (Fixed)</h3>
+                  <p id="compCategory">Basic Passives</p>
+                </div>
+                <div class="comp-symbols-showcase">
+                  <div class="comp-symbol-card">
+                    <!-- Dynamic symbol render container -->
+                    <svg width="120" height="60" id="compSymbolSVG" style="background: rgba(0,0,0,0.2); border-radius: 6px;">
+                      <!-- Placeholder, drawn by JS -->
+                    </svg>
+                    <span>Schematic Symbol</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="comp-info-details">
+                <h4 style="font-size: 0.9rem; color: var(--color-primary); text-transform: uppercase; margin-bottom: 0.5rem;">Functional Description</h4>
+                <p id="compDescription">
+                  Opposes electric current to limit flow rate. Protects fragile components (like LEDs) from receiving too much current. Uses color bands to denote value and tolerance rating.
+                </p>
+                <div id="compExtraContent" style="margin-top: 1.25rem;"></div>
+              </div>
+              
+              <div class="trap-alert" id="compTrapPanel">
+                <span class="trap-icon">⚠️</span>
+                <div class="trap-text">
+                  <h4 id="compTrapTitle">SO Trap: Color Band Reading</h4>
+                  <p id="compTrapDesc">The standard four-band resistor will have multiplier bands that can easily be misread if you look from the wrong end. Always locate the Gold/Silver tolerance band first; read from the opposite end!</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: Kahoot!-style Quiz -->
+      <div class="slide" id="slide7">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Module 06: Quiz Time</span>
+          <h2 class="slide-title">Division B Circuit Lab Warm-up</h2>
+        </div>
+        <div class="slide-content">
+          
+          <div class="quiz-container" id="quizContainer">
+            <div class="quiz-stats">
+              <span class="quiz-question-num" id="quizQuestionNum">Question 1 of 5</span>
+              <span class="quiz-score-val" id="quizScore">Score: 0 pts</span>
+            </div>
+            
+            <div class="quiz-timer-bar-container">
+              <div class="quiz-timer-bar" id="quizTimerBar"></div>
+            </div>
+            
+            <div class="glass-panel quiz-card">
+              <div class="quiz-question" id="quizQuestionText">
+                If a circuit is powered by a 9V battery and has an equivalent resistance of 150 ohms, what is the total current running through the circuit in milliamperes (mA)?
+              </div>
+            </div>
+            
+            <div class="quiz-options" id="quizOptions">
+              <button class="quiz-btn-option" onclick="submitQuizAnswer(0)">A. 60 mA</button>
+              <button class="quiz-btn-option" onclick="submitQuizAnswer(1)">B. 0.06 mA</button>
+              <button class="quiz-btn-option" onclick="submitQuizAnswer(2)">C. 600 mA</button>
+              <button class="quiz-btn-option" onclick="submitQuizAnswer(3)">D. 1.35 mA</button>
+            </div>
+            
+            <div class="quiz-explanation-card" id="quizExplanation">
+              <h4>Explanation</h4>
+              <p id="quizExplanationText">Ohm's Law: I = V / R = 9 / 150 = 0.06 A. Converting to milliamperes: 0.06 A * 1000 = 60 mA.</p>
+            </div>
+            
+            <div class="quiz-action-area">
+              <button class="btn-quiz-next" id="btnQuizNext" onclick="nextQuizQuestion()">Next Question</button>
+            </div>
+          </div>
+          
+          <!-- Quiz Finished Screen -->
+          <div class="glass-panel quiz-finished-panel" id="quizFinishedPanel">
+            <div class="quiz-finished-icon">🏆</div>
+            <h3 style="font-size: 2rem;">Quiz Completed!</h3>
+            <p style="font-size: 1.1rem; color: var(--color-text-secondary);" id="quizFinalScoreText">You scored 400 out of 500 points!</p>
+            <button class="btn-restart-quiz" onclick="restartQuiz()">Try Again</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Presenter Notes Panel Sidebar -->
+    <div class="presenter-panel" id="presenterPanel">
+      <div class="presenter-header">
+        <h3>
+          <!-- Mic icon -->
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+          </svg>
+          Presenter Console
+        </h3>
+        <button onclick="togglePresenterMode()" style="color: var(--color-text-secondary); font-size: 0.8rem; font-weight: 600;">Close</button>
+      </div>
+      
+      <div class="presenter-body" id="presenterBody">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       Bottom Control Bar
+       ========================================== -->
+  <div class="control-bar">
+    <div class="slide-indicators" id="slideIndicators">
+      <!-- Indicators generated dynamically -->
+    </div>
+    
+    <div class="navigation-controls">
+      <button class="btn-nav" id="btnPrev" onclick="navigateSlide(-1)" title="Previous Slide">
+        <!-- Arrow Left -->
+        <svg viewBox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </button>
+      <button class="btn-nav" id="btnNext" onclick="navigateSlide(1)" title="Next Slide">
+        <!-- Arrow Right -->
+        <svg viewBox="0 0 24 24">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       Scripts & Interaction Logic
+       ========================================== */ -->
+  <script>
+    // ==========================================
+    // Slide Navigation & State
+    // ==========================================
+    const totalSlides = 7;
+    let currentSlide = 1;
+    let presenterModeActive = false;
+
+    // Speaker Scripts dictionary matching slide IDs
+    const presenterNotes = {
+      1: {
+        script: "Alright class, welcome to the kickoff session of our Circuit Lab training program! This isn't just standard school science. We are here to prepare for a Science Olympiad tournament. A tournament tests not just what you know, but how fast you can build a breadboard circuit and how accurately you can solve tricky voltage questions. Today we will build the foundation. Stay sharp, ask questions, and let's get ready to win gold!",
+        actions: "Welcome students as they log in. Verify everyone can hear you. Let them know this slide covers the core goals: written theory, physical engineering, and speed drills. Ensure they know there is a quiz at the end!"
+      },
+      2: {
+        script: "Let's establish our lab rules quickly. In electrical engineering, we work as partners. Keeping cameras on builds teamwork. Keep your microphones muted unless speaking to eliminate background hums. Most importantly, see this slide as a safe zone. If you break a circuit or burn out a component, that's just data. Don't fear failure; in our lab, mistakes help us learn faster.",
+        actions: "Go over rules. Highlight Rule 4: 'Mistakes are Data'. In engineering, testing to destruction is normal. Make sure they know they can use chat or raise hand if they run into breadboarding issues later in the semester."
+      },
+      3: {
+        script: "Now, let's explore history. Science Olympiad written tests LOVE asking about historical figures. Take notes! Alessandro Volta invented the chemical battery in 1800, giving us Voltage. Georg Ohm gave us Resistance in 1827. In the late 1800s, Nikola Tesla and Thomas Edison fought the 'War of the Currents'. Edison wanted DC (Direct Current), where electrons march in one direction. Tesla wanted AC (Alternating Current), which moves back and forth. Look at the flow visualizer here: toggle between DC and AC. Spot the conventional arrow direction! The test makers will try to trick you: current is defined as flowing positive to negative, even though physical electrons travel negative to positive!",
+        actions: "Instruct the class to click on Volta and Georg Ohm to read their bios. Demonstrate the DC vs. AC toggle switch on the screen. Toggle the 'Directions' button to highlight Conventional Current direction (warning: classic test trap!)."
+      },
+      4: {
+        script: "Now, let's tackle Ohm's Law. This is the absolute cornerstone formula: V = I x R. Think of Voltage as a water pump pushing water. Current is the water flow rate. Resistance is a pinch in the hose restricting the flow. Click on the triangle diagram: if you want to find Voltage, cover V, and you see I multiplied by R. If you want to find Current, cover I, and you get V divided by R. Adjust the sliders in the sandbox on the right: see how low resistance causes a massive current spike? That is a short circuit! A short circuit will trip breakers, blow fuses, or burn wires. Watch the light bulb: higher voltage pushes more electrons, lighting it up brighter!",
+        actions: "Direct students to look at the triangle. Click 'I' and 'R' on the triangle to show formulas. Slide Voltage to 12V and Resistance to 15 Ohms. Show the bright bulb and high speed dots. Now slide Resistance down to 0: show the short circuit red alert popup and explain the fire danger."
+      },
+      5: {
+        script: "Next up: pathways! We have Series and Parallel circuits. In a series circuit, all bulbs are in a single chain. If one bulb burns out (try clicking 'Break Bulb A' on the simulator), the path breaks and the other bulb goes dark! In a parallel circuit, each bulb has its own loop back to the battery. If you break Bulb A in parallel, Bulb B stays lit! The math is crucial here. In series, we add resistance directly: Req = R1 + R2. In parallel, resistance drops: Req = (R1 * R2) / (R1 + R2). In parallel, Req is ALWAYS smaller than the smallest branch!",
+        actions: "Toggle between Series and Parallel on the simulator. Click 'Break Bulb A' while in Series mode, pointing out that Bulb B turns off. Reset, switch to Parallel, and break Bulb A again. Show that Bulb B remains active. Ask students to verify the equivalent resistance calculation shown at the bottom."
+      },
+      6: {
+        script: "Let's review components. You need to identify these instantly on a test. Fixed Resistors restrict current and use color codes. Switches are Single Pole Single Throw (SPST) or Single Pole Double Throw (SPDT). LEDs are light-emitting diodes, and they have polarity! The long leg is the positive anode; plug it backwards, and it won't light up! Also, LEDs MUST have a current-limiting resistor, or they will immediately burn out. Look at the schematic symbols: practice drawing these, as tests require circuit diagram drawings.",
+        actions: "Instruct students to follow along by clicking different components in the left list. Draw special attention to LED polarity and the SPDT switch schematic symbol, which students frequently confuse on competition exams."
+      },
+      7: {
+        script: "Time to test your knowledge! We have a quick 5-question competitive warmup. I will trigger the timer. Read carefully. Don't fall for the milliamperes trap! Take your time, calculate, and select the correct button. Let's see who can get a perfect score!",
+        actions: "Announce the start of the quiz. Guide students through the questions. After they submit, display and read the explanation card aloud to reinforce why the correct answer is right and why the distractors are wrong."
+      }
+    };
+
+    function initSlides() {
+      // Generate indicators
+      const indicatorContainer = document.getElementById('slideIndicators');
+      indicatorContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'indicator-dot' + (i === 1 ? ' active' : '');
+        dot.onclick = () => jumpToSlide(i);
+        indicatorContainer.appendChild(dot);
+      }
+      updateNavigationState();
+    }
+
+    function navigateSlide(direction) {
+      const next = currentSlide + direction;
+      if (next >= 1 && next <= totalSlides) {
+        jumpToSlide(next);
+      }
+    }
+
+    function jumpToSlide(slideNum) {
+      // Deactivate current slide
+      document.getElementById(`slide${currentSlide}`).classList.remove('active');
+      
+      // Update active slide
+      currentSlide = slideNum;
+      document.getElementById(`slide${currentSlide}`).classList.add('active');
+      
+      // Update dots
+      const dots = document.querySelectorAll('.indicator-dot');
+      dots.forEach((dot, index) => {
+        if (index + 1 === currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+      
+      updateNavigationState();
+      
+      // Special slide initializations
+      if (currentSlide === 3) {
+        initACDCSimulator();
+        const initialPioneerEl = document.querySelector('.pioneer-timeline .timeline-item.active');
+        if (initialPioneerEl) {
+          showPioneer('franklin', initialPioneerEl);
+        }
+      } else if (currentSlide === 4) {
+        updateOhmsLaw();
+      } else if (currentSlide === 5) {
+        initPathwaySimulator();
+      } else if (currentSlide === 6) {
+        selectComponent('resistor', document.querySelector('.component-tab-item'));
+      } else if (currentSlide === 7) {
+        // restart or check quiz state
+      }
+    }
+
+    function updateNavigationState() {
+      // Progress Bar
+      const percentage = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+      document.getElementById('progressBar').style.width = `${percentage}%`;
+      
+      // Nav buttons state
+      document.getElementById('btnPrev').style.opacity = currentSlide === 1 ? '0.4' : '1';
+      document.getElementById('btnPrev').disabled = currentSlide === 1;
+      document.getElementById('btnNext').style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+      document.getElementById('btnNext').disabled = currentSlide === totalSlides;
+      
+      // Update Speaker notes
+      const note = presenterNotes[currentSlide];
+      const presenterBody = document.getElementById('presenterBody');
+      if (note) {
+        presenterBody.innerHTML = `
+          <div class="script-section">
+            <h4>🗣️ Teacher Script</h4>
+            <div class="script-text">"${note.script}"</div>
+          </div>
+          <div class="teacher-action-card">
+            <h4>💡 Recommended Actions</h4>
+            <p>${note.actions}</p>
+          </div>
+        `;
+      }
+    }
+
+    function togglePresenterMode() {
+      presenterModeActive = !presenterModeActive;
+      const panel = document.getElementById('presenterPanel');
+      const btn = document.getElementById('presenterToggleBtn');
+      if (presenterModeActive) {
+        panel.classList.add('active');
+        btn.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+        btn.classList.remove('active');
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      // Prevent mapping arrow keys if input is focused (none in slides yet, but good practice)
+      if (document.activeElement.tagName === 'INPUT') return;
+      
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        navigateSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        navigateSlide(-1);
+      }
+    });
+
+    // ==========================================
+    // Slide 3: AC/DC & Historical Pioneers
+    // ==========================================
+    let acdcMode = 'DC';
+    let showDirections = false;
+    let acdcTimer = null;
+    let electronPosition = 0;
+
+    const pioneers = {
+      franklin: {
+        name: "Benjamin Franklin",
+        experiment: "Kite Experiment (1752)",
+        desc: "Franklin flew a kite during a thunderstorm to prove that lightning is a form of electricity. He collected electric charge in a Leyden jar and formulated the law of conservation of charge, coining the terms 'positive' and 'negative' current.",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- Cloud -->
+            <path d="M 30,35 a 12,12 0 0,1 20,-4 a 15,15 0 0,1 28,4 a 12,12 0 0,1 4,16 L 25,51 a 12,12 0 0,1 5,-16 z" fill="#5a657c" opacity="0.85"/>
+            <!-- Lightning -->
+            <path d="M 55,35 L 43,58 L 55,58 L 47,80" stroke="var(--color-warning)" stroke-width="3" fill="none" stroke-linejoin="round"/>
+            <!-- Kite -->
+            <polygon points="82,25 97,35 82,45 67,35" fill="none" stroke="var(--color-primary)" stroke-width="2"/>
+            <line x1="82" y1="25" x2="82" y2="45" stroke="var(--color-primary)" stroke-width="1"/>
+            <line x1="67" y1="35" x2="97" y2="35" stroke="var(--color-primary)" stroke-width="1"/>
+            <!-- Kite string -->
+            <path d="M 82,35 Q 60,65 42,88" fill="none" stroke="#6b7280" stroke-width="1" stroke-dasharray="2 2"/>
+            <!-- Key -->
+            <circle cx="42" cy="88" r="4" fill="none" stroke="var(--color-warning)" stroke-width="2"/>
+            <line x1="42" y1="92" x2="42" y2="98" stroke="var(--color-warning)" stroke-width="2"/>
+            <!-- Sparks -->
+            <line x1="42" y1="92" x2="33" y2="96" stroke="var(--color-warning)" stroke-width="1.5"/>
+            <line x1="42" y1="92" x2="51" y2="96" stroke="var(--color-warning)" stroke-width="1.5"/>
+          `;
+        }
+      },
+      coulomb: {
+        name: "Charles-Augustin de Coulomb",
+        experiment: "Torsion Balance Experiment (1785)",
+        desc: "Coulomb used a highly sensitive torsion balance to measure the mechanical force between electric charges. He proved Coulomb's Law: the electrostatic force between two charges is directly proportional to the product of their charges and inversely proportional to the square of the distance between them ($Fe = k \\\\frac{q_1 q_2}{r^2}$).",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- Torsion suspension wire -->
+            <line x1="60" y1="15" x2="60" y2="60" stroke="#9ca3af" stroke-width="1.5"/>
+            <!-- Rotating bar -->
+            <line x1="30" y1="60" x2="90" y2="60" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round"/>
+            <!-- Sphere A (charged) -->
+            <circle cx="30" cy="60" r="7" fill="var(--color-accent)" filter="drop-shadow(0 0 3px var(--color-accent))"/>
+            <text x="30" y="63" font-size="8" font-family="sans-serif" font-weight="bold" fill="#000" text-anchor="middle">+</text>
+            <!-- Sphere B (fixed charged near it) -->
+            <circle cx="14" cy="60" r="7" fill="var(--color-accent)" filter="drop-shadow(0 0 3px var(--color-accent))"/>
+            <text x="14" y="63" font-size="8" font-family="sans-serif" font-weight="bold" fill="#000" text-anchor="middle">+</text>
+            <!-- Repulsion forces arrows -->
+            <path d="M 22,48 L 26,48 M 25,45 L 22,48 L 25,51" fill="none" stroke="var(--color-danger)" stroke-width="1.5"/>
+            <path d="M 22,72 L 26,72 M 25,69 L 22,72 L 25,75" fill="none" stroke="var(--color-danger)" stroke-width="1.5"/>
+            <!-- Glass cylinder outline -->
+            <rect x="23" y="40" width="74" height="40" rx="4" fill="none" stroke="#4b5563" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="60" y="100" font-size="8" fill="var(--color-text-secondary)" text-anchor="middle">Electrostatic Repulsion</text>
+          `;
+        }
+      },
+      volta: {
+        name: "Alessandro Volta",
+        experiment: "The Voltaic Pile battery (1800)",
+        desc: "Volta built the first chemical battery by stacking alternating discs of zinc and copper separated by cardboard soaked in brine. This created a steady, continuous electric current, disproving Galvani's theory of 'animal electricity' and introducing the concept of potential difference (Voltage).",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- Alternating layers of Zinc and Copper stack -->
+            <ellipse cx="60" cy="20" rx="26" ry="6" fill="#d97706" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="26" rx="26" ry="6" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="32" rx="26" ry="6" fill="#d97706" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="38" rx="26" ry="6" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="44" rx="26" ry="6" fill="#d97706" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="50" rx="26" ry="6" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="56" rx="26" ry="6" fill="#d97706" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="62" rx="26" ry="6" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="68" rx="26" ry="6" fill="#d97706" stroke="#4b5563" stroke-width="1"/>
+            <ellipse cx="60" cy="74" rx="26" ry="6" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+            <!-- Wires -->
+            <path d="M 60,20 Q 20,20 20,50" fill="none" stroke="var(--color-primary)" stroke-width="2"/>
+            <path d="M 60,74 Q 100,74 100,50" fill="none" stroke="var(--color-danger)" stroke-width="2"/>
+            <!-- Tiny light bulb -->
+            <circle cx="60" cy="98" r="8" fill="#fef08a" stroke="var(--color-warning)" stroke-width="1.5" filter="drop-shadow(0 0 6px rgba(253, 224, 71, 0.6))"/>
+            <text x="60" y="112" font-size="8" fill="var(--color-text-secondary)" text-anchor="middle">Continuous Current</text>
+          `;
+        }
+      },
+      ampere: {
+        name: "André-Marie Ampère",
+        experiment: "Electrodynamic Force Discovery (1820)",
+        desc: "Ampère discovered that parallel wires carrying currents in the same direction attract each other, while currents in opposite directions repel. He formulated Ampere's Law, linking magnetic fields and electric currents, laying the foundation for electrodynamics.",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- Parallel Wire 1 -->
+            <line x1="40" y1="20" x2="40" y2="90" stroke="var(--color-primary)" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M 40,45 L 40,25 M 36,31 L 40,25 L 44,31" fill="none" stroke="var(--color-warning)" stroke-width="2"/>
+            <text x="28" y="35" font-size="9" fill="var(--color-warning)" font-weight="bold">I₁</text>
+            
+            <!-- Parallel Wire 2 -->
+            <line x1="80" y1="20" x2="80" y2="90" stroke="var(--color-primary)" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M 80,45 L 80,25 M 76,31 L 80,25 L 84,31" fill="none" stroke="var(--color-warning)" stroke-width="2"/>
+            <text x="92" y="35" font-size="9" fill="var(--color-warning)" font-weight="bold">I₂</text>
+            
+            <!-- Attraction arrows -->
+            <path d="M 40,55 L 53,55 M 49,51 L 53,55 L 49,59" fill="none" stroke="var(--color-danger)" stroke-width="2"/>
+            <path d="M 80,55 L 67,55 M 71,51 L 67,55 L 71,59" fill="none" stroke="var(--color-danger)" stroke-width="2"/>
+            <text x="60" y="105" font-size="8" fill="var(--color-danger)" text-anchor="middle" font-weight="bold">ATTRACTION</text>
+            
+            <!-- Magnetic Loop indication -->
+            <ellipse cx="60" cy="55" rx="30" ry="10" fill="none" stroke="rgba(0,210,255,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+          `;
+        }
+      },
+      ohm: {
+        name: "Georg Ohm",
+        experiment: "Resistance Transmission Measurements (1827)",
+        desc: "Ohm study current flowing through different lengths of wire. He established Ohm's Law: $V = I \\times R$, demonstrating that the current through a conductor is directly proportional to voltage and inversely proportional to resistance.",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- Conductor tunnel -->
+            <rect x="20" y="45" width="80" height="35" fill="none" stroke="#4b5563" stroke-width="2"/>
+            <!-- Constriction representing resistance -->
+            <path d="M 50,45 Q 60,60 70,45" fill="none" stroke="var(--color-danger)" stroke-width="3"/>
+            <path d="M 50,80 Q 60,65 70,80" fill="none" stroke="var(--color-danger)" stroke-width="3"/>
+            <!-- Voltage pushing -->
+            <path d="M 10,62 L 40,62 M 32,56 L 40,62 L 32,68" fill="none" stroke="var(--color-primary)" stroke-width="3.5"/>
+            <text x="25" y="38" font-size="9" fill="var(--color-primary)" font-weight="bold" text-anchor="middle">Volt (V)</text>
+            <!-- Squeeze forces representing resistance -->
+            <path d="M 60,25 L 60,40 M 56,34 L 60,40 L 64,34" fill="none" stroke="var(--color-danger)" stroke-width="1.5"/>
+            <text x="60" y="20" font-size="9" fill="var(--color-danger)" text-anchor="middle" font-weight="bold">Ohm (Ω)</text>
+            <!-- Moving Charge -->
+            <circle cx="33" cy="62" r="4.5" fill="var(--color-warning)"/>
+            <circle cx="75" cy="62" r="3.5" fill="var(--color-warning)"/>
+            <text x="60" y="102" font-size="8" fill="var(--color-text-secondary)" text-anchor="middle">I = V / R Relation</text>
+          `;
+        }
+      },
+      faraday: {
+        name: "Michael Faraday",
+        experiment: "Electromagnetic Induction Ring (1831)",
+        desc: "Faraday discovered electromagnetic induction by wrapping two insulated coils of wire around an iron ring. When current in the first coil was turned on or off, a transient voltage was induced in the second coil. This discovered the generator principle, enabling electric motors, transformers, and dynamos.",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- Iron ring -->
+            <circle cx="60" cy="55" r="28" fill="none" stroke="#4b5563" stroke-width="8"/>
+            <!-- Left coil wire wrap -->
+            <path d="M 26,40 Q 18,45 22,50 Q 26,55 22,60 Q 18,65 22,70" fill="none" stroke="#d97706" stroke-width="2"/>
+            <!-- Battery representation -->
+            <rect x="6" y="80" width="10" height="12" fill="#ef4444"/>
+            <line x1="11" y1="80" x2="11" y2="70" stroke="#d97706" stroke-width="1"/>
+            <line x1="11" y1="92" x2="22" y2="92" stroke="#d97706" stroke-width="1"/>
+            
+            <!-- Right coil wire wrap -->
+            <path d="M 94,40 Q 102,45 98,50 Q 94,55 98,60 Q 102,65 98,70" fill="none" stroke="#3b82f6" stroke-width="2"/>
+            <!-- Galvanometer meter -->
+            <circle cx="102" cy="88" r="9" fill="none" stroke="#9ca3af" stroke-width="1"/>
+            <line x1="102" y1="88" x2="107" y2="81" stroke="var(--color-warning)" stroke-width="2"/>
+            
+            <text x="60" y="105" font-size="8" fill="var(--color-text-secondary)" text-anchor="middle">Inductive Coupling</text>
+          `;
+        }
+      }
+    };
+
+    function showPioneer(id, el) {
+      // Remove active from timeline items
+      const items = document.querySelectorAll('.timeline-item');
+      items.forEach(item => item.classList.remove('active'));
+      
+      el.classList.add('active');
+      
+      const p = pioneers[id];
+      document.getElementById('pioneerName').innerText = p.name;
+      document.getElementById('pioneerExperiment').innerText = p.experiment;
+      document.getElementById('pioneerDesc').innerHTML = p.desc;
+      
+      const svg = document.getElementById('pioneerSVG');
+      p.draw(svg);
+    }
+
+    function setACDC(mode) {
+      acdcMode = mode;
+      document.getElementById('btnDC').classList.toggle('active', mode === 'DC');
+      document.getElementById('btnAC').classList.toggle('active', mode === 'AC');
+      document.getElementById('cardDC').classList.toggle('active', mode === 'DC');
+      document.getElementById('cardAC').classList.toggle('active', mode === 'AC');
+      
+      // Reset animation position
+      electronPosition = 0;
+    }
+
+    function toggleConventionalCurrent() {
+      showDirections = !showDirections;
+      document.getElementById('convArrows').classList.toggle('visible', showDirections);
+      document.getElementById('btnShowConv').classList.toggle('active', showDirections);
+    }
+
+    function initACDCSimulator() {
+      if (acdcTimer) clearInterval(acdcTimer);
+      
+      acdcTimer = setInterval(() => {
+        if (acdcMode === 'DC') {
+          // Direct Current: continuous movement in one direction
+          electronPosition = (electronPosition - 2) % 80;
+          document.getElementById('dot1').setAttribute('cx', 80 + electronPosition);
+          document.getElementById('dot2').setAttribute('cx', 160 + electronPosition);
+          document.getElementById('dot3').setAttribute('cx', 240 + electronPosition);
+          document.getElementById('dot4').setAttribute('cx', 320 + electronPosition);
+        } else {
+          // Alternating Current: back and forth oscillation
+          electronPosition += 0.08;
+          const offset = Math.sin(electronPosition) * 20;
+          document.getElementById('dot1').setAttribute('cx', 80 + offset);
+          document.getElementById('dot2').setAttribute('cx', 160 + offset);
+          document.getElementById('dot3').setAttribute('cx', 240 + offset);
+          document.getElementById('dot4').setAttribute('cx', 320 + offset);
+        }
+      }, 30);
+    }
+
+    // ==========================================
+    // Slide 4: Ohm's Law Simulation
+    // ==========================================
+    let ohmSelectedVar = 'V';
+    let ohmAnimationStep = 0;
+    let ohmTimer = null;
+
+    const ohmVariableDetails = {
+      V: {
+        formula: "V = I × R",
+        desc: "<strong>Voltage (V)</strong>: Measured in Volts. The electric potential difference or 'pressure' that pushes charge carriers (electrons) through a conductor."
+      },
+      I: {
+        formula: "I = V / R",
+        desc: "<strong>Current (I)</strong>: Measured in Amperes (Amps). The flow rate of electric charge. 1 Ampere equals 1 Coulomb of charge passing a point per second."
+      },
+      R: {
+        formula: "R = V / I",
+        desc: "<strong>Resistance (R)</strong>: Measured in Ohms (Ω). The property that opposes or restricts the flow of electric current. Higher resistance limits flow."
+      }
+    };
+
+    function selectOhmVariable(variable) {
+      ohmSelectedVar = variable;
+      
+      // Update selected triangle parts
+      document.getElementById('triV').classList.toggle('selected', variable === 'V');
+      document.getElementById('triI').classList.toggle('selected', variable === 'I');
+      document.getElementById('triR').classList.toggle('selected', variable === 'R');
+      
+      // Update formula info text
+      document.getElementById('formulaDisplay').innerHTML = ohmVariableDetails[variable].formula;
+      document.getElementById('formulaDesc').innerHTML = ohmVariableDetails[variable].desc;
+    }
+
+    function updateOhmsLaw() {
+      const vVal = parseFloat(document.getElementById('sliderV').value);
+      const rVal = parseFloat(document.getElementById('sliderR').value);
+      
+      document.getElementById('valVDisplay').innerText = `${vVal.toFixed(1)} V`;
+      document.getElementById('valRDisplay').innerText = `${rVal} Ω`;
+      
+      // Check for division by zero (Short circuit)
+      let currentVal = 0;
+      let shortCircuit = false;
+      
+      if (rVal === 0) {
+        currentVal = 999; // Represents infinity/very high value
+        shortCircuit = true;
+      } else {
+        currentVal = (vVal / rVal) * 1000; // in mA
+        if (currentVal > 500) {
+          shortCircuit = true;
+        }
+      }
+      
+      // Display current value
+      const calcDisplay = document.getElementById('calcCurrentDisplay');
+      if (shortCircuit && rVal === 0) {
+        calcDisplay.innerText = "Current: ⚡ ∞ mA";
+        calcDisplay.style.color = "var(--color-danger)";
+        document.getElementById('shortCircuitWarning').style.display = "block";
+      } else {
+        calcDisplay.innerText = `Current: ${currentVal.toFixed(1)} mA`;
+        calcDisplay.style.color = shortCircuit ? "var(--color-warning)" : "var(--color-success)";
+        document.getElementById('shortCircuitWarning').style.display = shortCircuit ? "block" : "none";
+      }
+
+      // Update Bulb visual brightness
+      const bulb = document.getElementById('sandboxBulb');
+      const filament = document.getElementById('sandboxBulbFilament');
+      
+      if (shortCircuit && rVal === 0) {
+        // Burnt out bulb visual
+        bulb.setAttribute('fill', '#4b5563');
+        bulb.style.filter = "none";
+        filament.setAttribute('stroke', '#ff3333');
+      } else {
+        // Brightness proportional to current
+        // Max current at 12V and 10R is 1200mA. Normalize around 400mA for max glow
+        const normalizedGlow = Math.min(currentVal / 400, 1.2); 
+        bulb.setAttribute('fill', `hsl(54, 100%, ${50 + (normalizedGlow * 30)}%)`);
+        filament.setAttribute('stroke', `hsl(35, 100%, ${50 + (normalizedGlow * 40)}%)`);
+        bulb.style.filter = `drop-shadow(0 0 ${normalizedGlow * 20}px rgba(253, 224, 71, ${0.3 + (normalizedGlow * 0.5)}))`;
+      }
+
+      // Set speed of electron flow dots based on current
+      if (ohmTimer) clearInterval(ohmTimer);
+      
+      if (currentVal > 0 && !(shortCircuit && rVal === 0)) {
+        // High current = high speed (lower millisecond intervals)
+        const speed = Math.max(10, Math.min(100, 2000 / currentVal));
+        
+        ohmTimer = setInterval(() => {
+          ohmAnimationStep = (ohmAnimationStep + 1.5) % 100;
+          
+          // Move dots along circuit path
+          // Path coordinates: Top wire is 25y. Right drop is 250x. Bottom wire is 75y. Left rise is 50x.
+          updateSandboxDots(ohmAnimationStep);
+        }, speed);
+      }
+    }
+
+    function updateSandboxDots(step) {
+      const dots = [
+        document.getElementById('sbDot1'),
+        document.getElementById('sbDot2'),
+        document.getElementById('sbDot3'),
+        document.getElementById('sbDot4')
+      ];
+      
+      // Each dot offset by 25% of the loop
+      dots.forEach((dot, index) => {
+        const dotStep = (step + index * 25) % 100;
+        let x = 50;
+        let y = 25;
+        
+        if (dotStep < 40) {
+          // Top line (50px to 250px) -> 40% of travel
+          x = 50 + (dotStep / 40) * 200;
+          y = 25;
+        } else if (dotStep < 50) {
+          // Right drop (25y to 75y) -> 10% of travel
+          x = 250;
+          y = 25 + ((dotStep - 40) / 10) * 50;
+        } else if (dotStep < 90) {
+          // Bottom line (250px to 50px) -> 40% of travel
+          x = 250 - ((dotStep - 50) / 40) * 200;
+          y = 75;
+        } else {
+          // Left rise (75y to 25y) -> 10% of travel
+          x = 50;
+          y = 75 - ((dotStep - 90) / 10) * 50;
+        }
+        
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+      });
+    }
+
+    // ==========================================
+    // Slide 5: Series & Parallel Simulation
+    // ==========================================
+    let pathwayType = 'Series';
+    let bulbAWorking = true;
+    let bulbBWorking = true;
+    let pathwayAnimStep = 0;
+    let pathwayTimer = null;
+
+    const pathwayData = {
+      Series: {
+        title: "Series Pathway",
+        body: "All components are chained in a single continuous path. If any single part is broken or open, the entire path halts and all currents drop to zero immediately!",
+        bullets: [
+          "Current (I) remains identical through all components.",
+          "Total Voltage divides across each bulb proportional to resistance.",
+          "Equivalent Resistance: R_eq = R1 + R2."
+        ]
+      },
+      Parallel: {
+        title: "Parallel Pathway",
+        body: "Components are branched across separate circuits. If one branch is disconnected or broken, the current in the other branch is completely unaffected and continues flowing normally!",
+        bullets: [
+          "Voltage (V) remains identical across both pathways.",
+          "Total Current splits among branches proportional to branch resistance.",
+          "Equivalent Resistance: R_eq = (R1 * R2) / (R1 + R2). Always smaller than smallest branch!"
+        ]
+      }
+    };
+
+    function switchPathwayType(type) {
+      pathwayType = type;
+      document.getElementById('btnTypeSeries').classList.toggle('active', type === 'Series');
+      document.getElementById('btnTypeParallel').classList.toggle('active', type === 'Parallel');
+      
+      document.getElementById('boardTitle').innerText = `${type} Circuit Simulator`;
+      document.getElementById('pathwayTitleText').innerText = pathwayData[type].title;
+      document.getElementById('pathwayBodyText').innerText = pathwayData[type].body;
+      
+      // Update bullets
+      const list = document.getElementById('pathwayList');
+      list.innerHTML = '';
+      pathwayData[type].bullets.forEach(bullet => {
+        const li = document.createElement('li');
+        li.innerText = bullet;
+        list.appendChild(li);
+      });
+      
+      resetBoard();
+    }
+
+    function toggleBulbState(bulbLetter) {
+      if (bulbLetter === 'A') {
+        bulbAWorking = !bulbAWorking;
+        document.getElementById('btnToggleBulbA').innerText = bulbAWorking ? "Break Bulb A" : "Fix Bulb A";
+        document.getElementById('btnToggleBulbA').classList.toggle('reconnect', !bulbAWorking);
+      } else {
+        bulbBWorking = !bulbBWorking;
+        document.getElementById('btnToggleBulbB').innerText = bulbBWorking ? "Break Bulb B" : "Fix Bulb B";
+        document.getElementById('btnToggleBulbB').classList.toggle('reconnect', !bulbBWorking);
+      }
+      
+      drawPathwayCircuit();
+    }
+
+    function resetBoard() {
+      bulbAWorking = true;
+      bulbBWorking = true;
+      
+      document.getElementById('btnToggleBulbA').innerText = "Break Bulb A";
+      document.getElementById('btnToggleBulbA').className = "btn-board-action cut";
+      
+      document.getElementById('btnToggleBulbB').innerText = "Break Bulb B";
+      document.getElementById('btnToggleBulbB').className = "btn-board-action cut";
+      
+      drawPathwayCircuit();
+    }
+
+    function initPathwaySimulator() {
+      if (pathwayTimer) clearInterval(pathwayTimer);
+      pathwayTimer = setInterval(() => {
+        pathwayAnimStep = (pathwayAnimStep + 2) % 100;
+        animatePathwayCurrent();
+      }, 40);
+    }
+
+    function drawPathwayCircuit() {
+      const svg = document.getElementById('pathwaySVG');
+      svg.innerHTML = ''; // Clear SVG
+      
+      // Set basic dimensions
+      const width = 350;
+      const height = 160;
+      
+      // Render components based on Series / Parallel
+      if (pathwayType === 'Series') {
+        const isCurrentFlowing = bulbAWorking && bulbBWorking;
+        const req = 200; // 100 + 100
+        const current = isCurrentFlowing ? (9.0 / req) * 1000 : 0.0; // mA
+        const vDropA = isCurrentFlowing ? 4.5 : 0.0;
+        
+        document.getElementById('statReq').innerText = `${req} Ω`;
+        document.getElementById('statVdrop').innerText = `${vDropA.toFixed(1)} V`;
+
+        // Draw Series Circuit
+        // Battery (left)
+        const batteryG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        batteryG.setAttribute("transform", "translate(40, 70)");
+        batteryG.innerHTML = `
+          <rect x="-10" y="-15" width="20" height="30" rx="4" fill="#0f172a" stroke="#4b5563" stroke-width="2"/>
+          <line x1="-5" y1="-8" x2="-5" y2="8" stroke="var(--color-primary)" stroke-width="4"/>
+          <line x1="5" y1="-5" x2="5" y2="5" stroke="var(--color-primary)" stroke-width="2"/>
+          <text x="-15" y="-5" font-size="10" fill="#9ca3af">+</text>
+          <text x="15" y="-5" font-size="10" fill="#9ca3af">-</text>
+        `;
+        
+        // Loop Wire
+        const wire = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        wire.setAttribute("d", "M 40 70 L 40 30 L 310 30 L 310 130 L 40 130 L 40 70");
+        wire.setAttribute("class", `wire-line ${isCurrentFlowing ? 'active' : ''}`);
+        
+        // Bulb A (top path)
+        const bulbAG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        bulbAG.setAttribute("transform", "translate(130, 30)");
+        bulbAG.innerHTML = `
+          <circle cx="0" cy="0" r="14" class="schematic-bulb ${bulbAWorking && isCurrentFlowing ? 'on' : ''} ${!bulbAWorking ? 'broken' : ''}" onclick="toggleBulbState('A')"/>
+          <path d="M -8 0 Q 0 -10 8 0 M -8 0 L 8 0" fill="none" stroke="${!bulbAWorking ? 'var(--color-danger)' : '#9ca3af'}" stroke-width="2"/>
+          <text x="0" y="-20" font-size="10" fill="#9ca3af" text-anchor="middle">Bulb A</text>
+        `;
+
+        // Bulb B (top path)
+        const bulbBG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        bulbBG.setAttribute("transform", "translate(220, 30)");
+        bulbBG.innerHTML = `
+          <circle cx="0" cy="0" r="14" class="schematic-bulb ${bulbBWorking && isCurrentFlowing ? 'on' : ''} ${!bulbBWorking ? 'broken' : ''}" onclick="toggleBulbState('B')"/>
+          <path d="M -8 0 Q 0 -10 8 0 M -8 0 L 8 0" fill="none" stroke="${!bulbBWorking ? 'var(--color-danger)' : '#9ca3af'}" stroke-width="2"/>
+          <text x="0" y="-20" font-size="10" fill="#9ca3af" text-anchor="middle">Bulb B</text>
+        `;
+
+        // Append to SVG
+        svg.appendChild(wire);
+        svg.appendChild(batteryG);
+        svg.appendChild(bulbAG);
+        svg.appendChild(bulbBG);
+        
+        // Add moving current dots
+        if (isCurrentFlowing) {
+          for(let i=0; i<6; i++) {
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("r", "4");
+            dot.setAttribute("class", "current-dot");
+            dot.setAttribute("id", `pathDot${i}`);
+            svg.appendChild(dot);
+          }
+        }
+      } else {
+        // Parallel Configuration
+        // Calculate Req: Bulb A & B in parallel = (100 * 100) / (100 + 100) = 50 ohms
+        // If one is broken, Req = 100 ohms. If both broken, Req = infinity
+        let activeBulbs = 0;
+        if (bulbAWorking) activeBulbs++;
+        if (bulbBWorking) activeBulbs++;
+        
+        let req = 0;
+        let vDropA = 9.0;
+        if (activeBulbs === 2) {
+          req = 50;
+        } else if (activeBulbs === 1) {
+          req = 100;
+        } else {
+          req = 0; // Infinity in code
+          vDropA = 0.0;
+        }
+
+        document.getElementById('statReq').innerText = req === 0 ? "⚡ ∞ Ω" : `${req} Ω`;
+        document.getElementById('statVdrop').innerText = bulbAWorking && activeBulbs > 0 ? `${vDropA.toFixed(1)} V` : `0.0 V`;
+
+        // Draw Parallel Circuit wires
+        // Battery on left loop
+        const batteryG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        batteryG.setAttribute("transform", "translate(40, 75)");
+        batteryG.innerHTML = `
+          <rect x="-10" y="-15" width="20" height="30" rx="4" fill="#0f172a" stroke="#4b5563" stroke-width="2"/>
+          <line x1="-5" y1="-8" x2="-5" y2="8" stroke="var(--color-primary)" stroke-width="4"/>
+          <line x1="5" y1="-5" x2="5" y2="5" stroke="var(--color-primary)" stroke-width="2"/>
+        `;
+
+        // Main trunk lines
+        const wireTrunk = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        wireTrunk.setAttribute("d", "M 40 75 L 40 30 L 260 30 M 40 75 L 40 120 L 260 120");
+        wireTrunk.setAttribute("class", `wire-line ${activeBulbs > 0 ? 'active' : ''}`);
+
+        // Branch A (middle branch down)
+        const wireBranchA = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        wireBranchA.setAttribute("d", "M 150 30 L 150 50 M 150 90 L 150 120");
+        wireBranchA.setAttribute("class", `wire-line ${bulbAWorking ? 'active' : ''}`);
+
+        // Branch B (right branch down)
+        const wireBranchB = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        wireBranchB.setAttribute("d", "M 260 30 L 260 50 M 260 90 L 260 120");
+        wireBranchB.setAttribute("class", `wire-line ${bulbBWorking ? 'active' : ''}`);
+
+        // Bulb A on branch A
+        const bulbAG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        bulbAG.setAttribute("transform", "translate(150, 70)");
+        bulbAG.innerHTML = `
+          <circle cx="0" cy="0" r="14" class="schematic-bulb ${bulbAWorking ? 'on' : 'broken'}" onclick="toggleBulbState('A')"/>
+          <path d="M -8 0 Q 0 -10 8 0 M -8 0 L 8 0" fill="none" stroke="${!bulbAWorking ? 'var(--color-danger)' : '#9ca3af'}" stroke-width="2"/>
+          <text x="30" y="5" font-size="10" fill="#9ca3af">Bulb A</text>
+        `;
+
+        // Bulb B on branch B
+        const bulbBG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        bulbBG.setAttribute("transform", "translate(260, 70)");
+        bulbBG.innerHTML = `
+          <circle cx="0" cy="0" r="14" class="schematic-bulb ${bulbBWorking ? 'on' : 'broken'}" onclick="toggleBulbState('B')"/>
+          <path d="M -8 0 Q 0 -10 8 0 M -8 0 L 8 0" fill="none" stroke="${!bulbBWorking ? 'var(--color-danger)' : '#9ca3af'}" stroke-width="2"/>
+          <text x="30" y="5" font-size="10" fill="#9ca3af">Bulb B</text>
+        `;
+
+        svg.appendChild(wireTrunk);
+        svg.appendChild(wireBranchA);
+        svg.appendChild(wireBranchB);
+        svg.appendChild(batteryG);
+        svg.appendChild(bulbAG);
+        svg.appendChild(bulbBG);
+
+        // Add moving current dots
+        if (activeBulbs > 0) {
+          const dotCount = (bulbAWorking && bulbBWorking) ? 8 : 5;
+          for(let i=0; i<dotCount; i++) {
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("r", "3.5");
+            dot.setAttribute("class", "current-dot");
+            dot.setAttribute("id", `pathDot${i}`);
+            svg.appendChild(dot);
+          }
+        }
+      }
+      
+      initPathwaySimulator();
+    }
+
+    function animatePathwayCurrent() {
+      if (pathwayType === 'Series') {
+        const isFlowing = bulbAWorking && bulbBWorking;
+        if (!isFlowing) return;
+        
+        // Moving along Series perimeter loop: 
+        // Segment 1 (Top wire right): 40,30 to 310,30 (len 270)
+        // Segment 2 (Right drop): 310,30 to 310,130 (len 100)
+        // Segment 3 (Bottom wire left): 310,130 to 40,130 (len 270)
+        // Segment 4 (Left rise): 40,130 to 40,30 (len 100)
+        // Total perimeter length = 740
+        for (let i = 0; i < 6; i++) {
+          const dot = document.getElementById(`pathDot${i}`);
+          if (!dot) continue;
+          
+          const dotPct = (pathwayAnimStep + i * (100 / 6)) % 100;
+          const pos = (dotPct / 100) * 740;
+          
+          let x, y;
+          if (pos < 270) {
+            x = 40 + pos;
+            y = 30;
+          } else if (pos < 370) {
+            x = 310;
+            y = 30 + (pos - 270);
+          } else if (pos < 640) {
+            x = 310 - (pos - 370);
+            y = 130;
+          } else {
+            x = 40;
+            y = 130 - (pos - 640);
+          }
+          
+          dot.setAttribute('cx', x);
+          dot.setAttribute('cy', y);
+        }
+      } else {
+        // Parallel animation: dots split at branch 150x
+        let activeBulbs = 0;
+        if (bulbAWorking) activeBulbs++;
+        if (bulbBWorking) activeBulbs++;
+        if (activeBulbs === 0) return;
+
+        const dotCount = (bulbAWorking && bulbBWorking) ? 8 : 5;
+        
+        for (let i = 0; i < dotCount; i++) {
+          const dot = document.getElementById(`pathDot${i}`);
+          if (!dot) continue;
+          
+          const dotPct = (pathwayAnimStep + i * (100 / dotCount)) % 100;
+          let x = 40, y = 30;
+          
+          // Basic logic:
+          // A trunk goes from left 40 to right 260. Branches drop down at 150 and 260.
+          // If both work, we route some dots down branch A and some down branch B.
+          let route = 'A';
+          if (bulbAWorking && bulbBWorking) {
+            route = (i % 2 === 0) ? 'A' : 'B';
+          } else {
+            route = bulbAWorking ? 'A' : 'B';
+          }
+          
+          if (route === 'A') {
+            // Path: (40,30) -> (150,30) -> (150,120) -> (40,120) -> (40,30)
+            // Total length: 110 (top) + 90 (drop) + 110 (bottom) + 90 (rise) = 400
+            const pos = (dotPct / 100) * 400;
+            if (pos < 110) {
+              x = 40 + pos; y = 30;
+            } else if (pos < 200) {
+              x = 150; y = 30 + (pos - 110);
+            } else if (pos < 310) {
+              x = 150 - (pos - 200); y = 120;
+            } else {
+              x = 40; y = 120 - (pos - 310);
+            }
+          } else {
+            // Path: (40,30) -> (260,30) -> (260,120) -> (40,120) -> (40,30)
+            // Total length: 220 (top) + 90 (drop) + 220 (bottom) + 90 (rise) = 620
+            const pos = (dotPct / 100) * 620;
+            if (pos < 220) {
+              x = 40 + pos; y = 30;
+            } else if (pos < 310) {
+              x = 260; y = 30 + (pos - 220);
+            } else if (pos < 530) {
+              x = 260 - (pos - 310); y = 120;
+            } else {
+              x = 40; y = 120 - (pos - 530);
+            }
+          }
+          
+          dot.setAttribute('cx', x);
+          dot.setAttribute('cy', y);
+        }
+      }
+    }
+
+    // ==========================================
+    // Slide 6: Component Lab Showcase
+    // ==========================================
+    const componentsData = {
+      resistor: {
+        name: "Fixed Resistor",
+        category: "Passive Components",
+        desc: "Fixed resistors oppose electric current to limit flow rate. They are essential for protecting delicate components (like LEDs) from receiving too much current. Uses color bands to denote resistance value and precision tolerance.",
+        trapTitle: "Olympiad Trap: Color Band Reading Direction",
+        trapDesc: "Tests will display a four-band resistor and ask you to compute its value. Always look for the gold or silver band—that is the tolerance band, which is ALWAYS at the right end. Read starting from the opposite end to get the digit values correct!",
+        extraHTML: `
+          <h4 style="font-size: 0.95rem; color: var(--color-accent); text-transform: uppercase; margin-bottom: 0.5rem; margin-top: 1rem;">Resistor Color Band Decoding (4-Band)</h4>
+          <div style="background: rgba(0,0,0,0.25); border-radius: 8px; padding: 1.25rem; font-size: 0.85rem; line-height: 1.5; color: var(--color-text-secondary);">
+            <p style="margin-bottom: 0.5rem;">To calculate the value of a standard <strong>4-band resistor</strong>, read from left to right starting at the end opposite the tolerance band (usually Gold or Silver):</p>
+            <ol style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.75rem; color: var(--color-text-primary);">
+              <li><strong>1st Band (Digit 1)</strong>: First digit value.</li>
+              <li><strong>2nd Band (Digit 2)</strong>: Second digit value.</li>
+              <li><strong>3rd Band (Multiplier)</strong>: Multiply the digits by 10 raised to this power ($10^{\\text{multiplier}}$).</li>
+              <li><strong>4th Band (Tolerance)</strong>: The variance limit (usually <span style="color:#d97706; font-weight:600;">Gold = ±5%</span> or <span style="color:#9ca3af; font-weight:600;">Silver = ±10%</span>).</li>
+            </ol>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 0.75rem; margin-top: 0.5rem;">
+              <span style="color:var(--color-primary); font-weight:bold; font-size:0.75rem; text-transform:uppercase;">💡 Value Calculation Example:</span>
+              <div style="margin-top: 0.25rem; font-family: var(--font-display); font-size: 1rem; color: var(--color-text-primary);">
+                <span style="color:#b55c1e; font-weight:bold;">Brown (1)</span>, 
+                <span style="color:#888; font-weight:bold;">Black (0)</span>, 
+                <span style="color:#ef4444; font-weight:bold;">Red (×100)</span>, 
+                <span style="color:#d97706; font-weight:bold;">Gold (±5%)</span>
+              </div>
+              <div style="margin-top: 0.25rem; font-size: 0.85rem; line-height: 1.4;">
+                Formula: $(D1 \\times 10 + D2) \\times \\text{Multiplier}$<br>
+                $\\rightarrow (1 \\times 10 + 0) \\times 10^2 = 10 \\times 100 = \\mathbf{1000\\,\\Omega} \\text{ (1 k}\\Omega\\text{)} \\pm 5\%$
+              </div>
+            </div>
+            <div style="background: rgba(176,38,255,0.04); border-radius: 6px; padding: 0.75rem; margin-top: 0.6rem; border: 1px dashed rgba(176,38,255,0.15);">
+              <span style="color:var(--color-accent); font-weight:bold; font-size:0.75rem; text-transform:uppercase;">🎵 Resistor Color Mnemonic:</span>
+              <div style="margin-top: 0.25rem; font-style: italic; color: var(--color-text-primary);">
+                "<strong>B</strong>ad <strong>B</strong>eer <strong>R</strong>ots <strong>O</strong>ur <strong>Y</strong>oung <strong>G</strong>uts <strong>B</strong>ut <strong>V</strong>odka <strong>G</strong>oes <strong>W</strong>ell"
+              </div>
+              <div style="margin-top: 0.25rem; font-size: 0.75rem; color: var(--color-text-secondary); word-break: break-all;">
+                Black(0), Brown(1), Red(2), Orange(3), Yellow(4), Green(5), Blue(6), Violet(7), Gray(8), White(9)
+              </div>
+            </div>
+          </div>
+        `,
+        draw: function(svg) {
+          svg.innerHTML = `
+            <line x1="10" y1="30" x2="40" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <rect x="40" y="20" width="40" height="20" rx="3" fill="#eab308" stroke="#4b5563" stroke-width="2"/>
+            <!-- Color bands -->
+            <rect x="48" y="20" width="3" height="20" fill="#a855f7"/>
+            <rect x="56" y="20" width="3" height="20" fill="#3b82f6"/>
+            <rect x="64" y="20" width="3" height="20" fill="#ef4444"/>
+            <rect x="72" y="20" width="3" height="20" fill="#d97706"/>
+            <line x1="80" y1="30" x2="110" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+          `;
+        }
+      },
+      switch: {
+        name: "Switches (SPST vs. SPDT)",
+        category: "Control Devices",
+        desc: "Switches manually open or close pathways. Single Pole Single Throw (SPST) is a simple ON/OFF switch. Single Pole Double Throw (SPDT) routes current from one input pathway to one of two output pathways.",
+        trapTitle: "Olympiad Trap: Open Switches & Floating Nodes",
+        trapDesc: "In circuit schematic diagrams, open switches mean that part of the circuit is floating. Floating wires do not carry any current. Never include floating resistance in parallel calculations!",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <line x1="10" y1="30" x2="45" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <circle cx="45" cy="30" r="3" fill="#f3f4f6"/>
+            <line x1="45" y1="30" x2="75" y2="15" stroke="#f3f4f6" stroke-width="2"/>
+            <circle cx="75" cy="30" r="3" fill="#f3f4f6"/>
+            <line x1="75" y1="30" x2="110" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+          `;
+        }
+      },
+      led: {
+        name: "Light Emitting Diode (LED)",
+        category: "Semiconductors",
+        desc: "Diodes only allow current to flow in ONE direction. An LED is a diode that lights up when forward-biased. They are extremely sensitive to voltage spikes and require a current-limiting resistor.",
+        trapTitle: "Olympiad Trap: Polarized Traps & Anodes",
+        trapDesc: "LEDs have polarity! The positive side is the Anode (longer leg, flat triangle side on schematics). The negative side is the Cathode (shorter leg, flat line side on schematics). Reverse the connections, and the circuit stays open!",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <line x1="20" y1="30" x2="50" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <!-- Triangle -->
+            <polygon points="50,18 50,42 70,30" fill="none" stroke="var(--color-primary)" stroke-width="2"/>
+            <!-- Line -->
+            <line x1="70" y1="18" x2="70" y2="42" stroke="var(--color-primary)" stroke-width="2"/>
+            <line x1="70" y1="30" x2="100" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <!-- Photon arrows -->
+            <line x1="55" y1="12" x2="45" y2="2" stroke="var(--color-primary)" stroke-width="1.5"/>
+            <path d="M 45 2 L 50 2 L 45 7" fill="none" stroke="var(--color-primary)" stroke-width="1.5"/>
+            
+            <line x1="65" y1="12" x2="55" y2="2" stroke="var(--color-primary)" stroke-width="1.5"/>
+            <path d="M 55 2 L 60 2 L 55 7" fill="none" stroke="var(--color-primary)" stroke-width="1.5"/>
+          `;
+        }
+      },
+      capacitor: {
+        name: "Capacitor",
+        category: "Passive Storage",
+        desc: "Stores electrical charge temporarily in an electric field. Blocks DC once fully charged, behaving like an open circuit. Capacitance is measured in Farads (usually microfarads in labs).",
+        trapTitle: "Olympiad Trap: Steady-State DC Cap behavior",
+        trapDesc: "If a question asks about a circuit 'after being connected for a long time' (steady state), treat all capacitors as open circuits (infinite resistance / cut wires). Zero current will pass through that branch!",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <line x1="10" y1="30" x2="52" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <!-- Plate 1 -->
+            <line x1="52" y1="15" x2="52" y2="45" stroke="var(--color-accent)" stroke-width="3"/>
+            <!-- Plate 2 -->
+            <line x1="62" y1="15" x2="62" y2="45" stroke="var(--color-accent)" stroke-width="3"/>
+            <line x1="62" y1="30" x2="110" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+          `;
+        }
+      },
+      potentiometer: {
+        name: "Potentiometer (Pot)",
+        category: "Variable Resistors",
+        desc: "A three-terminal variable resistor. By turning a knob, you change the electrical resistance ratio, which adjusts the voltage flowing through the middle terminal pin.",
+        trapTitle: "Olympiad Trap: Three-Terminal Wiring Mistakes",
+        trapDesc: "To use a potentiometer as a simple variable resistor (rheostat), you must connect the center slider terminal to one of the outer terminal pins. Leaving the center pin floating makes the knob useless!",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <line x1="10" y1="30" x2="35" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <path d="M 35 30 L 40 20 L 48 40 L 56 20 L 64 40 L 72 20 L 80 40 L 85 30" fill="none" stroke="#f3f4f6" stroke-width="2"/>
+            <line x1="85" y1="30" x2="110" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+            <!-- Arrow -->
+            <path d="M 60 55 L 60 42" stroke="var(--color-warning)" stroke-width="2" fill="none"/>
+            <polygon points="60,37 56,43 64,43" fill="var(--color-warning)"/>
+          `;
+        }
+      },
+      logic: {
+        name: "Logic Gates (AND, OR, NOT)",
+        category: "Digital Integrated Circuits",
+        desc: "Process high/low logic voltages (1s and 0s) to perform Boolean algebra. AND gates require BOTH inputs to be high, OR gates require EITHER to be high, and NOT gates invert the input state.",
+        trapTitle: "Olympiad Trap: Pinout Identification Sheets",
+        trapDesc: "In the lab practical, you will receive logic IC chips (e.g., 7408 AND chip). Do not assume inputs are adjacent! Always consult the IC datasheet pinout configuration: usually pin 14 is Power (Vcc) and pin 7 is Ground!",
+        draw: function(svg) {
+          svg.innerHTML = `
+            <!-- AND Gate representation -->
+            <line x1="10" y1="20" x2="40" y2="20" stroke="#f3f4f6" stroke-width="2"/>
+            <line x1="10" y1="40" x2="40" y2="40" stroke="#f3f4f6" stroke-width="2"/>
+            <!-- Gate Body -->
+            <path d="M 40 10 L 60 10 A 20 20 0 0 1 80 30 A 20 20 0 0 1 60 50 L 40 50 Z" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+            <line x1="80" y1="30" x2="110" y2="30" stroke="#f3f4f6" stroke-width="2"/>
+          `;
+        }
+      }
+    };
+
+    function selectComponent(id, el) {
+      // Toggle tab active styles
+      const tabs = document.querySelectorAll('.component-tab-item');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      el.classList.add('active');
+      
+      const comp = componentsData[id];
+      document.getElementById('compName').innerText = comp.name;
+      document.getElementById('compCategory').innerText = comp.category;
+      document.getElementById('compDescription').innerText = comp.desc;
+      document.getElementById('compTrapTitle').innerText = comp.trapTitle;
+      document.getElementById('compTrapDesc').innerText = comp.trapDesc;
+      
+      const compSvg = document.getElementById('compSymbolSVG');
+      comp.draw(compSvg);
+
+      const compExtra = document.getElementById('compExtraContent');
+      if (comp.extraHTML) {
+        compExtra.innerHTML = comp.extraHTML;
+        compExtra.style.display = 'block';
+      } else {
+        compExtra.innerHTML = '';
+        compExtra.style.display = 'none';
+      }
+    }
+
+    // ==========================================
+    // Slide 7: Kahoot!-style Interactive Quiz
+    // ==========================================
+    const quizQuestions = [
+      {
+        question: "If a circuit is powered by a 12V battery and has an equivalent resistance of 200 ohms, what is the total current running through the circuit in milliamperes (mA)?",
+        options: [
+          "A. 60 mA",
+          "B. 6 mA",
+          "C. 0.06 mA",
+          "D. 2400 mA"
+        ],
+        correct: 0,
+        explanation: "Using Ohm's Law: I = V / R = 12 / 200 = 0.06 A. Converting from Amperes to milliamperes: 0.06 A * 1000 = 60 mA. Common test trap: forgetting to convert units!"
+      },
+      {
+        question: "You have two resistors in parallel: one is 40 ohms, the other is 60 ohms. What is the equivalent resistance of this parallel pair?",
+        options: [
+          "A. 100 ohms",
+          "B. 24 ohms",
+          "C. 50 ohms",
+          "D. 12.5 ohms"
+        ],
+        correct: 1,
+        explanation: "Equivalent resistance of two parallel resistors: Req = (R1 * R2) / (R1 + R2) = (40 * 60) / (40 + 60) = 2400 / 100 = 24 ohms. Remember, Req in parallel is always smaller than the smallest single branch!"
+      },
+      {
+        question: "In a circuit schematic, which direction is conventional current defined to flow, and how does it compare to actual physical electrons?",
+        options: [
+          "A. Conventional current flows from - to +; matching electron flow.",
+          "B. Conventional current flows from + to -; opposite of electron flow.",
+          "C. Conventional current flows from - to +; opposite of electron flow.",
+          "D. Conventional current flows from + to -; matching electron flow."
+        ],
+        correct: 1,
+        explanation: "Conventional current is defined historically (blame Ben Franklin!) as flowing from positive to negative (+ to -). However, physical electrons carry negative charges, meaning they flow from negative to positive (- to +). Very common test question!"
+      },
+      {
+        question: "A steady-state DC circuit contains a 9V source, a 100 ohm resistor, and a capacitor in a single series loop. How much current passes through the resistor?",
+        options: [
+          "A. 90 mA",
+          "B. 9 mA",
+          "C. 0 mA",
+          "D. 900 mA"
+        ],
+        correct: 2,
+        explanation: "In steady-state DC, capacitors behave as open circuits (cuts in the wire). Since the components are in a series loop, an open circuit in one part stops current through all parts. Therefore, current is 0 mA."
+      },
+      {
+        question: "What is the primary visual difference between SPST and SPDT switch schematic symbols?",
+        options: [
+          "A. SPST has two terminals (ON/OFF); SPDT has three terminals to route current.",
+          "B. SPST has three terminals; SPDT has two terminals.",
+          "C. SPST is polarized; SPDT is not polarized.",
+          "D. SPST is for alternating current; SPDT is only for direct current."
+        ],
+        correct: 0,
+        explanation: "SPST stands for Single Pole Single Throw (two connection points: ON or OFF). SPDT stands for Single Pole Double Throw (three connection points: redirects incoming current to path A or path B)."
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let quizActive = true;
+    let timerVal = 30;
+    let quizInterval = null;
+
+    function startQuizTimer() {
+      timerVal = 30;
+      const bar = document.getElementById('quizTimerBar');
+      bar.style.width = '100%';
+      bar.style.background = 'var(--color-warning)';
+      
+      if (quizInterval) clearInterval(quizInterval);
+      
+      quizInterval = setInterval(() => {
+        timerVal--;
+        const pct = (timerVal / 30) * 100;
+        bar.style.width = `${pct}%`;
+        
+        if (timerVal <= 10) {
+          bar.style.background = 'var(--color-danger)';
+        }
+        
+        if (timerVal <= 0) {
+          clearInterval(quizInterval);
+          revealQuizAnswer(-1); // Timeout
+        }
+      }, 1000);
+    }
+
+    function loadQuizQuestion() {
+      if (currentQuizIndex >= quizQuestions.length) {
+        finishQuiz();
+        return;
+      }
+      
+      // Reset layout
+      document.getElementById('quizExplanation').style.display = 'none';
+      document.getElementById('btnQuizNext').style.display = 'none';
+      
+      const q = quizQuestions[currentQuizIndex];
+      document.getElementById('quizQuestionNum').innerText = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+      document.getElementById('quizQuestionText').innerText = q.question;
+      
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+      
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn-option';
+        btn.innerText = opt;
+        btn.onclick = () => submitQuizAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+      
+      startQuizTimer();
+    }
+
+    function submitQuizAnswer(selectedIdx) {
+      clearInterval(quizInterval);
+      revealQuizAnswer(selectedIdx);
+    }
+
+    function revealQuizAnswer(selectedIdx) {
+      const q = quizQuestions[currentQuizIndex];
+      const options = document.querySelectorAll('.quiz-btn-option');
+      
+      options.forEach((btn, idx) => {
+        btn.disabled = true; // Disable further clicking
+        
+        if (idx === q.correct) {
+          btn.classList.add('correct');
+        } else if (idx === selectedIdx) {
+          btn.classList.add('incorrect');
+        }
+      });
+      
+      const explanation = document.getElementById('quizExplanation');
+      const explanationText = document.getElementById('quizExplanationText');
+      explanation.style.display = 'block';
+      
+      let isCorrect = selectedIdx === q.correct;
+      if (isCorrect) {
+        quizScore += 100;
+        document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+        explanation.className = "quiz-explanation-card correct";
+        explanationText.innerHTML = `<strong>🌟 Correct!</strong> ${q.explanation}`;
+      } else {
+        explanation.className = "quiz-explanation-card incorrect";
+        explanationText.innerHTML = selectedIdx === -1 
+          ? `<strong>⏰ Time Out!</strong> ${q.explanation}`
+          : `<strong>❌ Incorrect.</strong> ${q.explanation}`;
+      }
+      
+      document.getElementById('btnQuizNext').style.display = 'block';
+    }
+
+    function nextQuizQuestion() {
+      currentQuizIndex++;
+      loadQuizQuestion();
+    }
+
+    function finishQuiz() {
+      document.getElementById('quizContainer').style.display = 'none';
+      const finished = document.getElementById('quizFinishedPanel');
+      finished.style.display = 'flex';
+      
+      const totalPoints = quizQuestions.length * 100;
+      document.getElementById('quizFinalScoreText').innerText = `You scored ${quizScore} out of ${totalPoints} points!`;
+    }
+
+    function restartQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      document.getElementById('quizScore').innerText = `Score: 0 pts`;
+      document.getElementById('quizContainer').style.display = 'flex';
+      document.getElementById('quizFinishedPanel').style.display = 'none';
+      loadQuizQuestion();
+    }
+
+    // ==========================================
+    // Initializer
+    // ==========================================
+    window.onload = () => {
+      initSlides();
+      loadQuizQuestion();
+    };
+
+  </script>
+</body>
+</html>

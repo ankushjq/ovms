@@ -1,0 +1,11 @@
+Question,Answer 1,Answer 2,Answer 3,Answer 4,Time limit (sec),Correct answer(s)
+"Two 100-ohm resistors are connected in parallel. What is their equivalent resistance?","50 ohms","200 ohms","100 ohms","25 ohms",30,1
+"Three 30-microfarad capacitors are connected in PARALLEL. What is the total equivalent capacitance?","90 microfarads","10 microfarads","30 microfarads","60 microfarads",30,1
+"A 12V power supply is connected across a 4-ohm resistor. How much electrical power is dissipated as heat?","36 Watts","48 Watts","16 Watts","3 Watts",30,1
+"What fundamental physical law forms the basis for Kirchhoff's Current Law (KCL)?","Conservation of Charge","Conservation of Energy","Ohm's Law","Faraday's Law of Induction",20,1
+"What fundamental physical law forms the basis for Kirchhoff's Voltage Law (KVL)?","Conservation of Energy","Conservation of Charge","Lenz's Law","Newton's Second Law",20,1
+"If three equal 60-ohm resistors are connected in parallel, what is their total equivalent resistance?","20 ohms","180 ohms","60 ohms","30 ohms",20,1
+"Two 20-microfarad capacitors are connected in SERIES. What is their total equivalent capacitance?","10 microfarads","40 microfarads","20 microfarads","5 microfarads",30,1
+"If current through a resistor doubles while resistance stays constant, how does the power dissipation change?","Power quadruples (4x)","Power doubles (2x)","Power stays the same","Power cuts in half (0.5x)",30,1
+"In a circuit junction, 5A enters from Branch A and 3A enters from Branch B. How much current MUST leave through Branch C?","8 Amperes","2 Amperes","15 Amperes","0.6 Amperes",20,1
+"A 1/4-Watt (0.25W) resistor has 10V across it. What is the MINIMUM resistance required to avoid burning it out?","400 ohms","25 ohms","100 ohms","2.5 ohms",30,1

@@ -1,0 +1,11 @@
+Question,Answer 1,Answer 2,Answer 3,Answer 4,Time limit (seconds),Correct answer(s)
+"Which logic gate outputs a 1 ONLY when both inputs are 1?","OR","XOR","AND","NAND",30,3
+"If a NOT gate's input is a 1, what is the output?","0","1","High Voltage","Both 1 and 2",30,1
+"Which gate is represented by a standard OR gate with a small inversion circle at its output?","XOR","NOR","NAND","XNOR",30,2
+"An XOR gate has inputs A=1 and B=1. What is the output?","1","0","Error","High Voltage",30,2
+"What happens to an electromagnet's strength if you replace its iron core with a plastic pen?","It gets stronger","It stays the same","It drops to nearly zero","It reverses polarity",30,3
+"Which parameter does NOT increase the strength of an electromagnet?","Increasing the current","Increasing coil loops","Using an iron core","Reversing current direction",30,4
+"How does a fuse protect an electrical circuit?","It increases the voltage","It melts to break the loop","It stores electrical charge","It reverses current flow",30,2
+"Why is an electromagnetic relay useful in engineering?","It stores current like a battery","It uses a small voltage to switch a high voltage loop","It changes AC to DC","It decreases resistance",30,2
+"Which gate outputs a 0 ONLY when both inputs are 1?","AND","NAND","OR","NOR",30,2
+"A solenoid is best described as:","A chemical battery","A coil of wire acting as an electromagnet","A logic gate inverter","A type of circuit fuse",30,2

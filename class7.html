@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Olympiad Circuit Lab - Class 7: Comprehensive Circuits Review &amp; Problem Solving</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for rendering LaTeX formulas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    /* ==========================================
+       Design System & Core Variables
+       ========================================== */
+    :root {
+      --color-bg: #0b0f19;
+      --color-surface: #131a2c;
+      --color-surface-hover: #1e2942;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-text-primary: #f3f4f6;
+      --color-text-secondary: #9ca3af;
+      
+      /* Glowing Neon Theme Colors - Class 7 Neon Cyan & Purple/Gold */
+      --color-primary: hsl(195, 100%, 50%);   /* Neon Cyan / Electric Blue */
+      --color-accent: hsl(280, 100%, 65%);   /* Neon Purple */
+      --color-success: hsl(145, 100%, 45%);  /* Neon Green */
+      --color-warning: hsl(35, 100%, 50%);   /* Neon Amber / Orange */
+      --color-danger: hsl(0, 100%, 60%);     /* Neon Red */
+      --color-info: hsl(195, 100%, 50%);     /* Electric Blue */
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      
+      --transition-speed: 0.3s;
+      --border-radius: 16px;
+      --shadow-neon: 0 0 20px rgba(0, 210, 255, 0.15);
+      --shadow-danger: 0 0 20px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      outline: none;
+      color: inherit;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* ==========================================
+       Layout Structure
+       ========================================== */
+    header {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.6));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .class-switcher-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border: 1px dashed var(--color-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .class-switcher-link:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(0, 210, 255, 0.05);
+    }
+
+    .progress-container {
+      width: 180px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    }
+
+    .btn-toggle-presenter {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-toggle-presenter:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.25);
+    }
+
+    .btn-toggle-presenter.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    .main-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-deck {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #070a12 100%);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 2.2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    /* Presenter Sidebar */
+    .presenter-panel {
+      width: 320px;
+      background: #0f1422;
+      border-left: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 9;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .presenter-panel.active {
+      transform: translateX(0);
+      position: relative;
+    }
+
+    .presenter-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presenter-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .speaker-script-box {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-primary);
+      padding: 0.9rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+    }
+
+    .speaker-actions-box {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-accent);
+      padding: 0.9rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* Glass Panels & Layout Grids */
+    .glass-panel {
+      background: rgba(19, 26, 44, 0.45);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .slide-title-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .slide-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .slide-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .slide-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .split-layout-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    .split-layout-wide-left {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    .split-layout-wide-right {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    .grid-3-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    /* Concept Cards & Formula Boxes */
+    .formula-card {
+      background: rgba(0, 210, 255, 0.05);
+      border: 1px solid rgba(0, 210, 255, 0.25);
+      border-radius: 12px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .formula-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      letter-spacing: 0.05em;
+    }
+
+    .formula-body {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .concept-card {
+      background: rgba(19, 26, 44, 0.6);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .concept-card h4 {
+      color: var(--color-primary);
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .concept-card p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.55;
+    }
+
+    .alert-box {
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fde68a;
+    }
+
+    .alert-info {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      color: #bae6fd;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    /* Illustrated Problem Card Styles */
+    .problem-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .problem-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .problem-badge {
+      background: rgba(0, 210, 255, 0.15);
+      color: var(--color-primary);
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .problem-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .problem-prompt {
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+    }
+
+    .btn-reveal-solution {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      font-weight: 700;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      align-self: flex-start;
+      margin-top: 0.5rem;
+    }
+
+    .btn-reveal-solution:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+    }
+
+    .solution-box {
+      background: rgba(19, 26, 44, 0.9);
+      border: 1px solid var(--color-success);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-top: 0.5rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.8rem;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .solution-box.active {
+      display: flex;
+    }
+
+    .solution-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-success);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .solution-step {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      padding-left: 1rem;
+      border-left: 2px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .solution-step span.highlight {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* SVG Schematic Styling */
+    .schematic-svg {
+      width: 100%;
+      height: 180px;
+      background: rgba(11, 15, 25, 0.6);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+    }
+
+    /* Footer Controls */
+    footer {
+      background: rgba(11, 15, 25, 0.9);
+      border-top: 1px solid var(--color-border);
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide-counter {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: rgba(0, 210, 255, 0.15);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-nav.primary {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      border: none;
+      font-weight: 700;
+    }
+
+    .btn-nav.primary:hover:not(:disabled) {
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Slider Input Controls */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .control-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .control-slider {
+      width: 100%;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* Thermal Heat Bar */
+    .heat-meter-bg {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .heat-meter-fill {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+      transition: width 0.3s ease;
+    }
+
+    /* Kahoot Quiz Player */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      height: 100%;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quiz-score {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+
+    .quiz-timer {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--color-danger);
+      color: #fca5a5;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .quiz-question-box {
+      background: rgba(19, 26, 44, 0.7);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .quiz-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .quiz-opt-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.1rem;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .quiz-opt-btn:hover:not(:disabled) {
+      background: rgba(0, 210, 255, 0.1);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .quiz-opt-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: var(--color-success) !important;
+      color: #a7f3d0 !important;
+    }
+
+    .quiz-opt-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: var(--color-danger) !important;
+      color: #fca5a5 !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER NAVBAR -->
+  <header>
+    <a href="index.html" class="brand">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 14h9v8l10-12h-9z"/>
+      </svg>
+      <span class="brand-title">Class 7: Core Circuits Master Review</span>
+    </a>
+
+    <div class="header-actions">
+      <a href="index.html" class="class-switcher-link">← Portal Dashboard</a>
+      
+      <div class="progress-container" title="Lesson Progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <button class="btn-toggle-presenter" id="btnTogglePresenter">
+        <span>🎙️ Speaker Notes (P)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="main-workspace">
+    
+    <!-- SLIDE DECK -->
+    <div class="slide-deck" id="slideDeck">
+      
+      <!-- ================= SLIDE 1 ================= -->
+      <div class="slide active" data-slide="1"
+           data-speaker-script="Welcome team to Class 7! Today is our 70-minute master review. We are going to lock down the core pillars of Circuit Lab: Series and Parallel Resistors and Capacitors, Power dissipation equations, and Kirchhoff's Laws (KCL and KVL). We will work through step-by-step illustrated competition problems, test interactive simulations, and run a live 10-question Kahoot!"
+           data-speaker-actions="Show enthusiasm! Remind students that these 4 core topics account for over 50% of written Science Olympiad exam points.">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class 7 • Master Review Session (70 Minutes)</span>
+          <h1 class="slide-title">Comprehensive Circuits Review &amp; Problem Solving</h1>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-primary); font-size:1.2rem;">⏱️ 70-Minute Agenda Breakdown</h3>
+              <ul style="list-style:none; display:flex; flex-direction:column; gap:0.7rem; font-size:0.95rem; color:var(--color-text-secondary);">
+                <li style="display:flex; gap:0.6rem;">⚡ <strong style="color:#fff;">00:00 - 10:00 (10m):</strong> Series vs. Parallel Resistance &amp; Illustrated Problem #1</li>
+                <li style="display:flex; gap:0.6rem;">🔌 <strong style="color:#fff;">10:00 - 22:00 (12m):</strong> Series vs. Parallel Capacitance &amp; Illustrated Problem #2</li>
+                <li style="display:flex; gap:0.6rem;">🔥 <strong style="color:#fff;">22:00 - 35:00 (13m):</strong> Power Equations ($P=VI, I^2R, V^2/R$) &amp; Illustrated Problem #3</li>
+                <li style="display:flex; gap:0.6rem;">🧠 <strong style="color:#fff;">35:00 - 50:00 (15m):</strong> Kirchhoff's Laws (KCL &amp; KVL) &amp; Illustrated Problem #4</li>
+                <li style="display:flex; gap:0.6rem;">🎯 <strong style="color:#fff;">50:00 - 60:00 (10m):</strong> Competition Illustrated Practice Station</li>
+                <li style="display:flex; gap:0.6rem;">🏆 <strong style="color:#fff;">60:00 - 70:00 (10m):</strong> Live Kahoot! Quiz &amp; Speed Recap</li>
+              </ul>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem; justify-content:center;">
+              <div class="alert-box alert-info">
+                <span>💡</span>
+                <div>
+                  <strong>Key Learning Target:</strong> Master equivalent resistance/capacitance formulas, resistor thermal safety, node current balances, and loop voltage conservation under timed exam conditions.
+                </div>
+              </div>
+
+              <div class="formula-card">
+                <div class="formula-title">4 Core Cheat-Sheet Pillars</div>
+                <div class="formula-body" style="font-size:0.95rem; line-height:1.6; font-weight:normal;">
+                  • $R_{\text{series}} = R_1 + R_2$, $R_{\text{parallel}} = \frac{R_1 R_2}{R_1 + R_2}$<br>
+                  • $C_{\text{parallel}} = C_1 + C_2$, $\frac{1}{C_{\text{series}}} = \frac{1}{C_1} + \frac{1}{C_2}$ (Opposite!)<br>
+                  • $P = VI = I^2 R = \frac{V^2}{R}$ ($\text{Watts}$)<br>
+                  • KCL: $\sum I_{\text{in}} = \sum I_{\text{out}}$, KVL: $\sum V_{\text{loop}} = 0$
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 2 ================= -->
+      <div class="slide" data-slide="2"
+           data-speaker-script="Let's start with Resistance! Series resistors form a single line pathway, so resistance simply adds up. Parallel resistors provide multiple parallel highways for current, reducing the total equivalent resistance. Remember the two key shortcuts: for two parallel resistors, R_eq = (R1 * R2)/(R1 + R2). For N equal parallel resistors, R_eq = R / N!"
+           data-speaker-actions="Ask class: If two 100-ohm resistors are in parallel, what is R_eq? (Answer: 50 ohms!). Highlight water pipe bottleneck analogy.">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 1 • 00:00 - 10:00</span>
+          <h2 class="slide-title">1. Series &amp; Parallel Resistance Foundations</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-primary);">📏 Series Resistance</h3>
+              <p style="font-size:0.9rem; color:var(--color-text-secondary);">Current must flow through every single resistor one after another in a single path.</p>
+              
+              <div class="formula-card">
+                <div class="formula-title">Series Formula</div>
+                <div class="formula-body">$$R_{\text{eq}} = R_1 + R_2 + R_3 + \dots + R_n$$</div>
+              </div>
+
+              <div class="alert-box alert-success">
+                <span>✔</span>
+                <div>Total resistance is <strong>always larger</strong> than any individual resistor in series.</div>
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-accent);">🔀 Parallel Resistance</h3>
+              <p style="font-size:0.9rem; color:var(--color-text-secondary);">Current splits across multiple parallel branches. Total resistance decreases.</p>
+              
+              <div class="formula-card" style="border-color:rgba(168,85,247,0.3); background:rgba(168,85,247,0.05);">
+                <div class="formula-title" style="color:var(--color-accent);">Parallel Formulas &amp; Shortcuts</div>
+                <div class="formula-body" style="font-size:0.95rem; line-height:1.6;">
+                  • Standard: $\frac{1}{R_{\text{eq}}} = \frac{1}{R_1} + \frac{1}{R_2} + \dots$<br>
+                  • <strong>2-Resistor Shortcut:</strong> $R_{\text{eq}} = \frac{R_1 \times R_2}{R_1 + R_2}$<br>
+                  • <strong>$N$ Equal Resistors:</strong> $R_{\text{eq}} = \frac{R}{N}$
+                </div>
+              </div>
+
+              <div class="alert-box alert-warning">
+                <span>⚠️</span>
+                <div>Total parallel resistance is <strong>always smaller</strong> than the smallest individual branch resistor!</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 3 ================= -->
+      <div class="slide" data-slide="3"
+           data-speaker-script="Here is Illustrated Problem #1. We have a combination circuit where a 12-ohm resistor is in series with a parallel block of 20-ohm and 30-ohm resistors. Let's simplify from the inside out!"
+           data-speaker-actions="Give students 60 seconds to calculate R_eq before clicking 'Reveal Step-by-Step Solution'.">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 1 • Worked Example</span>
+          <h2 class="slide-title">Illustrated Problem #1: Combination Resistance</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="problem-card">
+            <div class="problem-header">
+              <span class="problem-badge">Problem #1</span>
+              <span class="problem-title">Equivalent Resistance of a Combination Loop</span>
+            </div>
+
+            <!-- SVG Diagram -->
+            <svg class="schematic-svg" viewBox="0 0 500 160">
+              <rect x="30" y="60" width="40" height="30" fill="none" stroke="#00d2ff" stroke-width="3" rx="4"/>
+              <text x="50" y="48" fill="#00d2ff" font-weight="bold" font-size="14" text-anchor="middle">12 Ω</text>
+
+              <line x1="10" y1="75" x2="30" y2="75" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="70" y1="75" x2="120" y2="75" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Parallel Split -->
+              <line x1="120" y1="35" x2="120" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              
+              <!-- Top Branch 20 ohm -->
+              <line x1="120" y1="35" x2="160" y2="35" stroke="#9ca3af" stroke-width="3"/>
+              <rect x="160" y="20" width="60" height="30" fill="none" stroke="#a855f7" stroke-width="3" rx="4"/>
+              <text x="190" y="14" fill="#a855f7" font-weight="bold" font-size="14" text-anchor="middle">20 Ω</text>
+              <line x1="220" y1="35" x2="260" y2="35" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Bottom Branch 30 ohm -->
+              <line x1="120" y1="115" x2="160" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              <rect x="160" y="100" width="60" height="30" fill="none" stroke="#a855f7" stroke-width="3" rx="4"/>
+              <text x="190" y="145" fill="#a855f7" font-weight="bold" font-size="14" text-anchor="middle">30 Ω</text>
+              <line x1="220" y1="115" x2="260" y2="115" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Parallel Merge -->
+              <line x1="260" y1="35" x2="260" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="260" y1="75" x2="310" y2="75" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Battery Source -->
+              <line x1="310" y1="75" x2="310" y2="140" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="310" y1="140" x2="10" y2="140" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="10" y1="140" x2="10" y2="75" stroke="#9ca3af" stroke-width="3"/>
+
+              <circle cx="10" cy="75" r="4" fill="#00d2ff"/>
+              <circle cx="310" cy="75" r="4" fill="#00d2ff"/>
+              <text x="360" y="75" fill="#10b981" font-weight="bold" font-size="14">V = 24V DC</text>
+            </svg>
+
+            <p class="problem-prompt">
+              Find the total equivalent resistance ($R_{\text{eq}}$) of the circuit and calculate the total battery current ($I_{\text{total}}$) supplied by the 24V source.
+            </p>
+
+            <button class="btn-reveal-solution" onclick="toggleSolution('sol1')">
+              <span>🔍 Reveal Step-by-Step Solution</span>
+            </button>
+
+            <div class="solution-box" id="sol1">
+              <div class="solution-title">✔ Step-by-Step Solution Derivation</div>
+              <div class="solution-step">
+                <span class="highlight">Step 1: Simplify Parallel Block ($R_2 \parallel R_3$)</span><br>
+                Using the 2-resistor shortcut: $R_{p} = \frac{20 \times 30}{20 + 30} = \frac{600}{50} = 12\,\Omega$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 2: Add Series Resistor ($R_1$)</span><br>
+                $R_{\text{total}} = R_1 + R_p = 12\,\Omega + 12\,\Omega = \mathbf{24\,\Omega}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 3: Calculate Total Battery Current ($I$)</span><br>
+                $I_{\text{total}} = \frac{V}{R_{\text{total}}} = \frac{24\,\text{V}}{24\,\Omega} = \mathbf{1.0\,\text{Ampere}}$.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 4 ================= -->
+      <div class="slide" data-slide="4"
+           data-speaker-script="Now for Capacitors! Remember the OPPOSITE RULE. Capacitors store electrostatic charge Q = C * V. When you connect capacitors in PARALLEL, you are adding plate surface area together, so parallel capacitors ADD directly (C_eq = C1 + C2)! In SERIES, plate separation increases, so series capacitors use the reciprocal formula!"
+           data-speaker-actions="Stress the 'Opposite Rule' memory key. Students often confuse series/parallel formulas for resistors vs capacitors on competition day!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 2 • 10:00 - 22:00</span>
+          <h2 class="slide-title">2. Series &amp; Parallel Capacitance Foundations</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-primary);">⚡ Electrostatic Storage Rule</h3>
+              <p style="font-size:0.9rem; color:var(--color-text-secondary);">Capacitors store charge ($Q$) in Coulombs: $Q = C \times V$.</p>
+              
+              <div class="formula-card">
+                <div class="formula-title">Parallel Capacitance (Area Adds!)</div>
+                <div class="formula-body">$$C_{\text{eq}} = C_1 + C_2 + C_3 + \dots$$</div>
+              </div>
+
+              <div class="alert-box alert-success">
+                <span>✔</span>
+                <div>Parallel capacitors <strong>ADD directly</strong> because conductive plate surface area increases!</div>
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-accent);">⛓️ Series Capacitance</h3>
+              <p style="font-size:0.9rem; color:var(--color-text-secondary);">Series placement increases effective dielectric plate separation distance ($d$).</p>
+              
+              <div class="formula-card" style="border-color:rgba(168,85,247,0.3); background:rgba(168,85,247,0.05);">
+                <div class="formula-title" style="color:var(--color-accent);">Series Capacitance Formula</div>
+                <div class="formula-body" style="font-size:0.95rem; line-height:1.6;">
+                  • Standard: $\frac{1}{C_{\text{eq}}} = \frac{1}{C_1} + \frac{1}{C_2} + \dots$<br>
+                  • <strong>2-Capacitor Shortcut:</strong> $C_{\text{eq}} = \frac{C_1 \times C_2}{C_1 + C_2}$<br>
+                  • <strong>$N$ Equal Capacitors:</strong> $C_{\text{eq}} = \frac{C}{N}$
+                </div>
+              </div>
+
+              <div class="alert-box alert-warning">
+                <span>🧠</span>
+                <div><strong>Memory Trick:</strong> Capacitors follow the EXACT OPPOSITE formula math of Resistors!</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 5 ================= -->
+      <div class="slide" data-slide="5"
+           data-speaker-script="Illustrated Problem #2: Here we have three 30-microfarad capacitors. Two are in parallel, and that pair is connected in series with the third capacitor. Let's find equivalent capacitance and stored charge!"
+           data-speaker-actions="Remind students to convert microfarads (1 uF = 10^-6 F) when calculating stored charge Q = C * V in Coulombs.">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 2 • Worked Example</span>
+          <h2 class="slide-title">Illustrated Problem #2: Capacitor Network &amp; Stored Charge</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="problem-card">
+            <div class="problem-header">
+              <span class="problem-badge">Problem #2</span>
+              <span class="problem-title">Capacitance Simplification &amp; Stored Charge</span>
+            </div>
+
+            <!-- SVG Diagram -->
+            <svg class="schematic-svg" viewBox="0 0 500 160">
+              <line x1="20" y1="75" x2="60" y2="75" stroke="#9ca3af" stroke-width="3"/>
+              
+              <!-- Parallel Capacitors Block -->
+              <line x1="60" y1="35" x2="60" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              
+              <!-- C1 30 uF -->
+              <line x1="60" y1="35" x2="90" y2="35" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="90" y1="20" x2="90" y2="50" stroke="#00d2ff" stroke-width="4"/>
+              <line x1="100" y1="20" x2="100" y2="50" stroke="#00d2ff" stroke-width="4"/>
+              <line x1="100" y1="35" x2="130" y2="35" stroke="#9ca3af" stroke-width="3"/>
+              <text x="95" y="14" fill="#00d2ff" font-weight="bold" font-size="13" text-anchor="middle">30 µF</text>
+
+              <!-- C2 30 uF -->
+              <line x1="60" y1="115" x2="90" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="90" y1="100" x2="90" y2="130" stroke="#00d2ff" stroke-width="4"/>
+              <line x1="100" y1="100" x2="100" y2="130" stroke="#00d2ff" stroke-width="4"/>
+              <line x1="100" y1="115" x2="130" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              <text x="95" y="148" fill="#00d2ff" font-weight="bold" font-size="13" text-anchor="middle">30 µF</text>
+
+              <line x1="130" y1="35" x2="130" y2="115" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="130" y1="75" x2="190" y2="75" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- C3 Series 30 uF -->
+              <line x1="190" y1="60" x2="190" y2="90" stroke="#a855f7" stroke-width="4"/>
+              <line x1="200" y1="60" x2="200" y2="90" stroke="#a855f7" stroke-width="4"/>
+              <line x1="200" y1="75" x2="260" y2="75" stroke="#9ca3af" stroke-width="3"/>
+              <text x="195" y="52" fill="#a855f7" font-weight="bold" font-size="13" text-anchor="middle">30 µF (Series)</text>
+
+              <!-- Battery Source 12V -->
+              <line x1="260" y1="75" x2="260" y2="140" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="260" y1="140" x2="20" y2="140" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="20" y1="140" x2="20" y2="75" stroke="#9ca3af" stroke-width="3"/>
+              <text x="300" y="75" fill="#10b981" font-weight="bold" font-size="14">V = 12V DC</text>
+            </svg>
+
+            <p class="problem-prompt">
+              Calculate total equivalent capacitance ($C_{\text{eq}}$) of the network and find total stored charge ($Q_{\text{total}}$) when connected to a 12V DC battery.
+            </p>
+
+            <button class="btn-reveal-solution" onclick="toggleSolution('sol2')">
+              <span>🔍 Reveal Step-by-Step Solution</span>
+            </button>
+
+            <div class="solution-box" id="sol2">
+              <div class="solution-title">✔ Step-by-Step Solution Derivation</div>
+              <div class="solution-step">
+                <span class="highlight">Step 1: Simplify Parallel Pair ($C_1 \parallel C_2$)</span><br>
+                Parallel capacitors add directly: $C_p = C_1 + C_2 = 30\,\mu\text{F} + 30\,\mu\text{F} = 60\,\mu\text{F}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 2: Combine in Series with $C_3$</span><br>
+                $C_{\text{eq}} = \frac{C_p \times C_3}{C_p + C_3} = \frac{60 \times 30}{60 + 30} = \frac{1800}{90} = \mathbf{20\,\mu\text{F}}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 3: Stored Charge ($Q = C \times V$)</span><br>
+                $Q_{\text{total}} = 20 \times 10^{-6}\,\text{F} \times 12\,\text{V} = 240 \times 10^{-6}\,\text{C} = \mathbf{240\,\mu\text{C}}$ (or $0.24\,\text{mC}$).
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 6 ================= -->
+      <div class="slide" data-slide="6"
+           data-speaker-script="Interactive Tool #1! Let's play with our R & C Equivalent Calculator Sandbox. You can toggle between Resistors and Capacitors, change series or parallel layouts, and drag component values to see live mathematical breakdowns!"
+           data-speaker-actions="Demonstrate dragging component values. Show how parallel resistance drops below the smallest resistor, while parallel capacitance grows!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Interactive Sandbox • Tool #1</span>
+          <h2 class="slide-title">R &amp; C Equivalent Calculator Sandbox</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-wide-right">
+            
+            <!-- Controls Panel -->
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem;">
+              <h3 style="color:var(--color-primary); font-size:1.1rem;">⚙️ Component Configuration</h3>
+              
+              <div class="control-group">
+                <label class="control-label">Component Mode</label>
+                <select id="sim1Mode" onchange="updateSim1()" style="padding:0.6rem; background:rgba(0,0,0,0.4); color:#fff; border:1px solid var(--color-border); border-radius:8px; font-family:var(--font-body);">
+                  <option value="R">Resistors (Ω)</option>
+                  <option value="C">Capacitors (µF)</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label">Pathway Topology</label>
+                <select id="sim1Topology" onchange="updateSim1()" style="padding:0.6rem; background:rgba(0,0,0,0.4); color:#fff; border:1px solid var(--color-border); border-radius:8px; font-family:var(--font-body);">
+                  <option value="series">Series Pathway</option>
+                  <option value="parallel">Parallel Branches</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <div class="control-label"><span>Component 1 ($V_1$)</span> <span id="sim1Val1Text">20</span></div>
+                <input type="range" id="sim1Val1" class="control-slider" min="5" max="100" value="20" oninput="updateSim1()">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label"><span>Component 2 ($V_2$)</span> <span id="sim1Val2Text">30</span></div>
+                <input type="range" id="sim1Val2" class="control-slider" min="5" max="100" value="30" oninput="updateSim1()">
+              </div>
+            </div>
+
+            <!-- Output Display Panel -->
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem; justify-content:center;">
+              <div style="text-align:center;">
+                <span style="font-size:0.85rem; font-weight:700; text-transform:uppercase; color:var(--color-primary); letter-spacing:0.1em;">Calculated Result</span>
+                <div id="sim1Result" style="font-size:2.8rem; font-weight:800; color:#fff; margin-top:0.2rem;">12.0 Ω</div>
+              </div>
+
+              <div class="formula-card">
+                <div class="formula-title" id="sim1FormulaTitle">Live Equivalent Derivation</div>
+                <div class="formula-body" id="sim1FormulaBody" style="font-size:0.95rem; font-weight:normal; line-height:1.6;">
+                  $R_{\text{eq}} = \frac{20 \times 30}{20 + 30} = 12\,\Omega$
+                </div>
+              </div>
+
+              <div class="alert-box alert-info" id="sim1Insight">
+                <span>💡</span>
+                <div>Select component type and topology to observe live mathematical behavior!</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 7 ================= -->
+      <div class="slide" data-slide="7"
+           data-speaker-script="Now for Power Equations! Electrical Power P is the rate at which electrical energy is converted into heat or light. P = V * I. By substituting Ohm's law V = I*R, we get P = I^2 * R and P = V^2 / R. Watch out for resistor wattage ratings!"
+           data-speaker-actions="Point out standard quarter-watt (0.25W) resistors used in school labs. If power exceeds 0.25W, the resistor overheats and burns out!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 3 • 22:00 - 35:00</span>
+          <h2 class="slide-title">3. Resistive Circuit Power Equations</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-primary);">🔥 The 3 Power Formulas</h3>
+              
+              <div class="formula-card">
+                <div class="formula-title">Primary Power Equation</div>
+                <div class="formula-body">$$P = V \times I$$</div>
+              </div>
+
+              <div class="formula-card" style="border-color:rgba(168,85,247,0.3); background:rgba(168,85,247,0.05);">
+                <div class="formula-title" style="color:var(--color-accent);">Ohm's Law Substitutions</div>
+                <div class="formula-body" style="font-size:1.1rem;">
+                  $$P = I^2 \times R \quad \text{and} \quad P = \frac{V^2}{R}$$
+                </div>
+              </div>
+
+              <p style="font-size:0.88rem; color:var(--color-text-secondary);">
+                Units: Power is measured in <strong>Watts ($\text{W}$)</strong> or Joules per second ($\text{J/s}$).
+              </p>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-warning);">⚠️ Resistor Wattage &amp; Safety</h3>
+              
+              <div class="concept-card">
+                <h4>🌡️ Heat Dissipation</h4>
+                <p>All electrical power consumed by a resistor is converted directly into heat. If $P_{\text{actual}} > P_{\text{rating}}$, the resistor burns out!</p>
+              </div>
+
+              <div class="alert-box alert-danger">
+                <span>🚨</span>
+                <div>
+                  <strong>The Milliamp-Squared Trap:</strong> Always convert $I$ from $\text{mA}$ to $\text{A}$ BEFORE squaring! $50\,\text{mA} = 0.05\,\text{A} \implies I^2 = 0.0025\,\text{A}^2$.
+                </div>
+              </div>
+
+              <div class="alert-box alert-info">
+                <span>⚡</span>
+                <div>Energy Formula: $E = P \times t$ (Joules or Watt-hours).</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 8 ================= -->
+      <div class="slide" data-slide="8"
+           data-speaker-script="Illustrated Problem #3: A 1/4-Watt resistor is connected across a 9V battery. What is the MINIMUM resistance needed so the resistor doesn't overheat?"
+           data-speaker-actions="Ask students which formula connects P, V, and R (Answer: P = V^2 / R). Have them solve for R!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 3 • Worked Example</span>
+          <h2 class="slide-title">Illustrated Problem #3: Power Dissipation &amp; Thermal Safety</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="problem-card">
+            <div class="problem-header">
+              <span class="problem-badge">Problem #3</span>
+              <span class="problem-title">Resistor Power Safety Check</span>
+            </div>
+
+            <p class="problem-prompt">
+              A student connects a resistor across a <strong>9V DC battery</strong>. The resistor is rated for a maximum power dissipation of <strong>$1/4\text{ Watt}$ ($0.25\,\text{W}$)</strong>.<br>
+              Calculate the <strong>minimum safe resistance ($R_{\text{min}}$)</strong> required to prevent thermal blowout, and find the current ($I$) flowing at this limit.
+            </p>
+
+            <button class="btn-reveal-solution" onclick="toggleSolution('sol3')">
+              <span>🔍 Reveal Step-by-Step Solution</span>
+            </button>
+
+            <div class="solution-box" id="sol3">
+              <div class="solution-title">✔ Step-by-Step Solution Derivation</div>
+              <div class="solution-step">
+                <span class="highlight">Step 1: Choose Formula Connecting $P$, $V$, and $R$</span><br>
+                Use $P = \frac{V^2}{R} \implies R = \frac{V^2}{P}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 2: Plug in Given Values ($V = 9\,\text{V}$, $P_{\text{max}} = 0.25\,\text{W}$)</span><br>
+                $R_{\text{min}} = \frac{9^2}{0.25} = \frac{81}{0.25} = \mathbf{324\,\Omega}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 3: Calculate Safe Operating Current ($I$)</span><br>
+                $I = \frac{V}{R} = \frac{9\,\text{V}}{324\,\Omega} \approx 0.0278\,\text{A} = \mathbf{27.8\,\text{mA}}$.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 9 ================= -->
+      <div class="slide" data-slide="9"
+           data-speaker-script="Interactive Tool #2! Power & Thermal Safety Simulator. Adjust Voltage and Resistance sliders. Watch the wattage output and the thermal heat meter. If power exceeds the 0.25W rating, see the resistor overheat visual!"
+           data-speaker-actions="Lower the resistance under 300 ohms at 9V to demonstrate thermal overload alert!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Interactive Sandbox • Tool #2</span>
+          <h2 class="slide-title">Power &amp; Thermal Safety Simulator</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-wide-right">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem;">
+              <h3 style="color:var(--color-primary); font-size:1.1rem;">⚡ Circuit Inputs</h3>
+              
+              <div class="control-group">
+                <div class="control-label"><span>Voltage Source ($V$)</span> <span id="sim2VText">9.0 V</span></div>
+                <input type="range" id="sim2V" class="control-slider" min="1" max="24" value="9" oninput="updateSim2()">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label"><span>Resistance ($R$)</span> <span id="sim2RText">400 Ω</span></div>
+                <input type="range" id="sim2R" class="control-slider" min="50" max="1000" value="400" step="10" oninput="updateSim2()">
+              </div>
+
+              <div class="control-group">
+                <label class="control-label">Resistor Rating Limit</label>
+                <select id="sim2Rating" onchange="updateSim2()" style="padding:0.6rem; background:rgba(0,0,0,0.4); color:#fff; border:1px solid var(--color-border); border-radius:8px; font-family:var(--font-body);">
+                  <option value="0.25">1/4 Watt (0.25 W) - Standard</option>
+                  <option value="0.50">1/2 Watt (0.50 W) - Medium</option>
+                  <option value="1.00">1 Watt (1.00 W) - Power</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem; justify-content:center;">
+              <div style="display:flex; justify-content:space-around; align-items:center;">
+                <div style="text-align:center;">
+                  <span style="font-size:0.8rem; font-weight:700; color:var(--color-text-secondary); text-transform:uppercase;">Current ($I$)</span>
+                  <div id="sim2IText" style="font-size:1.6rem; font-weight:800; color:var(--color-primary);">22.5 mA</div>
+                </div>
+                <div style="text-align:center;">
+                  <span style="font-size:0.8rem; font-weight:700; color:var(--color-text-secondary); text-transform:uppercase;">Dissipated Power ($P$)</span>
+                  <div id="sim2PText" style="font-size:2rem; font-weight:800; color:#fff;">0.203 W</div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:0.3rem; font-weight:700;">
+                  <span>Thermal Heat Meter</span>
+                  <span id="sim2HeatPercent">81% limit</span>
+                </div>
+                <div class="heat-meter-bg">
+                  <div class="heat-meter-fill" id="sim2HeatBar"></div>
+                </div>
+              </div>
+
+              <div class="alert-box alert-success" id="sim2StatusBox">
+                <span>🟢</span>
+                <div id="sim2StatusMsg">Resistor operating safely within 0.25W thermal limits.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 10 ================= -->
+      <div class="slide" data-slide="10"
+           data-speaker-script="Kirchhoff's Current Law (KCL)! Gustav Kirchhoff's junction rule states that current entering any junction must equal current leaving it. This comes directly from the Conservation of Electric Charge—charge cannot vanish or appear out of nowhere!"
+           data-speaker-actions="Use water pipe junction analogy: If 5 gallons/sec enter a pipe junction and 3 gallons/sec go left, 2 gallons/sec MUST go right!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 4 • 35:00 - 50:00</span>
+          <h2 class="slide-title">4. Kirchhoff's Current Law (KCL)</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-primary);">🌊 KCL Junction Rule</h3>
+              
+              <div class="formula-card">
+                <div class="formula-title">Mathematical Statement</div>
+                <div class="formula-body">$$\sum I_{\text{entering}} = \sum I_{\text{leaving}}$$</div>
+              </div>
+
+              <div class="concept-card">
+                <h4>⚡ Physical Foundation</h4>
+                <p><strong>Conservation of Charge:</strong> Electrons cannot be created or destroyed at a node junction.</p>
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem; justify-content:center;">
+              <svg viewBox="0 0 400 200" style="width:100%; height:180px; background:rgba(0,0,0,0.3); border-radius:12px;">
+                <!-- Junction Node -->
+                <circle cx="200" cy="100" r="10" fill="#00d2ff"/>
+                <text x="200" y="80" fill="#00d2ff" font-weight="bold" font-size="14" text-anchor="middle">Node A</text>
+
+                <!-- Incoming Branch A -->
+                <line x1="50" y1="50" x2="190" y2="95" stroke="#10b981" stroke-width="4" marker-end="url(#arrow)"/>
+                <text x="70" y="40" fill="#10b981" font-weight="bold" font-size="14">I₁ = 5A (In)</text>
+
+                <!-- Incoming Branch B -->
+                <line x1="50" y1="150" x2="190" y2="105" stroke="#10b981" stroke-width="4"/>
+                <text x="70" y="170" fill="#10b981" font-weight="bold" font-size="14">I₂ = 3A (In)</text>
+
+                <!-- Outgoing Branch C -->
+                <line x1="210" y1="100" x2="350" y2="100" stroke="#a855f7" stroke-width="4"/>
+                <text x="280" y="85" fill="#a855f7" font-weight="bold" font-size="14">I₃ = ? (Out)</text>
+              </svg>
+
+              <div class="alert-box alert-info">
+                <span>💡</span>
+                <div>At Node A: $5\,\text{A} + 3\,\text{A} = I_3 \implies \mathbf{I_3 = 8\,\text{A}}$.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 11 ================= -->
+      <div class="slide" data-slide="11"
+           data-speaker-script="Kirchhoff's Voltage Law (KVL)! The loop rule states that the sum of all electric potential differences (voltages) around any closed loop must equal ZERO. This is Conservation of Energy—like a roller coaster returning to its starting height!"
+           data-speaker-actions="Explain sign conventions: Going from battery negative to positive is a GAIN (+V). Moving in current direction through a resistor is a DROP (-IR).">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 4 • 35:00 - 50:00</span>
+          <h2 class="slide-title">4. Kirchhoff's Voltage Law (KVL)</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-primary);">🎢 KVL Loop Rule</h3>
+              
+              <div class="formula-card">
+                <div class="formula-title">Mathematical Statement</div>
+                <div class="formula-body">$$\sum V_{\text{closed loop}} = 0$$</div>
+              </div>
+
+              <div class="concept-card">
+                <h4>⚡ Physical Foundation</h4>
+                <p><strong>Conservation of Energy:</strong> Total energy gained from voltage sources equals total energy lost across load resistors around a closed loop.</p>
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem;">
+              <h3 style="color:var(--color-accent);">🧭 Sign Conventions</h3>
+              
+              <ul style="list-style:none; display:flex; flex-direction:column; gap:0.8rem; font-size:0.9rem; color:var(--color-text-secondary);">
+                <li style="display:flex; gap:0.6rem;">🔋 <strong style="color:#fff;">Battery Source:</strong> Traversing from $-$ to $+$ terminal = <span style="color:var(--color-success); font-weight:bold;">+$V_{\text{source}}$ (Gain)</span></li>
+                <li style="display:flex; gap:0.6rem;">⚡ <strong style="color:#fff;">Resistor:</strong> Traversing in direction of current = <span style="color:var(--color-danger); font-weight:bold;">-$I \times R$ (Drop)</span></li>
+              </ul>
+
+              <div class="alert-box alert-warning">
+                <span>⚠️</span>
+                <div>KVL Equation: $V_{\text{source}} - I R_1 - I R_2 = 0 \implies V_{\text{source}} = I(R_1 + R_2)$.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 12 ================= -->
+      <div class="slide" data-slide="12"
+           data-speaker-script="Illustrated Problem #4: 2-Loop KCL and KVL DC Circuit. We have a 12V source powering two parallel branches (R1=6 ohm, R2=12 ohm). Let's calculate branch currents using KCL and KVL!"
+           data-speaker-actions="Walk through loop equations step-by-step. Show how KVL gives branch voltages immediately for parallel loops across a single battery!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 4 • Worked Example</span>
+          <h2 class="slide-title">Illustrated Problem #4: 2-Loop KCL/KVL Circuit</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="problem-card">
+            <div class="problem-header">
+              <span class="problem-badge">Problem #4</span>
+              <span class="problem-title">2-Loop KCL/KVL Branch Current Solving</span>
+            </div>
+
+            <svg class="schematic-svg" viewBox="0 0 500 160">
+              <!-- Source -->
+              <text x="35" y="70" fill="#10b981" font-weight="bold" font-size="14">12V</text>
+              <line x1="50" y1="80" x2="50" y2="30" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="50" y1="30" x2="200" y2="30" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Node A -->
+              <circle cx="200" cy="30" r="5" fill="#00d2ff"/>
+              <text x="200" y="20" fill="#00d2ff" font-weight="bold" font-size="13" text-anchor="middle">Node A</text>
+
+              <!-- Branch 1 (6 ohm) -->
+              <line x1="200" y1="30" x2="200" y2="50" stroke="#9ca3af" stroke-width="3"/>
+              <rect x="185" y="50" width="30" height="40" fill="none" stroke="#a855f7" stroke-width="3" rx="4"/>
+              <text x="235" y="75" fill="#a855f7" font-weight="bold" font-size="13">R₁ = 6 Ω</text>
+              <line x1="200" y1="90" x2="200" y2="130" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Branch 2 (12 ohm) -->
+              <line x1="200" y1="30" x2="350" y2="30" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="350" y1="30" x2="350" y2="50" stroke="#9ca3af" stroke-width="3"/>
+              <rect x="335" y="50" width="30" height="40" fill="none" stroke="#00d2ff" stroke-width="3" rx="4"/>
+              <text x="385" y="75" fill="#00d2ff" font-weight="bold" font-size="13">R₂ = 12 Ω</text>
+              <line x1="350" y1="90" x2="350" y2="130" stroke="#9ca3af" stroke-width="3"/>
+
+              <!-- Bottom Rail -->
+              <line x1="50" y1="130" x2="350" y2="130" stroke="#9ca3af" stroke-width="3"/>
+              <line x1="50" y1="130" x2="50" y2="100" stroke="#9ca3af" stroke-width="3"/>
+            </svg>
+
+            <p class="problem-prompt">
+              Use KVL to find branch currents $I_1$ and $I_2$, then use KCL at Node A to calculate total source current $I_{\text{total}}$.
+            </p>
+
+            <button class="btn-reveal-solution" onclick="toggleSolution('sol4')">
+              <span>🔍 Reveal Step-by-Step Solution</span>
+            </button>
+
+            <div class="solution-box" id="sol4">
+              <div class="solution-title">✔ Step-by-Step Solution Derivation</div>
+              <div class="solution-step">
+                <span class="highlight">Step 1: KVL on Loop 1 ($12\,\text{V}$ &amp; $R_1$)</span><br>
+                $12 - I_1(6) = 0 \implies I_1 = \frac{12}{6} = \mathbf{2.0\,\text{Amperes}}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 2: KVL on Loop 2 ($12\,\text{V}$ &amp; $R_2$)</span><br>
+                $12 - I_2(12) = 0 \implies I_2 = \frac{12}{12} = \mathbf{1.0\,\text{Ampere}}$.
+              </div>
+              <div class="solution-step">
+                <span class="highlight">Step 3: KCL at Node A ($I_{\text{total}} = I_1 + I_2$)</span><br>
+                $I_{\text{total}} = 2.0\,\text{A} + 1.0\,\text{A} = \mathbf{3.0\,\text{Amperes}}$.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 13 ================= -->
+      <div class="slide" data-slide="13"
+           data-speaker-script="Interactive Tool #3! KCL & KVL Loop Step-by-Step Solver. Adjust battery source voltage and branch resistor values. Observe live node current balances and KVL loop trace equations!"
+           data-speaker-actions="Demonstrate changing battery voltage to 24V and watching all branch currents double instantly due to linearity!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Interactive Sandbox • Tool #3</span>
+          <h2 class="slide-title">KCL &amp; KVL Loop Solver Visualizer</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-wide-right">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem;">
+              <h3 style="color:var(--color-primary); font-size:1.1rem;">⚙️ Loop Parameters</h3>
+              
+              <div class="control-group">
+                <div class="control-label"><span>Battery Voltage ($V_s$)</span> <span id="sim3VText">12 V</span></div>
+                <input type="range" id="sim3V" class="control-slider" min="6" max="36" value="12" step="6" oninput="updateSim3()">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label"><span>Resistor $R_1$</span> <span id="sim3R1Text">6 Ω</span></div>
+                <input type="range" id="sim3R1" class="control-slider" min="2" max="24" value="6" oninput="updateSim3()">
+              </div>
+
+              <div class="control-group">
+                <div class="control-label"><span>Resistor $R_2$</span> <span id="sim3R2Text">12 Ω</span></div>
+                <input type="range" id="sim3R2" class="control-slider" min="2" max="24" value="12" oninput="updateSim3()">
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem; justify-content:center;">
+              <div class="grid-3-col" style="text-align:center;">
+                <div>
+                  <span style="font-size:0.75rem; font-weight:700; color:var(--color-text-secondary); text-transform:uppercase;">Branch 1 ($I_1$)</span>
+                  <div id="sim3I1Text" style="font-size:1.5rem; font-weight:800; color:var(--color-accent);">2.00 A</div>
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; font-weight:700; color:var(--color-text-secondary); text-transform:uppercase;">Branch 2 ($I_2$)</span>
+                  <div id="sim3I2Text" style="font-size:1.5rem; font-weight:800; color:var(--color-primary);">1.00 A</div>
+                </div>
+                <div>
+                  <span style="font-size:0.75rem; font-weight:700; color:var(--color-text-secondary); text-transform:uppercase;">Source ($I_{\text{total}}$)</span>
+                  <div id="sim3ItotalText" style="font-size:1.5rem; font-weight:800; color:var(--color-success);">3.00 A</div>
+                </div>
+              </div>
+
+              <div class="formula-card">
+                <div class="formula-title">Live KCL &amp; KVL Verification</div>
+                <div class="formula-body" id="sim3Breakdown" style="font-size:0.9rem; font-weight:normal; line-height:1.6;">
+                  • KCL: $3.00\,\text{A} = 2.00\,\text{A} + 1.00\,\text{A}$<br>
+                  • KVL Loop 1: $12\,\text{V} - (2.00 \times 6) = 0\,\text{V}$<br>
+                  • KVL Loop 2: $12\,\text{V} - (1.00 \times 12) = 0\,\text{V}$
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 14 ================= -->
+      <div class="slide" data-slide="14"
+           data-speaker-script="Segment 5: Competition Station! Here are 3 multi-step Science Olympiad challenge problems. Have students work independently or in pairs for 10 minutes before revealing step solutions!"
+           data-speaker-actions="Circulate around the room to assist students during the 10-minute competition station sprint.">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 5 • 50:00 - 60:00</span>
+          <h2 class="slide-title">5. Competition Illustrated Practice Station</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="grid-3-col">
+            
+            <!-- Challenge 1 -->
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:0.8rem;">
+              <div class="problem-badge" style="align-self:flex-start;">Challenge #1</div>
+              <h4 style="color:#fff; font-size:1rem;">Mixed R &amp; C Network</h4>
+              <p style="font-size:0.85rem; color:var(--color-text-secondary);">Two 40µF capacitors are in parallel, connected in series with a 20µF capacitor across 10V.</p>
+              <button class="btn-reveal-solution" style="font-size:0.8rem; padding:0.5rem 0.8rem;" onclick="toggleSolution('cs1')">Show Solution</button>
+              <div class="solution-box" id="cs1">
+                <div style="font-size:0.82rem; color:#fff; line-height:1.5;">
+                  Parallel: $40+40=80\,\mu\text{F}$<br>
+                  Series: $\frac{80 \times 20}{80 + 20} = \mathbf{16\,\mu\text{F}}$<br>
+                  Charge: $16\,\mu\text{F} \times 10\,\text{V} = \mathbf{160\,\mu\text{C}}$
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge 2 -->
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:0.8rem;">
+              <div class="problem-badge" style="align-self:flex-start; background:rgba(168,85,247,0.15); color:var(--color-accent);">Challenge #2</div>
+              <h4 style="color:#fff; font-size:1rem;">Power Ratio Comparison</h4>
+              <p style="font-size:0.85rem; color:var(--color-text-secondary);">Resistor A (10Ω) and Resistor B (20Ω) are connected in PARALLEL. Which dissipates more power?</p>
+              <button class="btn-reveal-solution" style="font-size:0.8rem; padding:0.5rem 0.8rem;" onclick="toggleSolution('cs2')">Show Solution</button>
+              <div class="solution-box" id="cs2">
+                <div style="font-size:0.82rem; color:#fff; line-height:1.5;">
+                  In parallel, $V$ is equal.<br>
+                  $P = \frac{V^2}{R} \implies$ Smaller $R$ dissipates MORE power!<br>
+                  <strong>Resistor A dissipates 2x more power.</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge 3 -->
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:0.8rem;">
+              <div class="problem-badge" style="align-self:flex-start; background:rgba(16,185,129,0.15); color:var(--color-success);">Challenge #3</div>
+              <h4 style="color:#fff; font-size:1rem;">KCL Mystery Branch</h4>
+              <p style="font-size:0.85rem; color:var(--color-text-secondary);">Node X has 12A entering from source. Branch 1 takes 4A, Branch 2 takes 5A. Find Branch 3 current.</p>
+              <button class="btn-reveal-solution" style="font-size:0.8rem; padding:0.5rem 0.8rem;" onclick="toggleSolution('cs3')">Show Solution</button>
+              <div class="solution-box" id="cs3">
+                <div style="font-size:0.82rem; color:#fff; line-height:1.5;">
+                  $\sum I_{\text{in}} = \sum I_{\text{out}}$<br>
+                  $12\,\text{A} = 4\,\text{A} + 5\,\text{A} + I_3$<br>
+                  $\mathbf{I_3 = 3.0\,\text{Amperes}}$.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 15 ================= -->
+      <div class="slide" data-slide="15"
+           data-speaker-script="Segment 6: Live Kahoot! Quiz. Let's test our speed and knowledge under timed competition rules!"
+           data-speaker-actions="Run through the 10 interactive questions with the class. Award points for top speed and accuracy!">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Segment 6 • 60:00 - 70:00</span>
+          <h2 class="slide-title">6. Live Kahoot! Master Review Quiz</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="quiz-container glass-panel">
+            
+            <div class="quiz-header">
+              <div class="quiz-score" id="quizScoreText">Score: 0 / 10</div>
+              <div class="quiz-timer" id="quizTimerText">⏱️ Question 1 of 10</div>
+            </div>
+
+            <div class="quiz-question-box" id="quizQuestionBox">
+              Two 100-ohm resistors are connected in parallel. What is their total equivalent resistance?
+            </div>
+
+            <div class="quiz-options-grid" id="quizOptionsGrid">
+              <!-- Options populated via JS -->
+            </div>
+
+            <div class="alert-box alert-info" id="quizExplanationBox" style="display:none;">
+              <span>💡</span>
+              <div id="quizExplanationText">Explanation details...</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 16 ================= -->
+      <div class="slide" data-slide="16"
+           data-speaker-script="Fantastic work today team! Here is the Kahoot import table and direct CSV export link for Class 7. You have mastered Series/Parallel R & C, Power Equations, and Kirchhoff's Laws!"
+           data-speaker-actions="Encourage students for their hard work. Provide the CSV download link for teacher Kahoot host setup.">
+        
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class 7 Wrap-Up • Teacher Export</span>
+          <h2 class="slide-title">Kahoot! Quiz Import Table &amp; CSV Export</h2>
+        </div>
+
+        <div class="slide-content">
+          <div class="split-layout-wide-left">
+            
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1rem; overflow-y:auto;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="color:var(--color-primary); font-size:1.1rem;">📋 Kahoot Spreadsheet Import Table</h3>
+                <div style="display:flex; gap:0.5rem;">
+                  <a href="kahoot_quiz_class7.xlsx" download class="btn-nav primary" style="text-decoration:none; padding:0.4rem 0.8rem; font-size:0.8rem;">
+                    📊 Download Excel (.xlsx)
+                  </a>
+                  <a href="kahoot_quiz_class7.csv" download class="btn-nav" style="text-decoration:none; padding:0.4rem 0.8rem; font-size:0.8rem;">
+                    ⬇️ CSV
+                  </a>
+                </div>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:0.78rem; text-align:left; color:var(--color-text-secondary);">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--color-border); color:var(--color-primary);">
+                    <th style="padding:0.4rem;">Question</th>
+                    <th style="padding:0.4rem;">Ans 1 (Correct)</th>
+                    <th style="padding:0.4rem;">Ans 2</th>
+                    <th style="padding:0.4rem;">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:0.4rem; color:#fff;">Two 100Ω resistors in parallel?</td>
+                    <td style="padding:0.4rem; color:var(--color-success);">50 Ω</td>
+                    <td style="padding:0.4rem;">200 Ω</td>
+                    <td style="padding:0.4rem;">30s</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:0.4rem; color:#fff;">Three 30µF capacitors in parallel?</td>
+                    <td style="padding:0.4rem; color:var(--color-success);">90 µF</td>
+                    <td style="padding:0.4rem;">10 µF</td>
+                    <td style="padding:0.4rem;">30s</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:0.4rem; color:#fff;">12V across 4Ω resistor power?</td>
+                    <td style="padding:0.4rem; color:var(--color-success);">36 Watts</td>
+                    <td style="padding:0.4rem;">48 Watts</td>
+                    <td style="padding:0.4rem;">30s</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:0.4rem; color:#fff;">Physical law behind KCL?</td>
+                    <td style="padding:0.4rem; color:var(--color-success);">Conservation of Charge</td>
+                    <td style="padding:0.4rem;">Energy</td>
+                    <td style="padding:0.4rem;">20s</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td style="padding:0.4rem; color:#fff;">Physical law behind KVL?</td>
+                    <td style="padding:0.4rem; color:var(--color-success);">Conservation of Energy</td>
+                    <td style="padding:0.4rem;">Charge</td>
+                    <td style="padding:0.4rem;">20s</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.2rem; justify-content:center;">
+              <div class="alert-box alert-success">
+                <span>🏆</span>
+                <div>
+                  <strong>70-Minute Master Review Complete!</strong><br>
+                  Students are now prepared for competition-level circuit analysis.
+                </div>
+              </div>
+
+              <a href="index.html" class="btn-nav primary" style="text-decoration:none; justify-content:center; padding:0.9rem;">
+                🚀 Return to Class Dashboard
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PRESENTER SIDEBAR -->
+    <div class="presenter-panel" id="presenterPanel">
+      <div class="presenter-header">
+        <span>🎙️ Presenter Console</span>
+      </div>
+      <div class="presenter-body">
+        <div>
+          <div style="font-size:0.75rem; font-weight:700; color:var(--color-primary); text-transform:uppercase; margin-bottom:0.4rem;">Teacher Narrative Script</div>
+          <div class="speaker-script-box" id="speakerScriptText">
+            Welcome to Class 7! Presenter script content loaded dynamically...
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:0.75rem; font-weight:700; color:var(--color-accent); text-transform:uppercase; margin-bottom:0.4rem;">Recommended Action Hook</div>
+          <div class="speaker-actions-box" id="speakerActionsText">
+            Engage class with enthusiastic welcome!
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER NAVBAR -->
+  <footer>
+    <div class="slide-counter" id="slideCounter">Slide 1 of 16</div>
+
+    <div class="nav-buttons">
+      <button class="btn-nav" id="btnPrev" onclick="navigateSlide(-1)">← Previous</button>
+      <button class="btn-nav primary" id="btnNext" onclick="navigateSlide(1)">Next Slide →</button>
+    </div>
+  </footer>
+
+  <!-- INTERACTIVE APPLICATION SCRIPT -->
+  <script>
+    /* ==========================================
+       State & Navigation Variables
+       ========================================== */
+    let currentSlideIndex = 1;
+    const totalSlides = 16;
+    let isPresenterMode = false;
+
+    // DOM Element References
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const presenterPanel = document.getElementById('presenterPanel');
+    const btnTogglePresenter = document.getElementById('btnTogglePresenter');
+    const speakerScriptText = document.getElementById('speakerScriptText');
+    const speakerActionsText = document.getElementById('speakerActionsText');
+
+    /* Initialize Presentation */
+    function initPresentation() {
+      updateSlideDisplay();
+
+      // Keyboard Controls
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          navigateSlide(1);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          navigateSlide(-1);
+        } else if (e.key === 'p' || e.key === 'P') {
+          togglePresenterMode();
+        }
+      });
+
+      // Speaker Toggle
+      btnTogglePresenter.addEventListener('click', togglePresenterMode);
+
+      // Run initial simulator updates
+      updateSim1();
+      updateSim2();
+      updateSim3();
+      initQuiz();
+    }
+
+    function navigateSlide(direction) {
+      const targetIndex = currentSlideIndex + direction;
+      if (targetIndex >= 1 && targetIndex <= totalSlides) {
+        currentSlideIndex = targetIndex;
+        updateSlideDisplay();
+      }
+    }
+
+    function updateSlideDisplay() {
+      slides.forEach((slide) => {
+        slide.classList.remove('active');
+        if (parseInt(slide.getAttribute('data-slide')) === currentSlideIndex) {
+          slide.classList.add('active');
+          
+          // Update Presenter Notes
+          const script = slide.getAttribute('data-speaker-script') || "No notes for this slide.";
+          const actions = slide.getAttribute('data-speaker-actions') || "Proceed through slide content.";
+          speakerScriptText.textContent = script;
+          speakerActionsText.textContent = actions;
+        }
+      });
+
+      // UI Indicators
+      slideCounter.textContent = `Slide ${currentSlideIndex} of ${totalSlides}`;
+      progressBar.style.width = `${((currentSlideIndex - 1) / (totalSlides - 1)) * 100}%`;
+
+      btnPrev.disabled = (currentSlideIndex === 1);
+      btnNext.disabled = (currentSlideIndex === totalSlides);
+
+      // MathJax Re-typeset
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    function togglePresenterMode() {
+      isPresenterMode = !isPresenterMode;
+      presenterPanel.classList.toggle('active', isPresenterMode);
+      btnTogglePresenter.classList.toggle('active', isPresenterMode);
+    }
+
+    function toggleSolution(id) {
+      const box = document.getElementById(id);
+      if (box) {
+        box.classList.toggle('active');
+      }
+    }
+
+    /* ==========================================
+       Sim 1: R & C Calculator Sandbox
+       ========================================== */
+    function updateSim1() {
+      const mode = document.getElementById('sim1Mode').value;
+      const topology = document.getElementById('sim1Topology').value;
+      const val1 = parseFloat(document.getElementById('sim1Val1').value);
+      const val2 = parseFloat(document.getElementById('sim1Val2').value);
+
+      document.getElementById('sim1Val1Text').textContent = val1;
+      document.getElementById('sim1Val2Text').textContent = val2;
+
+      let eq = 0;
+      let unit = (mode === 'R') ? 'Ω' : 'µF';
+      let title = (mode === 'R') ? 'Resistor Equivalent' : 'Capacitor Equivalent';
+      let formulaText = "";
+
+      if (mode === 'R') {
+        if (topology === 'series') {
+          eq = val1 + val2;
+          formulaText = `Series Resistors ADD directly:<br>$R_{\\text{eq}} = ${val1} + ${val2} = \\mathbf{${eq.toFixed(1)}\\,\\Omega}$`;
+        } else {
+          eq = (val1 * val2) / (val1 + val2);
+          formulaText = `Parallel Shortcut Formula:<br>$R_{\\text{eq}} = \\frac{${val1} \\times ${val2}}{${val1} + ${val2}} = \\frac{${val1*val2}}{${val1+val2}} = \\mathbf{${eq.toFixed(1)}\\,\\Omega}$`;
+        }
+      } else {
+        // Capacitors
+        if (topology === 'series') {
+          eq = (val1 * val2) / (val1 + val2);
+          formulaText = `Series Capacitors (Reciprocal Shortcut):<br>$C_{\\text{eq}} = \\frac{${val1} \\times ${val2}}{${val1} + ${val2}} = \\mathbf{${eq.toFixed(1)}\\,\\mu\\text{F}}$`;
+        } else {
+          eq = val1 + val2;
+          formulaText = `Parallel Capacitors ADD directly (Area increases):<br>$C_{\\text{eq}} = ${val1} + ${val2} = \\mathbf{${eq.toFixed(1)}\\,\\mu\\text{F}}$`;
+        }
+      }
+
+      document.getElementById('sim1Result').textContent = `${eq.toFixed(1)} ${unit}`;
+      document.getElementById('sim1FormulaTitle').textContent = `${title} (${topology.toUpperCase()})`;
+      document.getElementById('sim1FormulaBody').innerHTML = formulaText;
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    /* ==========================================
+       Sim 2: Power & Thermal Safety Simulator
+       ========================================== */
+    function updateSim2() {
+      const V = parseFloat(document.getElementById('sim2V').value);
+      const R = parseFloat(document.getElementById('sim2R').value);
+      const rating = parseFloat(document.getElementById('sim2Rating').value);
+
+      document.getElementById('sim2VText').textContent = `${V.toFixed(1)} V`;
+      document.getElementById('sim2RText').textContent = `${R} Ω`;
+
+      const I_amps = V / R;
+      const I_mA = I_amps * 1000;
+      const P_watts = (V * V) / R;
+
+      document.getElementById('sim2IText').textContent = `${I_mA.toFixed(1)} mA`;
+      document.getElementById('sim2PText').textContent = `${P_watts.toFixed(3)} W`;
+
+      const ratio = (P_watts / rating) * 100;
+      document.getElementById('sim2HeatPercent').textContent = `${Math.min(ratio, 200).toFixed(0)}% limit`;
+      document.getElementById('sim2HeatBar').style.width = `${Math.min(ratio, 100)}%`;
+
+      const statusBox = document.getElementById('sim2StatusBox');
+      const statusMsg = document.getElementById('sim2StatusMsg');
+
+      if (P_watts > rating) {
+        statusBox.className = 'alert-box alert-danger';
+        statusMsg.innerHTML = `<strong>🚨 THERMAL OVERLOAD BURN OUT!</strong><br>Dissipated power (${P_watts.toFixed(3)}W) exceeds component rating (${rating}W). Resistor will overheat and burn!`;
+      } else {
+        statusBox.className = 'alert-box alert-success';
+        statusMsg.innerHTML = `<strong>🟢 SAFE OPERATING RANGE:</strong><br>Dissipated power (${P_watts.toFixed(3)}W) is within safe limits for a ${rating}W resistor.`;
+      }
+    }
+
+    /* ==========================================
+       Sim 3: KCL & KVL Loop Solver
+       ========================================== */
+    function updateSim3() {
+      const Vs = parseFloat(document.getElementById('sim3V').value);
+      const R1 = parseFloat(document.getElementById('sim3R1').value);
+      const R2 = parseFloat(document.getElementById('sim3R2').value);
+
+      document.getElementById('sim3VText').textContent = `${Vs} V`;
+      document.getElementById('sim3R1Text').textContent = `${R1} Ω`;
+      document.getElementById('sim3R2Text').textContent = `${R2} Ω`;
+
+      const I1 = Vs / R1;
+      const I2 = Vs / R2;
+      const Itotal = I1 + I2;
+
+      document.getElementById('sim3I1Text').textContent = `${I1.toFixed(2)} A`;
+      document.getElementById('sim3I2Text').textContent = `${I2.toFixed(2)} A`;
+      document.getElementById('sim3ItotalText').textContent = `${Itotal.toFixed(2)} A`;
+
+      document.getElementById('sim3Breakdown').innerHTML = 
+        `• <strong>KCL Node A:</strong> $I_{\\text{total}} = I_1 + I_2 \\implies ${Itotal.toFixed(2)}\\text{A} = ${I1.toFixed(2)}\\text{A} + ${I2.toFixed(2)}\\text{A}$<br>` +
+        `• <strong>KVL Branch 1:</strong> $${Vs}\\text{V} - (${I1.toFixed(2)} \\times ${R1}) = 0\\text{V}$<br>` +
+        `• <strong>KVL Branch 2:</strong> $${Vs}\\text{V} - (${I2.toFixed(2)} \\times ${R2}) = 0\\text{V}$`;
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    /* ==========================================
+       Interactive Kahoot Quiz Engine
+       ========================================== */
+    const quizQuestions = [
+      {
+        q: "Two 100-ohm resistors are connected in parallel. What is their total equivalent resistance?",
+        opts: ["50 ohms", "200 ohms", "100 ohms", "25 ohms"],
+        ans: 0,
+        exp: "Parallel shortcut for equal resistors: R_eq = R / N = 100 / 2 = 50 ohms!"
+      },
+      {
+        q: "Three 30-microfarad capacitors are connected in PARALLEL. What is the total equivalent capacitance?",
+        opts: ["90 microfarads", "10 microfarads", "30 microfarads", "60 microfarads"],
+        ans: 0,
+        exp: "Capacitors in parallel ADD directly because plate area increases: 30 + 30 + 30 = 90 uF!"
+      },
+      {
+        q: "A 12V power supply is connected across a 4-ohm resistor. How much electrical power is dissipated?",
+        opts: ["36 Watts", "48 Watts", "16 Watts", "3 Watts"],
+        ans: 0,
+        exp: "P = V^2 / R = 12^2 / 4 = 144 / 4 = 36 Watts!"
+      },
+      {
+        q: "What fundamental physical law forms the basis for Kirchhoff's Current Law (KCL)?",
+        opts: ["Conservation of Charge", "Conservation of Energy", "Ohm's Law", "Faraday's Law"],
+        ans: 0,
+        exp: "KCL states charge cannot be created or destroyed at a junction (Conservation of Charge)."
+      },
+      {
+        q: "What fundamental physical law forms the basis for Kirchhoff's Voltage Law (KVL)?",
+        opts: ["Conservation of Energy", "Conservation of Charge", "Lenz's Law", "Newton's Second Law"],
+        ans: 0,
+        exp: "KVL states potential energy gains and drops around any closed loop sum to zero (Conservation of Energy)."
+      },
+      {
+        q: "If three equal 60-ohm resistors are connected in parallel, what is their total equivalent resistance?",
+        opts: ["20 ohms", "180 ohms", "60 ohms", "30 ohms"],
+        ans: 0,
+        exp: "Equal parallel resistors: R_eq = R / N = 60 / 3 = 20 ohms!"
+      },
+      {
+        q: "Two 20-microfarad capacitors are connected in SERIES. What is their total equivalent capacitance?",
+        opts: ["10 microfarads", "40 microfarads", "20 microfarads", "5 microfarads"],
+        ans: 0,
+        exp: "Equal series capacitors: C_eq = C / N = 20 / 2 = 10 uF!"
+      },
+      {
+        q: "If current through a resistor doubles while resistance stays constant, how does power dissipation change?",
+        opts: ["Power quadruples (4x)", "Power doubles (2x)", "Power stays the same", "Power cuts in half"],
+        ans: 0,
+        exp: "P = I^2 * R. Doubling current (2I)^2 = 4 * I^2, so power quadruples (4x)!"
+      },
+      {
+        q: "At a node junction, 5A enters from Branch A and 3A enters from Branch B. How much current MUST leave through Branch C?",
+        opts: ["8 Amperes", "2 Amperes", "15 Amperes", "0.6 Amperes"],
+        ans: 0,
+        exp: "KCL: Current IN = Current OUT. 5A + 3A = 8A leaving!"
+      },
+      {
+        q: "A 1/4-Watt (0.25W) resistor has 10V across it. What is the MINIMUM resistance needed to avoid burning it out?",
+        opts: ["400 ohms", "25 ohms", "100 ohms", "2.5 ohms"],
+        ans: 0,
+        exp: "P = V^2 / R => R = V^2 / P = 10^2 / 0.25 = 100 / 0.25 = 400 ohms!"
+      }
+    ];
+
+    let currentQIdx = 0;
+    let quizScore = 0;
+    let answered = false;
+
+    function initQuiz() {
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      answered = false;
+      const qData = quizQuestions[currentQIdx];
+      
+      document.getElementById('quizScoreText').textContent = `Score: ${quizScore} / ${quizQuestions.length}`;
+      document.getElementById('quizTimerText').textContent = `⏱️ Question ${currentQIdx + 1} of ${quizQuestions.length}`;
+      document.getElementById('quizQuestionBox').textContent = qData.q;
+      
+      const grid = document.getElementById('quizOptionsGrid');
+      grid.innerHTML = '';
+
+      qData.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.innerHTML = `<span style="color:var(--color-primary); font-weight:800;">${String.fromCharCode(65 + idx)}.</span> ${opt}`;
+        btn.onclick = () => checkAnswer(idx);
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('quizExplanationBox').style.display = 'none';
+    }
+
+    function checkAnswer(selectedIdx) {
+      if (answered) return;
+      answered = true;
+
+      const qData = quizQuestions[currentQIdx];
+      const buttons = document.querySelectorAll('.quiz-opt-btn');
+
+      if (selectedIdx === qData.ans) {
+        quizScore++;
+        buttons[selectedIdx].classList.add('correct');
+      } else {
+        buttons[selectedIdx].classList.add('wrong');
+        buttons[qData.ans].classList.add('correct');
+      }
+
+      buttons.forEach(btn => btn.disabled = true);
+
+      document.getElementById('quizScoreText').textContent = `Score: ${quizScore} / ${quizQuestions.length}`;
+      document.getElementById('quizExplanationText').textContent = qData.exp;
+      document.getElementById('quizExplanationBox').style.display = 'flex';
+
+      setTimeout(() => {
+        if (currentQIdx < quizQuestions.length - 1) {
+          currentQIdx++;
+          loadQuestion();
+        }
+      }, 3500);
+    }
+
+    /* Run Setup on Load */
+    window.addEventListener('DOMContentLoaded', initPresentation);
+  </script>
+</body>
+</html>

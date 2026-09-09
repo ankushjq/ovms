@@ -1,0 +1,3275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Olympiad Circuit Lab - Class 2: Logic & Electromagnetism</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for rendering LaTeX formulas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    /* ==========================================
+       Design System & Core Variables
+       ========================================== */
+    :root {
+      --color-bg: #0b0f19;
+      --color-surface: #131a2c;
+      --color-surface-hover: #1e2942;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-text-primary: #f3f4f6;
+      --color-text-secondary: #9ca3af;
+      
+      /* Neon Electric Theme Colors */
+      --color-primary: hsl(195, 100%, 50%); /* Electric Blue */
+      --color-accent: hsl(280, 100%, 65%);  /* Neon Purple */
+      --color-success: hsl(145, 100%, 45%); /* Neon Green */
+      --color-warning: hsl(35, 100%, 50%);  /* Neon Amber */
+      --color-danger: hsl(0, 100%, 60%);    /* Neon Red */
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      
+      --transition-speed: 0.3s;
+      --border-radius: 16px;
+      --shadow-neon: 0 0 20px rgba(0, 210, 255, 0.2);
+      --shadow-accent: 0 0 20px rgba(176, 38, 255, 0.2);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      outline: none;
+      color: inherit;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* ==========================================
+       Layout Structure
+       ========================================== */
+    header {
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.6));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .class-switcher-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border: 1px dashed var(--color-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .class-switcher-link:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(0, 210, 255, 0.05);
+    }
+
+    /* Progress bar */
+    .progress-container {
+      width: 250px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    }
+
+    /* Presenter Mode Toggle Button */
+    .btn-toggle-presenter {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-toggle-presenter:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.25);
+    }
+
+    .btn-toggle-presenter.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Main Workspace Split */
+    .main-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Slide Deck Panel */
+    .slide-deck {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #111827 0%, #070a12 100%);
+      overflow-y: auto;
+      padding: 2rem;
+      transition: flex-basis 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Slide Layouts */
+    .slide {
+      display: none;
+      flex-direction: column;
+      margin: auto;
+      width: 100%;
+      max-width: 1380px;
+      min-height: 640px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-title-wrapper {
+      margin-bottom: 2rem;
+    }
+
+    .slide-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-accent);
+      margin-bottom: 0.25rem;
+      display: inline-block;
+    }
+
+    .slide-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Presenter Notes Panel */
+    .presenter-panel {
+      width: 0%;
+      background: #0f1422;
+      border-left: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .presenter-panel.active {
+      width: 360px;
+    }
+
+    .presenter-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .presenter-header h3 {
+      font-size: 1.1rem;
+      color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presenter-body {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .script-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+    }
+
+    .script-section h4 {
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .script-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-text-primary);
+      font-style: italic;
+    }
+
+    .teacher-action-card {
+      background: rgba(0, 210, 255, 0.03);
+      border-left: 4px solid var(--color-primary);
+      padding: 1rem;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+
+    .teacher-action-card h4 {
+      font-size: 0.85rem;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .teacher-action-card p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* Bottom Control Bar */
+    .control-bar {
+      background: rgba(11, 15, 25, 0.9);
+      border-top: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide-indicators {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .indicator-dot.active {
+      background: var(--color-primary);
+      box-shadow: 0 0 8px var(--color-primary);
+      transform: scale(1.2);
+    }
+
+    .navigation-controls {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--color-text-primary);
+      transition: fill 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+    }
+
+    .btn-nav:hover svg {
+      fill: var(--color-primary);
+    }
+
+    .btn-nav:active {
+      transform: scale(0.95);
+    }
+
+    /* ==========================================
+       Specific Components & UI Styling
+       ========================================== */
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(25, 30, 50, 0.45);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .glass-panel:hover {
+      border-color: rgba(0, 210, 255, 0.2);
+    }
+
+    /* Alerts and Traps */
+    .trap-alert {
+      background: rgba(255, 77, 77, 0.05);
+      border: 1px dashed var(--color-danger);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-top: 1rem;
+    }
+
+    .trap-icon {
+      font-size: 1.5rem;
+      color: var(--color-danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    .trap-text h4 {
+      font-size: 0.9rem;
+      color: var(--color-danger);
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    .trap-text p {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Slide-specific Grid Layouts */
+    .split-layout-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .welcome-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .welcome-card-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(176, 38, 255, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-accent);
+      border: 1px solid rgba(176, 38, 255, 0.2);
+    }
+
+    .welcome-card-icon.blue {
+      background: rgba(0, 210, 255, 0.1);
+      color: var(--color-primary);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+
+    .welcome-card-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    /* Quick Ohm's Law Calculator */
+    .quick-calc-box {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(0, 210, 255, 0.02);
+      border: 1px solid rgba(0, 210, 255, 0.1);
+    }
+
+    .calc-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .input-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-field-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-secondary);
+    }
+
+    .input-field-group input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.6rem;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-field-group input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+    }
+
+    .calc-output-btn {
+      margin-top: 0.5rem;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: var(--shadow-neon);
+      transition: all 0.2s ease;
+    }
+
+    .calc-output-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Slide 2 & 3: Logic Gates Grid */
+    .gates-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .gates-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .gate-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      background: rgba(25, 30, 50, 0.3);
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      transition: all 0.2s ease;
+    }
+
+    .gate-card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-4px);
+      background: rgba(25, 30, 50, 0.5);
+    }
+
+    .gate-card.accent:hover {
+      border-color: var(--color-accent);
+    }
+
+    .gate-header-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .gate-title-sub {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+    }
+
+    .gate-svg-icon {
+      width: 70px;
+      height: 40px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 4px;
+    }
+
+    .gate-desc {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Small Truth Tables */
+    .mini-truth-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: auto;
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+    .mini-truth-table th, .mini-truth-table td {
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 4px;
+    }
+
+    .mini-truth-table th {
+      background: rgba(255,255,255,0.03);
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+
+    .mini-truth-table td.out {
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+
+    /* Slide 4: Logic Gates Playground Layout */
+    .logic-playground-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .logic-workbench {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .logic-canvas-container {
+      flex: 1;
+      background: #090c14;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logic-controls-panel {
+      display: flex;
+      gap: 1rem;
+      background: rgba(255,255,255,0.02);
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-logic-input {
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-logic-input.active {
+      background: var(--color-primary);
+      color: #0b0f19;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+      border-color: transparent;
+    }
+
+    .select-logic-gate {
+      padding: 0.5rem 1rem;
+      background: rgba(25, 30, 50, 0.8);
+      border: 1px solid var(--color-primary);
+      border-radius: 20px;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Interactive Truth Table Practice */
+    .truth-practice-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .truth-practice-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .truth-practice-table th, .truth-practice-table td {
+      border: 1px solid var(--color-border);
+      padding: 10px 8px;
+    }
+
+    .truth-practice-table th {
+      background: rgba(255,255,255,0.04);
+      font-family: var(--font-display);
+      color: var(--color-primary);
+    }
+
+    .truth-input-cell {
+      width: 50px;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      color: #fff;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .truth-input-cell:focus {
+      border-color: var(--color-accent);
+    }
+
+    .truth-input-cell.correct {
+      border-color: var(--color-success);
+      background: rgba(0, 255, 100, 0.05);
+      color: var(--color-success);
+    }
+
+    .truth-input-cell.incorrect {
+      border-color: var(--color-danger);
+      background: rgba(255, 0, 0, 0.05);
+      color: var(--color-danger);
+    }
+
+    .truth-feedback-badge {
+      display: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .truth-feedback-badge.success {
+      display: block;
+      background: rgba(0, 255, 100, 0.08);
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
+      box-shadow: 0 0 10px rgba(0, 255, 100, 0.1);
+    }
+
+    /* Slide 5: Magnetism timeline/current flow */
+    .magnetism-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .bar-magnet-canvas {
+      height: 220px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      background: #090c14;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Slide 6: Electromagnet Sandbox layout */
+    .emagnet-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .emagnet-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+
+    .slider-val {
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .slider-input {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+      transition: transform 0.1s ease;
+    }
+
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider-input.accent::-webkit-slider-thumb {
+      background: var(--color-accent);
+      box-shadow: 0 0 8px rgba(176, 38, 255, 0.6);
+    }
+
+    .toggle-core-group {
+      display: flex;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .btn-core-option {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .btn-core-option.active {
+      background: var(--color-primary);
+      color: #0b0f19;
+      font-weight: 700;
+    }
+
+    .paperclip-stats-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: auto;
+    }
+
+    .pclip-stat-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+
+    .pclip-stat-val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: var(--font-display);
+      color: var(--color-success);
+    }
+
+    .pclip-stat-lbl {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* Slide 7: Relay & Safety Layout */
+    .safety-layout-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .relay-workbench {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .relay-canvas-container {
+      flex: 1;
+      background: #090c14;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 250px;
+    }
+
+    .relay-steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .relay-step-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      transition: all 0.3s ease;
+    }
+    .relay-step-item .step-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      font-size: 0.7rem;
+    }
+    .relay-step-item.active {
+      background: rgba(16, 185, 129, 0.06);
+      border-color: var(--color-success);
+      color: #fff;
+    }
+    .relay-step-item.active .step-num {
+      background: var(--color-success);
+      color: #0b0f19;
+    }
+
+    @keyframes flowCurrent {
+      to {
+        stroke-dashoffset: -20;
+      }
+    }
+    .wire-active {
+      stroke-dasharray: 8 6;
+      animation: flowCurrent 1.2s linear infinite;
+    }
+
+    /* Fuse Overload visualizer */
+    .fuse-visualizer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .fuse-canvas {
+      height: 140px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.3);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .appliance-switches {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .btn-appliance {
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      text-align: center;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .btn-appliance:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-appliance.active {
+      border-color: var(--color-warning);
+      background: rgba(255, 170, 0, 0.05);
+    }
+
+    .btn-appliance span.name {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .btn-appliance span.load {
+      font-size: 0.75rem;
+      color: var(--color-warning);
+    }
+
+    .btn-replace-fuse {
+      padding: 0.6rem;
+      border: 1px solid var(--color-primary);
+      border-radius: 20px;
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-align: center;
+      transition: all 0.2s ease;
+      display: none;
+    }
+
+    .btn-replace-fuse:hover {
+      background: rgba(0, 210, 255, 0.05);
+    }
+
+    /* Slide 8: Kahoot Table & Playable Quiz styling */
+    .quiz-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .quiz-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .quiz-question-num {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .quiz-score-val {
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+
+    .quiz-timer-bar-container {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .quiz-timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--color-accent);
+      transition: width 0.1s linear;
+    }
+
+    .quiz-card {
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(19, 26, 44, 0.6);
+    }
+
+    .quiz-question {
+      font-size: 1.25rem;
+      text-align: center;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .quiz-btn-option {
+      padding: 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .quiz-btn-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .quiz-btn-option.correct {
+      background: rgba(0, 255, 100, 0.08) !important;
+      border-color: var(--color-success) !important;
+      color: var(--color-success) !important;
+    }
+
+    .quiz-btn-option.incorrect {
+      background: rgba(255, 0, 0, 0.08) !important;
+      border-color: var(--color-danger) !important;
+      color: var(--color-danger) !important;
+    }
+
+    .quiz-explanation-card {
+      display: none;
+      padding: 1.25rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 210, 255, 0.15);
+      background: rgba(0, 210, 255, 0.02);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .quiz-explanation-card h4 {
+      color: var(--color-primary);
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .quiz-explanation-card p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    .quiz-action-area {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-quiz-next {
+      padding: 0.75rem 1.75rem;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      font-weight: 700;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+      display: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-quiz-next:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+    }
+
+    .quiz-finished-panel {
+      display: none;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 3rem 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .quiz-finished-icon {
+      font-size: 4rem;
+      animation: bounce-win 1s infinite alternate;
+    }
+
+    @keyframes bounce-win {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    .btn-restart-quiz {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      font-weight: 700;
+      border-radius: 30px;
+      margin-top: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-restart-quiz:hover {
+      background: rgba(0, 210, 255, 0.05);
+      box-shadow: 0 0 12px rgba(0,210,255,0.2);
+    }
+
+    /* Base fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       Header
+       ========================================== -->
+  <header>
+    <a href="index.html" class="brand">
+      <!-- Lightning bolt logo -->
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 14h9v8l10-12h-9z"/>
+      </svg>
+      <span class="brand-title">CIRCUIT LAB ⚡ DIV B</span>
+    </a>
+    
+    <div class="header-actions">
+      <a href="class1.html" class="class-switcher-link">Class 1</a>
+      <a href="class3.html" class="class-switcher-link">Class 3</a>
+      <a href="class4.html" class="class-switcher-link">Class 4</a>
+      <div class="progress-container" title="Course Progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <button class="btn-toggle-presenter" id="presenterToggleBtn" onclick="togglePresenterMode()">
+        <!-- Panel icon -->
+        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Panel</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       Main Workspace
+       ========================================== -->
+  <div class="main-workspace">
+    
+    <!-- Slide Deck Container -->
+    <div class="slide-deck" id="slideDeck">
+
+      <!-- SLIDE 1: Welcome & Retrieval (Ohm's Law Recall) -->
+      <div class="slide active" id="slide1">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class 2: Welcome</span>
+          <h2 class="slide-title">Gearing Up: Logic Gates & Electromagnetism</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            <div>
+              <div class="glass-panel" style="background: linear-gradient(135deg, rgba(176, 38, 255, 0.05), rgba(0, 210, 255, 0.05));">
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--color-accent);">Class 2 Core Goals ⚡</h3>
+                <p style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary);">
+                  Welcome back, future Circuit champions! Since we are online today, we will utilize interactive visual simulators directly in the slides. Today we introduce two massive, point-heavy components of Science Olympiad exams:
+                </p>
+              </div>
+              
+              <div class="welcome-grid">
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                  </div>
+                  <h4 style="font-size: 0.95rem;">Binary Logic</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Learn how AND, OR, NAND, NOR, and XOR gates process electrical 1s and 0s.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon blue">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                  </div>
+                  <h4 style="font-size: 0.95rem;">Electromagnets</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">See how electric current generates physical magnetism and operates mechanical relays.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.2 1.8 4 4 4h1.7c.8 1.6 2.2 2.8 3.9 3.2V21H8v2h8v-2h-3.6v-3.8c1.7-.4 3.1-1.6 3.9-3.2H19c2.2 0 4-1.8 4-4V7c0-1.1-.9-2-2-2zm-12 5H5V7h2v3zm12 0h-2V7h2v3z"/></svg>
+                  </div>
+                  <h4 style="font-size: 0.95rem;">Safety Devices</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Understand fuses, breakers, and GFCIs, and how they protect sensitive components.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Recall Quiz Box -->
+            <div class="glass-panel quick-calc-box">
+              <h3 style="font-size: 1.1rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Ohm's Law Retrieval Tool</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary);">Recap: Let's calculate the current (in mA) of a circuit with a given Voltage and Resistance. Remember the mA trap!</p>
+              
+              <div class="calc-inputs">
+                <div class="input-field-group">
+                  <label for="recallV">Voltage (V)</label>
+                  <input type="number" id="recallV" value="9" min="0" step="0.5">
+                </div>
+                <div class="input-field-group">
+                  <label for="recallR">Resistance (Ω)</label>
+                  <input type="number" id="recallR" value="150" min="1">
+                </div>
+              </div>
+              
+              <button class="calc-output-btn" onclick="calculateRecallCurrent()">Calculate Current (I)</button>
+              
+              <div id="recallResult" style="margin-top: 0.5rem; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--color-success);">
+                Current = 60 mA
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Basic Logic Gates (AND, OR, NOT) -->
+      <div class="slide" id="slide2">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Logic Gates</span>
+          <h2 class="slide-title">The Decision Makers: AND, OR, NOT</h2>
+        </div>
+        <div class="slide-content">
+          <p style="font-size: 0.95rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
+            Logic gates are the fundamental building blocks of digital electronics. They act like smart switches, taking high voltage (1) or low voltage (0) inputs and returning an output based on strict logical rules.
+          </p>
+          
+          <div class="gates-grid-3">
+            
+            <!-- AND Gate -->
+            <div class="gate-card">
+              <div class="gate-header-display">
+                <h3 style="color: var(--color-primary);">AND Gate</h3>
+                <span class="gate-title-sub">Multiplication</span>
+              </div>
+              <!-- SVG AND gate -->
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <path d="M 20 15 L 45 15 A 10 10 0 0 1 45 35 L 20 35 Z" fill="none" stroke="var(--color-primary)" stroke-width="2.5"/>
+                <line x1="10" y1="20" x2="20" y2="20" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="30" x2="20" y2="30" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="55" y1="25" x2="70" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc">Outputs <strong>1</strong> ONLY when <strong>both</strong> inputs are 1. Think of two switches placed in a series sequence.</p>
+              <table class="mini-truth-table">
+                <thead>
+                  <tr><th>A</th><th>B</th><th>Out</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td class="out">0</td></tr>
+                  <tr><td>1</td><td>0</td><td class="out">0</td></tr>
+                  <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+                  <tr><td>1</td><td>1</td><td class="out">1</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- OR Gate -->
+            <div class="gate-card">
+              <div class="gate-header-display">
+                <h3 style="color: var(--color-primary);">OR Gate</h3>
+                <span class="gate-title-sub">Addition</span>
+              </div>
+              <!-- SVG OR gate -->
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <path d="M 20 12 C 28 12 35 15 40 15 C 47 15 54 22 57 25 C 54 28 47 35 40 35 C 35 35 28 38 20 38 C 24 30 24 20 20 12 Z" fill="none" stroke="var(--color-primary)" stroke-width="2.5"/>
+                <line x1="10" y1="20" x2="21" y2="20" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="30" x2="21" y2="30" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="57" y1="25" x2="70" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc">Outputs <strong>1</strong> when <strong>any</strong> input is 1. Think of two switches placed in parallel branches.</p>
+              <table class="mini-truth-table">
+                <thead>
+                  <tr><th>A</th><th>B</th><th>Out</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td class="out">0</td></tr>
+                  <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+                  <tr><td>0</td><td>1</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td>1</td><td class="out">1</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- NOT Gate -->
+            <div class="gate-card">
+              <div class="gate-header-display">
+                <h3 style="color: var(--color-primary);">NOT Gate</h3>
+                <span class="gate-title-sub">Inverter</span>
+              </div>
+              <!-- SVG NOT gate -->
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <polygon points="30,15 55,25 30,35" fill="none" stroke="var(--color-primary)" stroke-width="2.5"/>
+                <circle cx="58" cy="25" r="3.5" fill="none" stroke="var(--color-primary)" stroke-width="2"/>
+                <line x1="15" y1="25" x2="30" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="62" y1="25" x2="75" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc">Outputs the <strong>opposite</strong> of the input. Flips a 1 into a 0, and a 0 into a 1. Only has a single input!</p>
+              <table class="mini-truth-table">
+                <thead>
+                  <tr><th>In</th><th>Out</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>0</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td class="out">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Advanced Logic Gates (NAND, NOR, XOR, XNOR) -->
+      <div class="slide" id="slide3">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Logic Gates</span>
+          <h2 class="slide-title">Advanced Logic Gates: NAND, NOR, XOR, XNOR</h2>
+        </div>
+        <div class="slide-content">
+          <p style="font-size: 0.95rem; color: var(--color-text-secondary); margin-bottom: 0.25rem;">
+            Olympiad exams test gates that have inverted outputs (marked by an inversion bubble circle) or exclusive operations (marked by an extra curved back wall).
+          </p>
+          
+          <div class="gates-grid-4">
+            
+            <!-- NAND Gate -->
+            <div class="gate-card accent">
+              <div class="gate-header-display">
+                <h4 style="color: var(--color-accent); font-size: 0.95rem;">NAND Gate</h4>
+                <span class="gate-title-sub" style="font-size: 0.65rem;">NOT AND</span>
+              </div>
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <path d="M 20 15 L 45 15 A 10 10 0 0 1 45 35 L 20 35 Z" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+                <circle cx="58" cy="25" r="3.5" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+                <line x1="10" y1="20" x2="20" y2="20" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="30" x2="20" y2="30" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="62" y1="25" x2="72" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc" style="font-size: 0.75rem;">Opposite of AND. Outputs a 0 ONLY when both inputs are 1.</p>
+              <table class="mini-truth-table" style="font-size: 0.7rem;">
+                <thead><tr><th>A</th><th>B</th><th>Out</th></tr></thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+                  <tr><td>0</td><td>1</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td>1</td><td class="out">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- NOR Gate -->
+            <div class="gate-card accent">
+              <div class="gate-header-display">
+                <h4 style="color: var(--color-accent); font-size: 0.95rem;">NOR Gate</h4>
+                <span class="gate-title-sub" style="font-size: 0.65rem;">NOT OR</span>
+              </div>
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <path d="M 20 12 C 28 12 35 15 40 15 C 47 15 54 22 57 25 C 54 28 47 35 40 35 C 35 35 28 38 20 38 C 24 30 24 20 20 12 Z" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+                <circle cx="60.5" cy="25" r="3.5" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+                <line x1="10" y1="20" x2="21" y2="20" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="30" x2="21" y2="30" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="64" y1="25" x2="74" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc" style="font-size: 0.75rem;">Opposite of OR. Outputs a 1 ONLY when both inputs are 0.</p>
+              <table class="mini-truth-table" style="font-size: 0.7rem;">
+                <thead><tr><th>A</th><th>B</th><th>Out</th></tr></thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td>0</td><td class="out">0</td></tr>
+                  <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+                  <tr><td>1</td><td>1</td><td class="out">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- XOR Gate -->
+            <div class="gate-card accent">
+              <div class="gate-header-display">
+                <h4 style="color: var(--color-accent); font-size: 0.95rem;">XOR Gate</h4>
+                <span class="gate-title-sub" style="font-size: 0.65rem;">Exclusive OR</span>
+              </div>
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <path d="M 23 12 C 31 12 38 15 43 15 C 50 15 57 22 60 25 C 57 28 50 35 43 35 C 38 35 31 38 23 38 C 27 30 27 20 23 12 Z" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+                <path d="M 18 12 C 22 20 22 30 18 38" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+                <line x1="10" y1="20" x2="22" y2="20" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="30" x2="22" y2="30" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="60" y1="25" x2="72" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc" style="font-size: 0.75rem;">Strictly different. Outputs 1 if inputs are different (e.g. 1 & 0).</p>
+              <table class="mini-truth-table" style="font-size: 0.7rem;">
+                <thead><tr><th>A</th><th>B</th><th>Out</th></tr></thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td class="out">0</td></tr>
+                  <tr><td>1</td><td>0</td><td class="out">1</td></tr>
+                  <tr><td>0</td><td>1</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td>1</td><td class="out">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- XNOR Gate -->
+            <div class="gate-card accent">
+              <div class="gate-header-display">
+                <h4 style="color: var(--color-accent); font-size: 0.95rem;">XNOR Gate</h4>
+                <span class="gate-title-sub" style="font-size: 0.65rem;">Exclusive NOR</span>
+              </div>
+              <svg class="gate-svg-icon" viewBox="0 0 100 50">
+                <path d="M 23 12 C 31 12 38 15 43 15 C 50 15 57 22 60 25 C 57 28 50 35 43 35 C 38 35 31 38 23 38 C 27 30 27 20 23 12 Z" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+                <path d="M 18 12 C 22 20 22 30 18 38" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+                <circle cx="63.5" cy="25" r="3.5" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+                <line x1="10" y1="20" x2="22" y2="20" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="30" x2="22" y2="30" stroke="var(--color-text-secondary)" stroke-width="2"/>
+                <line x1="67" y1="25" x2="77" y2="25" stroke="var(--color-text-secondary)" stroke-width="2"/>
+              </svg>
+              <p class="gate-desc" style="font-size: 0.75rem;">Opposite of XOR. Outputs a 1 ONLY when inputs are identical.</p>
+              <table class="mini-truth-table" style="font-size: 0.7rem;">
+                <thead><tr><th>A</th><th>B</th><th>Out</th></tr></thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td class="out">1</td></tr>
+                  <tr><td>1</td><td>0</td><td class="out">0</td></tr>
+                  <tr><td>0</td><td>1</td><td class="out">0</td></tr>
+                  <tr><td>1</td><td>1</td><td class="out">1</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Interactive Logic Gate Playground & Challenge -->
+      <div class="slide" id="slide4">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Logic Sandbox</span>
+          <h2 class="slide-title">Interactive Logic Playground & Truth Table Practice</h2>
+        </div>
+        <div class="slide-content">
+          <div class="logic-playground-grid">
+            
+            <!-- Left Side Workbench -->
+            <div class="logic-workbench">
+              <div class="logic-controls-panel">
+                <button class="btn-logic-input active" id="btnInputA" onclick="togglePlaygroundInput('A')">A: 1</button>
+                
+                <select class="select-logic-gate" id="selectPlaygroundGate" onchange="changePlaygroundGate()">
+                  <option value="AND">AND Gate</option>
+                  <option value="OR">OR Gate</option>
+                  <option value="NOT">NOT Gate (Single Input)</option>
+                  <option value="NAND">NAND Gate</option>
+                  <option value="NOR">NOR Gate</option>
+                  <option value="XOR">XOR Gate</option>
+                  <option value="XNOR">XNOR Gate</option>
+                </select>
+                
+                <button class="btn-logic-input" id="btnInputB" onclick="togglePlaygroundInput('B')">B: 0</button>
+              </div>
+              
+              <div class="logic-canvas-container">
+                <!-- SVG Logic Circuit representation -->
+                <svg width="100%" height="220" viewBox="0 0 450 200" id="logicPlaygroundSVG">
+                  <!-- Wire inputs -->
+                  <path id="wireA" d="M 40 50 L 120 50 L 150 90 L 180 90" stroke="cyan" stroke-width="4" fill="none"/>
+                  <path id="wireB" d="M 40 150 L 120 150 L 150 110 L 180 110" stroke="#2a3554" stroke-width="4" fill="none"/>
+                  
+                  <!-- Out wire -->
+                  <path id="wireOut" d="M 235 100 L 370 100" stroke="#2a3554" stroke-width="4" fill="none"/>
+                  
+                  <!-- Labels -->
+                  <text x="35" y="35" font-family="monospace" font-size="12" fill="#fff" font-weight="bold">Input A</text>
+                  <text x="35" y="180" font-family="monospace" font-size="12" fill="#fff" font-weight="bold" id="labelB">Input B</text>
+                  
+                  <!-- Target Gate Base Box -->
+                  <g id="svgGateNode" transform="translate(170, 60)">
+                    <!-- Standard gate path drawn by JS -->
+                  </g>
+                  
+                  <!-- Bulb Output node -->
+                  <g transform="translate(370, 75)">
+                    <circle cx="25" cy="25" r="22" fill="#1f2937" stroke="#4b5563" stroke-width="2.5" id="playgroundBulb"/>
+                    <path d="M 18 25 Q 25 10 32 25 M 18 25 L 32 25" fill="none" stroke="#9ca3af" stroke-width="2" id="playgroundBulbFilament"/>
+                    <text x="25" y="65" font-family="sans-serif" font-size="11" fill="var(--color-text-secondary)" text-anchor="middle" font-weight="bold">Out</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Right Side Interactive Challenge -->
+            <div class="glass-panel truth-practice-panel">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Practice: Complete the Truth Table</h3>
+              <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Select a gate on the left. Type the correct binary output (0 or 1) for each row below to verify your gate knowledge.</p>
+              
+              <table class="truth-practice-table">
+                <thead>
+                  <tr>
+                    <th>Input A</th>
+                    <th id="thHeaderB">Input B</th>
+                    <th id="thHeaderGate">AND Output</th>
+                  </tr>
+                </thead>
+                <tbody id="truthPracticeBody">
+                  <!-- Generated dynamically by JS based on selection -->
+                </tbody>
+              </table>
+              
+              <div class="truth-feedback-badge success" id="truthFeedback">
+                🎉 Perfect! You mastered the truth table for this gate!
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Magnetism & Electromagnetism (Invisible Forces) -->
+      <div class="slide" id="slide5">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Electromagnetism</span>
+          <h2 class="slide-title">Magnetism & The Birth of Electromagnetism</h2>
+        </div>
+        <div class="slide-content">
+          <div class="magnetism-layout">
+            
+            <!-- Left Side: Bar Magnet fields -->
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+              <h3 style="font-size: 1.15rem; color: var(--color-accent);">1. Permanent Magnetic Fields</h3>
+              <p style="font-size: 0.85rem; line-height: 1.5; color: var(--color-text-secondary);">
+                Permanent magnets have poles (North & South). Field lines always travel from the <strong>North Pole to the South Pole</strong> externally. Identical poles repel; opposite poles attract.
+              </p>
+              <div class="bar-magnet-canvas">
+                <!-- SVG permanent magnet -->
+                <svg width="100%" height="100%" viewBox="0 0 300 200">
+                  <!-- Magnetic field lines background -->
+                  <path d="M 100 100 Q 150 40 200 100" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6"/>
+                  <path d="M 100 100 Q 150 20 200 100" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.4"/>
+                  <path d="M 100 100 Q 150 160 200 100" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6"/>
+                  <path d="M 100 100 Q 150 180 200 100" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.4"/>
+                  
+                  <!-- Magnet Body -->
+                  <rect x="90" y="85" width="60" height="30" fill="#ef4444" rx="2 0 0 2"/>
+                  <rect x="150" y="85" width="60" height="30" fill="#3b82f6" rx="0 2 2 0"/>
+                  
+                  <!-- Text labels -->
+                  <text x="120" y="105" font-family="monospace" font-size="14" fill="#fff" text-anchor="middle" font-weight="bold">N</text>
+                  <text x="180" y="105" font-family="monospace" font-size="14" fill="#fff" text-anchor="middle" font-weight="bold">S</text>
+                  
+                  <!-- Arrows showing field direction -->
+                  <path d="M 145 68 L 155 70 L 149 75 Z" fill="var(--color-accent)"/>
+                  <path d="M 155 132 L 145 130 L 151 125 Z" fill="var(--color-accent)"/>
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Right Side: Oersted's discovery (current-carrying wire) -->
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary);">2. Oersted's Discovery: Wire Magnetic Fields</h3>
+              <p style="font-size: 0.85rem; line-height: 1.5; color: var(--color-text-secondary);">
+                In 1820, Hans Christian Ørsted noticed that a magnetic compass needle twitched when placed near a current-carrying wire. <strong>Moving charges generate magnetic fields!</strong> The field loops in concentric circles around the wire.
+              </p>
+              
+              <div class="bar-magnet-canvas">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" id="oerstedSVG">
+                  <!-- Wire -->
+                  <line x1="50" y1="100" x2="250" y2="100" stroke="#222f47" stroke-width="8" stroke-linecap="round"/>
+                  
+                  <!-- Animated current dots -->
+                  <g id="oerstedDotsGroup">
+                    <circle cx="50" cy="100" r="3" fill="var(--color-success)" filter="drop-shadow(0 0 3px var(--color-success))"/>
+                    <circle cx="90" cy="100" r="3" fill="var(--color-success)" filter="drop-shadow(0 0 3px var(--color-success))"/>
+                    <circle cx="130" cy="100" r="3" fill="var(--color-success)" filter="drop-shadow(0 0 3px var(--color-success))"/>
+                    <circle cx="170" cy="100" r="3" fill="var(--color-success)" filter="drop-shadow(0 0 3px var(--color-success))"/>
+                    <circle cx="210" cy="100" r="3" fill="var(--color-success)" filter="drop-shadow(0 0 3px var(--color-success))"/>
+                  </g>
+                  
+                  <!-- Concentric field loops (oval look) -->
+                  <ellipse cx="150" cy="100" rx="35" ry="50" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-dasharray="4 4" id="oerstedLoop1"/>
+                  <ellipse cx="150" cy="100" rx="60" ry="75" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-dasharray="4 4" id="oerstedLoop2"/>
+                  
+                  <!-- Concentric Loop Arrowheads -->
+                  <polygon id="loopArrowLeft" points="115,95 118,105 112,105" fill="var(--color-primary)" />
+                  <polygon id="loopArrowRight" points="185,105 188,95 182,95" fill="var(--color-primary)" />
+                  
+                  <!-- Right Hand Rule Grip Graphic -->
+                  <g id="oerstedHand" transform="translate(125, 85)" style="transition: transform 0.3s ease;">
+                    <!-- Wrist -->
+                    <rect x="0" y="8" width="12" height="14" rx="2" fill="#131a2c" stroke="var(--color-success)" stroke-width="1.5"/>
+                    <!-- Fist -->
+                    <rect x="12" y="3" width="18" height="24" rx="4" fill="#131a2c" stroke="var(--color-success)" stroke-width="1.5"/>
+                    <!-- Knuckles/Wrapped Fingers -->
+                    <path d="M 18 3 C 22 7 22 11 18 14 M 18 14 C 22 18 22 22 18 25" fill="none" stroke="var(--color-success)" stroke-width="1.5"/>
+                    <!-- Thumb pointing along current -->
+                    <path d="M 30 9 C 35 9 37 7 40 7 C 42 7 43 10 40 12 C 37 13 30 13 30 13" fill="#131a2c" stroke="var(--color-success)" stroke-width="1.5"/>
+                  </g>
+                  
+                  <!-- RHR Rule Label on canvas -->
+                  <text x="150" y="190" font-family="sans-serif" font-size="8.5" fill="var(--color-success)" font-weight="bold" text-anchor="middle">Right-Hand Rule: Thumb = Current (I), Fingers = Field (B)</text>
+                  
+                  <!-- Compass needle circles -->
+                  <circle cx="150" cy="25" r="14" fill="#131a2c" stroke="var(--color-border)" stroke-width="1.5"/>
+                  <path d="M 150 15 L 150 35" stroke="var(--color-warning)" stroke-width="2.5" id="compassNeedle"/>
+                  <polygon points="150,13 153,20 147,20" fill="var(--color-warning)" id="compassArrow"/>
+                  
+                  <!-- Current Direction Indicator -->
+                  <g transform="translate(100, 140)">
+                    <path d="M 30 10 L 70 10 M 65 5 L 70 10 L 65 15" stroke="var(--color-success)" stroke-width="2.5" fill="none" id="oerstedCurrentArrow"/>
+                    <text x="50" y="-2" font-size="10" fill="var(--color-success)" text-anchor="middle" font-weight="bold" id="oerstedCurrentText">Current (I) →</text>
+                  </g>
+                </svg>
+                
+                <div style="position: absolute; bottom: 8px; left: 8px;">
+                  <button class="btn-logic-input active" id="btnToggleOerstedCurrent" onclick="toggleOerstedCurrent()" style="padding: 4px 10px; font-size: 0.75rem;">Reverse Current</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: Interactive Electromagnet Sandbox -->
+      <div class="slide" id="slide6">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Electromagnetism</span>
+          <h2 class="slide-title">Interactive Electromagnet Sandbox</h2>
+        </div>
+        <div class="slide-content">
+          <div class="emagnet-layout">
+            
+            <!-- Left Panel: Sandbox Canvas visualizer -->
+            <div class="glass-panel" style="display: flex; flex-direction: column; background: #090c14; border-radius: var(--border-radius); overflow: hidden; min-height: 380px; position: relative;">
+              <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-bottom: 0.5rem; text-align: center;">Live Electromagnet Visualizer</h3>
+              
+              <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative;">
+                <svg width="100%" height="280" viewBox="0 0 420 280" id="emagnetSVG">
+                  <!-- Magnetic field lines radiating from nail ends -->
+                  <g id="emFieldLines" opacity="0">
+                    <path d="M 210 135 C 100 80 100 190 210 135" fill="none" stroke="var(--color-primary)" stroke-dasharray="2 2" stroke-width="1.5" id="emLineLeft1"/>
+                    <path d="M 210 135 C 80 40 80 230 210 135" fill="none" stroke="var(--color-primary)" stroke-dasharray="2 2" stroke-width="1.2" id="emLineLeft2"/>
+                    <path d="M 210 135 C 320 80 320 190 210 135" fill="none" stroke="var(--color-primary)" stroke-dasharray="2 2" stroke-width="1.5" id="emLineRight1"/>
+                    <path d="M 210 135 C 340 40 340 230 210 135" fill="none" stroke="var(--color-primary)" stroke-dasharray="2 2" stroke-width="1.2" id="emLineRight2"/>
+                  </g>
+                  
+                  <!-- Core object (Iron, copper, wood core cylinder) -->
+                  <rect x="120" y="125" width="180" height="20" rx="3" fill="#6b7280" id="emCoreObj" stroke="#4b5563" stroke-width="1"/>
+                  <text x="210" y="139" font-family="sans-serif" font-size="10" fill="#000" font-weight="bold" text-anchor="middle" id="emCoreText">IRON CORE</text>
+                  
+                  <!-- Battery source schematic at bottom -->
+                  <g transform="translate(180, 220)">
+                    <rect x="0" y="5" width="50" height="25" rx="3" fill="#131a2c" stroke="var(--color-border)" stroke-width="2"/>
+                    <text x="25" y="21" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle" id="emBatteryText">9 V</text>
+                    <path d="M -60 18 L 0 18 M 50 18 L 110 18" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M -60 -75 L -60 18 M 110 -75 L 110 18" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+                  </g>
+                  
+                  <!-- Dynamic coil wire lines will be inserted here by script -->
+                  <g id="emCoilGroup">
+                    <!-- Scripted coils -->
+                  </g>
+                  
+                  <!-- Clinging Paperclips container at bottom of core left tip -->
+                  <g id="emPaperclipsGroup" transform="translate(100, 135)">
+                    <!-- Clips drawn by script -->
+                  </g>
+                </svg>
+              </div>
+            </div>
+            
+            <!-- Right Panel: Sliders & Core selectors -->
+            <div class="emagnet-controls">
+              
+              <!-- Core selection tabs -->
+              <div class="slider-group">
+                <span class="slider-label">Core Material (Ferromagnetic test multiplier)</span>
+                <div class="toggle-core-group">
+                  <button class="btn-core-option active" id="coreIron" onclick="setCoreMaterial('Iron')">Iron Nail (x1000)</button>
+                  <button class="btn-core-option" id="coreCopper" onclick="setCoreMaterial('Copper')">Copper Bar (x1.0)</button>
+                  <button class="btn-core-option" id="coreWood" onclick="setCoreMaterial('Wood')">Wood Dowel (x0.0)</button>
+                </div>
+              </div>
+
+              <!-- Voltage Slider -->
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Battery Voltage (Current Source)</span>
+                  <span class="slider-val" id="emVoltageVal">9.0 V</span>
+                </div>
+                <input type="range" class="slider-input" id="sliderEmVoltage" min="0" max="12" step="1.5" value="9" oninput="updateElectromagnet()">
+              </div>
+
+              <!-- Coil Loops Slider -->
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Number of Wire Loops (N)</span>
+                  <span class="slider-val" id="emLoopsVal" style="color: var(--color-accent);">15 Turns</span>
+                </div>
+                <input type="range" class="slider-input accent" id="sliderEmLoops" min="5" max="30" step="5" value="15" oninput="updateElectromagnet()">
+              </div>
+
+              <!-- Paperclip Stats boxes -->
+              <div class="paperclip-stats-panel">
+                <div class="pclip-stat-box">
+                  <div class="pclip-stat-val" id="emFieldStrengthText">135</div>
+                  <div class="pclip-stat-lbl">Rel. Field (T)</div>
+                </div>
+                <div class="pclip-stat-box">
+                  <div class="pclip-stat-val" id="emClipsText" style="color: var(--color-warning);">13 Clips</div>
+                  <div class="pclip-stat-lbl">Cling Clips</div>
+                </div>
+              </div>
+              
+              <!-- Trap details -->
+              <div class="trap-alert" style="background: rgba(255, 170, 0, 0.03); border-color: var(--color-warning); margin-top: 0;">
+                <span class="trap-icon" style="color: var(--color-warning);">⚠️</span>
+                <div class="trap-text">
+                  <h4 style="color: var(--color-warning);">Olympiad Focus: Variable Control</h4>
+                  <p>In short answer test questions, they will double the coil loops ($N$) or voltage ($V$) and ask what happens to magnet strength. Both scale **linearly**! Doubling coil wraps doubles the strength.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: Safety & Controls (Relays, Fuses, Breakers) -->
+      <div class="slide" id="slide7">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Safety & Controls</span>
+          <h2 class="slide-title">Controls & Circuit Protection: Fuses & Relays</h2>
+        </div>
+        <div class="slide-content">
+          <div class="safety-layout-grid">
+            
+            <!-- Left Side: Interactive Relay Demonstration -->
+            <div class="relay-workbench">
+              <div class="glass-panel" style="padding: 1rem; border-bottom: none; border-radius: var(--border-radius) var(--border-radius) 0 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h3 style="font-size: 1.1rem; color: var(--color-primary);">Electromagnetic Relay Simulator</h3>
+                  <button class="btn-logic-input" id="btnRelaySwitch" onclick="toggleRelaySwitch()" style="padding: 5px 12px; font-size: 0.8rem;">Control Switch: OFF</button>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 0.25rem;">
+                  Turn on the low-voltage control loop switch. The coil magnetizes, pulls the spring armature close, and completes the secondary high-voltage circuit to light the big bulb.
+                </p>
+              </div>
+              
+              <div class="relay-canvas-container" style="border-radius: 0; border-bottom: none;">
+                <svg width="100%" height="240" viewBox="0 0 420 240" id="relaySVG">
+                  <!-- Control loop wires (clean rectangular layout) -->
+                  <path d="M 30 140 L 30 180 L 95 180 L 95 160" stroke="#3b82f6" stroke-width="2.5" fill="none" id="lowPowerWireBottom" style="transition: stroke 0.3s;"/>
+                  <path d="M 30 110 L 30 70 L 65 70" stroke="#3b82f6" stroke-width="2.5" fill="none" id="lowPowerWireTop" style="transition: stroke 0.3s;"/>
+                  <path d="M 95 70 L 95 100" stroke="#3b82f6" stroke-width="2.5" fill="none" id="lowPowerWireToCoil" style="transition: stroke 0.3s;"/>
+                  
+                  <!-- Low Power Battery (3V) -->
+                  <rect x="15" y="110" width="30" height="30" rx="3" fill="#ef4444" />
+                  <text x="30" y="128" font-family="monospace" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">3V</text>
+                  
+                  <!-- Switch hinge on control loop -->
+                  <line x1="65" y1="70" x2="95" y2="45" stroke="#ef4444" stroke-width="3" id="relayHingeWire" style="transition: y2 0.2s ease;"/>
+                  <circle cx="65" cy="70" r="3" fill="#fff"/>
+                  <circle cx="95" cy="70" r="3" fill="#fff"/>
+                  
+                  <!-- Electromagnet Coil -->
+                  <rect x="75" y="100" width="40" height="60" rx="2" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+                  <!-- Wires inside coil wraps -->
+                  <path d="M 75 110 L 115 110 M 75 120 L 115 120 M 75 130 L 115 130 M 75 140 L 115 140 M 75 150 L 115 150" stroke="#d97706" stroke-width="2"/>
+                  <text x="95" y="135" font-size="9" fill="#9ca3af" text-anchor="middle" font-weight="bold" id="relayCoilFieldText">COIL</text>
+                  
+                  <!-- Armature Lever (magnetic material switch) -->
+                  <g id="relayArmature" transform="rotate(0, 160, 45)" style="transition: transform 0.2s ease;">
+                    <!-- Lever arm -->
+                    <line x1="160" y1="45" x2="160" y2="150" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/>
+                    <!-- Contact point at bottom -->
+                    <circle cx="160" cy="150" r="5" fill="#f59e0b"/>
+                    <!-- Small spring pulling left -->
+                    <line x1="160" y1="90" x2="190" y2="90" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="2 1"/>
+                    <circle cx="190" cy="90" r="2" fill="#6b7280"/>
+                  </g>
+                  
+                  <!-- High power loop contacts -->
+                  <!-- Contact point fixed -->
+                  <circle cx="140" cy="150" r="5" fill="#f59e0b"/>
+                  
+                  <!-- High power wires (rectangular loop) -->
+                  <path d="M 140 150 L 140 190 L 225 190" stroke="#2a3554" stroke-width="4.5" fill="none" id="highPowerWireBottom" style="transition: stroke 0.3s;"/>
+                  <path d="M 255 190 L 340 190 L 340 118" stroke="#2a3554" stroke-width="4.5" fill="none" id="highPowerWireToBulb" style="transition: stroke 0.3s;"/>
+                  <path d="M 340 82 L 340 45 L 160 45" stroke="#2a3554" stroke-width="4.5" fill="none" id="highPowerWireTop" style="transition: stroke 0.3s;"/>
+                  
+                  <!-- High voltage battery (Secondary Power) -->
+                  <rect x="225" y="175" width="30" height="30" rx="4" fill="#3b82f6" />
+                  <text x="240" y="193" font-family="monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">120V</text>
+                  
+                  <!-- High voltage output bulb -->
+                  <g transform="translate(320, 80)">
+                    <circle cx="20" cy="20" r="18" fill="#111827" stroke="#374151" stroke-width="2" id="relayBulb" style="transition: all 0.3s;"/>
+                    <path d="M 14 20 Q 20 10 26 20 M 14 20 L 26 20" fill="none" stroke="#9ca3af" stroke-width="2" id="relayBulbFilament" style="transition: stroke 0.3s;"/>
+                    <text x="20" y="52" font-size="9" fill="#9ca3af" text-anchor="middle">120V Lamp</text>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Relay Cause and Effect Steps Visualizer -->
+              <div class="glass-panel" style="padding: 1rem; border-top: none; border-radius: 0 0 var(--border-radius) var(--border-radius);">
+                <h4 style="font-size: 0.9rem; color: var(--color-primary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Relay Sequence: Cause &amp; Effect</h4>
+                <div class="relay-steps-list">
+                  
+                  <div class="relay-step-item" id="relayStep1">
+                    <span class="step-num">1</span>
+                    <span class="step-text">Low-Voltage Switch closes the control circuit.</span>
+                  </div>
+                  
+                  <div class="relay-step-item" id="relayStep2">
+                    <span class="step-num">2</span>
+                    <span class="step-text">Coil magnetizes and pulls the spring armature.</span>
+                  </div>
+                  
+                  <div class="relay-step-item" id="relayStep3">
+                    <span class="step-num">3</span>
+                    <span class="step-text">Contacts close in the isolated high-power circuit.</span>
+                  </div>
+                  
+                  <div class="relay-step-item" id="relayStep4">
+                    <span class="step-num">4</span>
+                    <span class="step-text">120V Lamp turns ON.</span>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+            
+            <!-- Right Side: Fuses, Breakers and Overload -->
+            <div class="glass-panel fuse-visualizer">
+              <h3 style="font-size: 1.15rem; color: var(--color-accent); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Circuit Protection: Fuses</h3>
+              <p style="font-size: 0.8rem; color: var(--color-text-secondary);">
+                A **fuse** contains a thin metal ribbon. If current is too high, it heats up and **melts**, opening the circuit to prevent a fire. Turn on appliances to exceed the **10A Fuse Limit**!
+              </p>
+              
+              <div class="fuse-canvas">
+                <svg width="100%" height="100%" viewBox="0 0 280 120" id="fuseSVG">
+                  <!-- Wire line -->
+                  <path d="M 20 60 L 100 60" stroke="var(--color-success)" stroke-width="4" id="fuseWireLeft"/>
+                  <path d="M 180 60 L 260 60" stroke="var(--color-success)" stroke-width="4" id="fuseWireRight"/>
+                  
+                  <!-- Glass fuse cartridge -->
+                  <rect x="95" y="45" width="90" height="30" rx="4" fill="rgba(255,255,255,0.04)" stroke="var(--color-border)" stroke-width="1.5"/>
+                  <rect x="95" y="45" width="15" height="30" fill="#9ca3af" rx="2 0 0 2"/>
+                  <rect x="170" y="45" width="15" height="30" fill="#9ca3af" rx="0 2 2 0"/>
+                  
+                  <!-- Thin fuse wire inside -->
+                  <path d="M 110 60 C 125 50 135 70 150 50 C 160 70 165 55 170 60" fill="none" stroke="#f59e0b" stroke-width="2.5" id="fuseElementWire"/>
+                  
+                  <text x="140" y="93" font-size="10" fill="var(--color-text-secondary)" text-anchor="middle" font-weight="bold" id="fuseStatusText">FUSE INTACT (10A MAX)</text>
+                </svg>
+                
+                <div style="position: absolute; top: 10px; right: 10px; font-weight: bold; font-size: 1.1rem; color: var(--color-success);" id="fuseCurrentDisplay">
+                  Current: 0 A
+                </div>
+              </div>
+              
+              <div class="appliance-switches">
+                <button class="btn-appliance" id="btnAppToaster" onclick="toggleAppliance('Toaster', 4)">
+                  <span class="name">Toaster</span>
+                  <span class="load">4 A</span>
+                </button>
+                <button class="btn-appliance" id="btnAppMicrowave" onclick="toggleAppliance('Microwave', 5)">
+                  <span class="name">Microwave</span>
+                  <span class="load">5 A</span>
+                </button>
+                <button class="btn-appliance" id="btnAppHeater" onclick="toggleAppliance('Heater', 8)">
+                  <span class="name">Heater</span>
+                  <span class="load">8 A</span>
+                </button>
+              </div>
+              
+              <button class="btn-replace-fuse" id="btnReplaceFuse" onclick="replaceFuse()">Replace Blown Fuse 🛠️</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: Checkpoint Kahoot Quiz -->
+      <div class="slide" id="slide8">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class Checkpoint</span>
+          <h2 class="slide-title">20-Minute Quiz: Gates & Electromagnetism Showdown</h2>
+        </div>
+        <div class="slide-content">
+          <div class="quiz-container" id="quizContainer">
+            <div class="quiz-stats">
+              <span class="quiz-question-num" id="quizQuestionNum">Question 1 of 10</span>
+              <span class="quiz-score-val" id="quizScore">Score: 0 pts</span>
+            </div>
+            
+            <div class="quiz-timer-bar-container">
+              <div class="quiz-timer-bar" id="quizTimerBar"></div>
+            </div>
+            
+            <div class="glass-panel quiz-card">
+              <div class="quiz-question" id="quizQuestionText">
+                Which logic gate outputs a 1 ONLY when both inputs are 1?
+              </div>
+            </div>
+            
+            <div class="quiz-options" id="quizOptions">
+              <!-- Options drawn by script -->
+            </div>
+            
+            <div class="quiz-explanation-card" id="quizExplanation">
+              <h4>Explanation</h4>
+              <p id="quizExplanationText">Ohm's Law explanation...</p>
+            </div>
+            
+            <div class="quiz-action-area">
+              <button class="btn-quiz-next" id="btnQuizNext" onclick="nextQuizQuestion()">Next Question</button>
+            </div>
+          </div>
+          
+          <!-- Quiz Finished Screen -->
+          <div class="glass-panel quiz-finished-panel" id="quizFinishedPanel">
+            <div class="quiz-finished-icon">🏆</div>
+            <h3 style="font-size: 2rem;">Quiz Completed!</h3>
+            <p style="font-size: 1.1rem; color: var(--color-text-secondary);" id="quizFinalScoreText">You scored 0 out of 1000 points!</p>
+            <button class="btn-restart-quiz" onclick="restartQuiz()">Try Again</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Presenter Notes Panel Sidebar -->
+    <div class="presenter-panel" id="presenterPanel">
+      <div class="presenter-header">
+        <h3>
+          <!-- Mic icon -->
+          <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+          </svg>
+          Presenter Console
+        </h3>
+        <button onclick="togglePresenterMode()" style="color: var(--color-text-secondary); font-size: 0.8rem; font-weight: 600;">Close</button>
+      </div>
+      
+      <div class="presenter-body" id="presenterBody">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       Bottom Control Bar
+       ========================================== -->
+  <div class="control-bar">
+    <div class="slide-indicators" id="slideIndicators">
+      <!-- Indicators generated dynamically -->
+    </div>
+    
+    <div class="navigation-controls">
+      <button class="btn-nav" id="btnPrev" onclick="navigateSlide(-1)" title="Previous Slide">
+        <!-- Arrow Left -->
+        <svg viewBox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </button>
+      <button class="btn-nav" id="btnNext" onclick="navigateSlide(1)" title="Next Slide">
+        <!-- Arrow Right -->
+        <svg viewBox="0 0 24 24">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       Scripts & Interaction Logic
+       ========================================== -->
+  <script>
+    // ==========================================
+    // Slide Navigation & State
+    // ==========================================
+    const totalSlides = 8;
+    let currentSlide = 1;
+    let presenterModeActive = false;
+
+    // Speaker Scripts dictionary matching slide IDs
+    const presenterNotes = {
+      1: {
+        script: "Welcome back, future Circuit Lab gold medalists! Today, we are meeting online via Zoom, which is actually a super-power because we have built high-fidelity visual simulators right here in our slides. Today, we are tackling two massive, point-heavy components of Science Olympiad exams: Binary Logic Gates and Electromagnetism. First, let's start with a quick Ohm's Law retrieval challenge on the right panel to wake up our brain cells. Enter a voltage and resistance, click calculate, and watch for that classic milliampere test trap!",
+        actions: "Welcome students as they log in. Verify everyone can hear and see your shared screen. Walk them through the Ohm's Law quick calculator on the right—ask a student to unmute and tell you what 9V / 150 Ohms equals in mA."
+      },
+      2: {
+        script: "Let's kick off with Part 1: Logic Gates. Logic gates are the brains of all digital electronics. They act like smart switches, taking high-voltage inputs represented by a binary 1, and low-voltage inputs represented by a 0. An AND gate acts like two switches wired in series: both inputs must be 1 to get an output of 1. An OR gate is like switches in parallel: if either input is 1, the output is 1. The NOT gate is the simplest—it's an inverter that flips whatever goes into it. Take a look at these truth tables, as you will need to copy or reconstruct them quickly during tests.",
+        actions: "Show the visual symbols of the AND, OR, and NOT gates. Explain the series/parallel switch analogies. Have students type the output of a NOT gate if the input is 0 in the Zoom chat."
+      },
+      3: {
+        script: "Now we move to advanced gates: NAND, NOR, XOR, and XNOR. NAND and NOR are simply AND and OR gates with an inverter bubble on the end. XOR stands for Exclusive OR. It is the pickiest gate—it outputs a 1 ONLY when the inputs are different. If both inputs are 1, it outputs a 0! XNOR is the inverse of XOR, outputting a 1 only when inputs are identical. Pay special attention to these symbols: XOR has a curved back wall, and XNOR has a curved back wall AND a bubble at the tip.",
+        actions: "Review symbols and truth tables. Make sure students notice the tiny circles (bubbles) on NAND, NOR, and XNOR, which represent NOT operations."
+      },
+      4: {
+        script: "Let's put this into practice on our interactive logic playground! I can toggle inputs A and B between 1 and 0. Wires glowing cyan mean a binary 1; dark wires represent 0. Watch how changing the gate changes the output bulb. And look at the right side panel: it's your challenge. Complete the truth table by typing the correct 1s and 0s. Once you fill in all 4 rows correctly, the simulator will unlock and confirm you have mastered the logic!",
+        actions: "Demonstrate toggling Input A and B. Select 'XOR' from the gate dropdown and show how A=1, B=1 makes the output go dark. Have students solve the active truth table challenge on their own tabs or type answers in Zoom chat."
+      },
+      5: {
+        script: "Let's change paths to Part 2: Magnetism and Electromagnetism. A standard permanent magnet has a North and South pole, and magnetic field lines flow from North to South. But in 1820, scientist Hans Christian Oersted discovered something incredible: a compass needle twitched when placed near a wire carrying current. He proved that moving charges create a magnetic field that loops around the wire. Click the 'Reverse Current' button on the simulator to see the field direction and the compass needle flip instantly!",
+        actions: "Discuss Oersted's discovery. Toggle the 'Reverse Current' button to show current moving left vs right, pointing out how the compass needle needle points in opposite directions based on current flow."
+      },
+      6: {
+        script: "We can concentrate this magnetic field by wrapping the wire into a coil around an iron nail. This is an electromagnet! Play with the voltage, loop wraps, and core material sliders. What happens if we switch the core to wood? The magnetic strength drops to zero! That's because wood is not ferromagnetic. If we use iron, it concentrates the field, letting us lift virtual paperclips! Notice that doubling loop turns or doubling voltage doubles our lifting capacity. This linear relationship is heavily tested in Science Olympiad matches.",
+        actions: "Demonstrate the sliders. Set core to 'Wood' and show that it lifts 0 paperclips. Switch to 'Iron', increase loops to 30 and Voltage to 12V: show the dense field line animation and the large stack of paperclips clinging to the nail tip."
+      },
+      7: {
+        script: "How do we use electromagnets in circuits? The most famous device is an electromagnetic relay. A relay uses a safe, low-voltage control loop with a coil to physically attract a metal arm (armature), which closes contacts in a high-voltage loop. Toggle our control switch on the left: see how the coil magnetizes and pulls the lever? Now, look at the right side. How do we protect circuits? Fuses! Toggle on the toaster, microwave, and space heater. The combined current exceeds 10 amps, causing the thin fuse wire to turn red-hot and melt with a pop! This stops current before wire insulation catches fire.",
+        actions: "Click 'Control Switch' to show relay operation. Then, click appliance buttons one-by-one to show cumulative current. Click the space heater to trigger the fuse blowout alert. Demonstrate replacing the fuse."
+      },
+      8: {
+        script: "It is now time for our 20-minute class checkpoint quiz! I've loaded our 10 competitive checkpoint questions right here in the slides. I will read each question, and you will have 30 seconds to lock in your answer. Remember: no calculators except simple ones, think about logic inversions, and watch out for electromagnet variables. Let's see who takes home the virtual gold medal today!",
+        actions: "Launch the built-in checkpoint quiz. Read questions aloud. After students answer, click the option, show the explanation card, and address any concepts they struggled with before closing the Zoom session."
+      }
+    };
+
+    function initSlides() {
+      // Generate indicators
+      const indicatorContainer = document.getElementById('slideIndicators');
+      indicatorContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'indicator-dot' + (i === 1 ? ' active' : '');
+        dot.onclick = () => jumpToSlide(i);
+        indicatorContainer.appendChild(dot);
+      }
+      updateNavigationState();
+    }
+
+    function navigateSlide(direction) {
+      const next = currentSlide + direction;
+      if (next >= 1 && next <= totalSlides) {
+        jumpToSlide(next);
+      }
+    }
+
+    function jumpToSlide(slideNum) {
+      // Stop previous animations if any
+      if (oerstedTimer) {
+        clearInterval(oerstedTimer);
+        oerstedTimer = null;
+      }
+
+      // Deactivate current slide
+      document.getElementById(`slide${currentSlide}`).classList.remove('active');
+      
+      // Update active slide
+      currentSlide = slideNum;
+      document.getElementById(`slide${currentSlide}`).classList.add('active');
+      
+      // Update dots
+      const dots = document.querySelectorAll('.indicator-dot');
+      dots.forEach((dot, index) => {
+        if (index + 1 === currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+      
+      updateNavigationState();
+      
+      // Special slide initializations
+      if (currentSlide === 4) {
+        initPlayground();
+      } else if (currentSlide === 5) {
+        initOersted();
+      } else if (currentSlide === 6) {
+        initElectromagnet();
+      } else if (currentSlide === 7) {
+        initRelayAndFuse();
+      } else if (currentSlide === 8) {
+        initQuiz();
+      }
+    }
+
+    function updateNavigationState() {
+      // Progress Bar
+      const percentage = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+      document.getElementById('progressBar').style.width = `${percentage}%`;
+      
+      // Nav buttons state
+      document.getElementById('btnPrev').style.opacity = currentSlide === 1 ? '0.4' : '1';
+      document.getElementById('btnPrev').disabled = currentSlide === 1;
+      document.getElementById('btnNext').style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+      document.getElementById('btnNext').disabled = currentSlide === totalSlides;
+      
+      // Update Speaker notes
+      const note = presenterNotes[currentSlide];
+      const presenterBody = document.getElementById('presenterBody');
+      if (note) {
+        presenterBody.innerHTML = `
+          <div class="script-section">
+            <h4>🗣️ Teacher Script</h4>
+            <div class="script-text">"${note.script}"</div>
+          </div>
+          <div class="teacher-action-card">
+            <h4>💡 Recommended Actions</h4>
+            <p>${note.actions}</p>
+          </div>
+        `;
+      }
+    }
+
+    function togglePresenterMode() {
+      presenterModeActive = !presenterModeActive;
+      const panel = document.getElementById('presenterPanel');
+      const btn = document.getElementById('presenterToggleBtn');
+      if (presenterModeActive) {
+        panel.classList.add('active');
+        btn.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+        btn.classList.remove('active');
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.className === 'truth-input-cell') return;
+      
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        navigateSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        navigateSlide(-1);
+      }
+    });
+
+    // ==========================================
+    // Slide 1: Quick Ohm's Law Recall Calc
+    // ==========================================
+    function calculateRecallCurrent() {
+      const v = parseFloat(document.getElementById('recallV').value) || 0;
+      const r = parseFloat(document.getElementById('recallR').value) || 1;
+      
+      const currentAmperes = v / r;
+      const currentMilliamperes = currentAmperes * 1000;
+      
+      const displayEl = document.getElementById('recallResult');
+      displayEl.innerHTML = `Current (I) = ${currentMilliamperes.toFixed(1)} mA <span style="font-size:0.85rem; color:var(--color-text-secondary); font-weight:normal;">(${currentAmperes.toFixed(4)} A)</span>`;
+    }
+
+    // ==========================================
+    // Slide 4: Interactive Logic Playground
+    // ==========================================
+    let playgroundInputA = 1;
+    let playgroundInputB = 0;
+    let playgroundGate = 'AND';
+    const truthTableAnswers = {
+      AND: [0, 0, 0, 1],
+      OR: [0, 1, 1, 1],
+      NOT: [1, 0], // Only Input A matters
+      NAND: [1, 1, 1, 0],
+      NOR: [1, 0, 0, 0],
+      XOR: [0, 1, 1, 0],
+      XNOR: [1, 0, 0, 1]
+    };
+
+    function initPlayground() {
+      changePlaygroundGate();
+    }
+
+    function togglePlaygroundInput(inputLetter) {
+      if (inputLetter === 'A') {
+        playgroundInputA = playgroundInputA === 1 ? 0 : 1;
+        document.getElementById('btnInputA').innerText = `A: ${playgroundInputA}`;
+        document.getElementById('btnInputA').classList.toggle('active', playgroundInputA === 1);
+      } else {
+        playgroundInputB = playgroundInputB === 1 ? 0 : 1;
+        document.getElementById('btnInputB').innerText = `B: ${playgroundInputB}`;
+        document.getElementById('btnInputB').classList.toggle('active', playgroundInputB === 1);
+      }
+      updatePlaygroundCircuit();
+    }
+
+    function changePlaygroundGate() {
+      playgroundGate = document.getElementById('selectPlaygroundGate').value;
+      
+      // Hide Input B button if NOT gate
+      const btnB = document.getElementById('btnInputB');
+      const labelB = document.getElementById('labelB');
+      const wireB = document.getElementById('wireB');
+      const thB = document.getElementById('thHeaderB');
+      
+      if (playgroundGate === 'NOT') {
+        btnB.style.display = 'none';
+        labelB.style.display = 'none';
+        wireB.style.display = 'none';
+        thB.style.display = 'none';
+      } else {
+        btnB.style.display = 'block';
+        labelB.style.display = 'block';
+        wireB.style.display = 'block';
+        thB.style.display = 'table-cell';
+      }
+      
+      // Dynamically re-route input and output wires to prevent disconnection gaps
+      let inEndX = 180;
+      if (playgroundGate === 'NOT') inEndX = 190;
+      else if (playgroundGate === 'XOR' || playgroundGate === 'XNOR') inEndX = 183;
+      
+      if (playgroundGate === 'NOT') {
+        document.getElementById('wireA').setAttribute('d', `M 40 100 L ${inEndX} 100`);
+      } else {
+        document.getElementById('wireA').setAttribute('d', `M 40 50 L 120 50 L 150 90 L ${inEndX} 90`);
+        document.getElementById('wireB').setAttribute('d', `M 40 150 L 120 150 L 150 110 L ${inEndX} 110`);
+      }
+
+      let outStartX = 235;
+      if (playgroundGate === 'AND') outStartX = 235;
+      else if (playgroundGate === 'OR') outStartX = 237;
+      else if (playgroundGate === 'NOT') outStartX = 228.5;
+      else if (playgroundGate === 'NAND') outStartX = 244.5;
+      else if (playgroundGate === 'NOR') outStartX = 246;
+      else if (playgroundGate === 'XOR') outStartX = 240;
+      else if (playgroundGate === 'XNOR') outStartX = 249.5;
+      
+      document.getElementById('wireOut').setAttribute('d', `M ${outStartX} 100 L 370 100`);
+      
+      // Redraw Gate symbol
+      drawGateSymbolSVG();
+      
+      // Generate Truth Table Challenge
+      generateTruthTableChallenge();
+      
+      updatePlaygroundCircuit();
+    }
+
+    function drawGateSymbolSVG() {
+      const g = document.getElementById('svgGateNode');
+      let pathContent = '';
+      
+      switch (playgroundGate) {
+        case 'AND':
+          pathContent = `
+            <path d="M 10 15 L 45 15 A 20 20 0 0 1 45 65 L 10 65 Z" fill="none" stroke="var(--color-primary)" stroke-width="3"/>
+            <text x="32" y="45" font-family="sans-serif" font-size="11" fill="var(--color-primary)" font-weight="bold">AND</text>
+          `;
+          break;
+        case 'OR':
+          pathContent = `
+            <path d="M 10 12 C 22 12 32 15 40 15 C 50 15 62 25 67 40 C 62 55 50 65 40 65 C 32 65 22 68 10 68 C 16 52 16 28 10 12 Z" fill="none" stroke="var(--color-primary)" stroke-width="3"/>
+            <text x="32" y="45" font-family="sans-serif" font-size="11" fill="var(--color-primary)" font-weight="bold">OR</text>
+          `;
+          break;
+        case 'NOT':
+          pathContent = `
+            <polygon points="20,20 50,40 20,60" fill="none" stroke="var(--color-primary)" stroke-width="3"/>
+            <circle cx="54" cy="40" r="4.5" fill="none" stroke="var(--color-primary)" stroke-width="2.5"/>
+            <text x="30" y="44" font-family="sans-serif" font-size="10" fill="var(--color-primary)" font-weight="bold">NOT</text>
+          `;
+          break;
+        case 'NAND':
+          pathContent = `
+            <path d="M 10 15 L 45 15 A 20 20 0 0 1 45 65 L 10 65 Z" fill="none" stroke="var(--color-accent)" stroke-width="3"/>
+            <circle cx="70" cy="40" r="4.5" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+            <text x="32" y="45" font-family="sans-serif" font-size="11" fill="var(--color-accent)" font-weight="bold">NAND</text>
+          `;
+          break;
+        case 'NOR':
+          pathContent = `
+            <path d="M 10 12 C 22 12 32 15 40 15 C 50 15 62 25 67 40 C 62 55 50 65 40 65 C 32 65 22 68 10 68 C 16 52 16 28 10 12 Z" fill="none" stroke="var(--color-accent)" stroke-width="3"/>
+            <circle cx="71.5" cy="40" r="4.5" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+            <text x="32" y="45" font-family="sans-serif" font-size="10" fill="var(--color-accent)" font-weight="bold">NOR</text>
+          `;
+          break;
+        case 'XOR':
+          pathContent = `
+            <path d="M 13 12 C 25 12 35 15 43 15 C 53 15 65 25 70 40 C 65 55 53 65 43 65 C 35 65 25 68 13 68 C 19 52 19 28 13 12 Z" fill="none" stroke="var(--color-accent)" stroke-width="3"/>
+            <path d="M 5 12 C 11 28 11 52 5 68" fill="none" stroke="var(--color-accent)" stroke-width="3"/>
+            <text x="36" y="45" font-family="sans-serif" font-size="10" fill="var(--color-accent)" font-weight="bold">XOR</text>
+          `;
+          break;
+        case 'XNOR':
+          pathContent = `
+            <path d="M 13 12 C 25 12 35 15 43 15 C 53 15 65 25 70 40 C 65 55 53 65 43 65 C 35 65 25 68 13 68 C 19 52 19 28 13 12 Z" fill="none" stroke="var(--color-accent)" stroke-width="3"/>
+            <path d="M 5 12 C 11 28 11 52 5 68" fill="none" stroke="var(--color-accent)" stroke-width="3"/>
+            <circle cx="75" cy="40" r="4.5" fill="none" stroke="var(--color-accent)" stroke-width="2.5"/>
+            <text x="36" y="45" font-family="sans-serif" font-size="9" fill="var(--color-accent)" font-weight="bold">XNOR</text>
+          `;
+          break;
+      }
+      g.innerHTML = pathContent;
+    }
+
+    function calculateGateOutput(gate, a, b) {
+      switch (gate) {
+        case 'AND': return a && b;
+        case 'OR': return a || b;
+        case 'NOT': return a === 1 ? 0 : 1;
+        case 'NAND': return !(a && b) ? 1 : 0;
+        case 'NOR': return !(a || b) ? 1 : 0;
+        case 'XOR': return (a !== b) ? 1 : 0;
+        case 'XNOR': return (a === b) ? 1 : 0;
+        default: return 0;
+      }
+    }
+
+    function updatePlaygroundCircuit() {
+      const outVal = calculateGateOutput(playgroundGate, playgroundInputA, playgroundInputB);
+      
+      // Update wire styles
+      document.getElementById('wireA').style.stroke = playgroundInputA === 1 ? 'var(--color-primary)' : '#2a3554';
+      if (playgroundGate !== 'NOT') {
+        document.getElementById('wireB').style.stroke = playgroundInputB === 1 ? 'var(--color-primary)' : '#2a3554';
+      }
+      document.getElementById('wireOut').style.stroke = outVal === 1 ? 'var(--color-accent)' : '#2a3554';
+      
+      // Update Bulb Glow
+      const bulb = document.getElementById('playgroundBulb');
+      const bulbFilament = document.getElementById('playgroundBulbFilament');
+      if (outVal === 1) {
+        bulb.style.fill = 'rgba(176, 38, 255, 0.4)';
+        bulb.style.stroke = 'var(--color-accent)';
+        bulb.style.filter = 'drop-shadow(0 0 12px var(--color-accent))';
+        bulbFilament.style.stroke = '#fff';
+      } else {
+        bulb.style.fill = '#1f2937';
+        bulb.style.stroke = '#4b5563';
+        bulb.style.filter = 'none';
+        bulbFilament.style.stroke = '#9ca3af';
+      }
+    }
+
+    function generateTruthTableChallenge() {
+      const tableBody = document.getElementById('truthPracticeBody');
+      const thGate = document.getElementById('thHeaderGate');
+      thGate.innerText = `${playgroundGate} Output`;
+      
+      let rowsHTML = '';
+      
+      if (playgroundGate === 'NOT') {
+        const combinations = [0, 1];
+        combinations.forEach((a, index) => {
+          rowsHTML += `
+            <tr>
+              <td>${a}</td>
+              <td><input type="text" maxlength="1" class="truth-input-cell" data-index="${index}" oninput="checkTruthCell(this)"></td>
+            </tr>
+          `;
+        });
+      } else {
+        const combinations = [
+          {a: 0, b: 0},
+          {a: 1, b: 0},
+          {a: 0, b: 1},
+          {a: 1, b: 1}
+        ];
+        combinations.forEach((comb, index) => {
+          rowsHTML += `
+            <tr>
+              <td>${comb.a}</td>
+              <td>${comb.b}</td>
+              <td><input type="text" maxlength="1" class="truth-input-cell" data-index="${index}" oninput="checkTruthCell(this)"></td>
+            </tr>
+          `;
+        });
+      }
+      tableBody.innerHTML = rowsHTML;
+      document.getElementById('truthFeedback').style.display = 'none';
+    }
+
+    function checkTruthCell(inputEl) {
+      const index = parseInt(inputEl.getAttribute('data-index'));
+      const val = parseInt(inputEl.value.trim());
+      
+      let expected = 0;
+      if (playgroundGate === 'NOT') {
+        expected = truthTableAnswers.NOT[index];
+      } else {
+        expected = truthTableAnswers[playgroundGate][index];
+      }
+      
+      if (isNaN(val)) {
+        inputEl.className = 'truth-input-cell';
+        return;
+      }
+      
+      if (val === expected) {
+        inputEl.className = 'truth-input-cell correct';
+      } else {
+        inputEl.className = 'truth-input-cell incorrect';
+      }
+      
+      // Check if all rows are correct
+      const allInputs = document.querySelectorAll('.truth-input-cell');
+      let allCorrect = true;
+      allInputs.forEach((inp) => {
+        if (!inp.classList.contains('correct')) {
+          allCorrect = false;
+        }
+      });
+      
+      if (allCorrect && allInputs.length > 0) {
+        document.getElementById('truthFeedback').style.display = 'block';
+      } else {
+        document.getElementById('truthFeedback').style.display = 'none';
+      }
+    }
+
+    // ==========================================
+    // Slide 5: Oersted Current Flow Demonstration
+    // ==========================================
+    let oerstedCurrentState = 'RIGHT'; // 'RIGHT' or 'LEFT' or 'ZERO'
+    let oerstedTimer = null;
+    let oerstedDotPos = [50, 90, 130, 170, 210];
+    
+    function initOersted() {
+      oerstedCurrentState = 'RIGHT';
+      updateOerstedSVG();
+      
+      // Setup animation
+      if (oerstedTimer) clearInterval(oerstedTimer);
+      oerstedTimer = setInterval(animateOerstedDots, 30);
+    }
+
+    function toggleOerstedCurrent() {
+      oerstedCurrentState = oerstedCurrentState === 'RIGHT' ? 'LEFT' : 'RIGHT';
+      updateOerstedSVG();
+    }
+
+    function updateOerstedSVG() {
+      const needle = document.getElementById('compassNeedle');
+      const arrow = document.getElementById('compassArrow');
+      const curText = document.getElementById('oerstedCurrentText');
+      const curArrow = document.getElementById('oerstedCurrentArrow');
+      
+      const loop1 = document.getElementById('oerstedLoop1');
+      const loop2 = document.getElementById('oerstedLoop2');
+      
+      const hand = document.getElementById('oerstedHand');
+      const arrowL = document.getElementById('loopArrowLeft');
+      const arrowR = document.getElementById('loopArrowRight');
+      
+      if (oerstedCurrentState === 'RIGHT') {
+        // Needle points straight up/rightwards angle
+        needle.setAttribute('transform', 'rotate(45, 150, 25)');
+        arrow.setAttribute('transform', 'rotate(45, 150, 25)');
+        curText.innerText = "Current (I) →";
+        curArrow.removeAttribute('transform');
+        
+        loop1.style.stroke = 'var(--color-primary)';
+        loop2.style.stroke = 'var(--color-primary)';
+        loop1.style.animation = 'pulse 2s infinite';
+        loop2.style.animation = 'pulse 2s infinite reverse';
+        
+        // Hand translates to center left, thumb points right
+        if (hand) hand.setAttribute('transform', 'translate(125, 85) scale(1, 1)');
+        
+        // Loop arrows: Left points UP, Right points DOWN
+        if (arrowL) arrowL.setAttribute('points', '115,95 118,105 112,105');
+        if (arrowR) arrowR.setAttribute('points', '185,105 188,95 182,95');
+        if (arrowL) arrowL.setAttribute('fill', 'var(--color-primary)');
+        if (arrowR) arrowR.setAttribute('fill', 'var(--color-primary)');
+      } else {
+        // Needle points opposite angle
+        needle.setAttribute('transform', 'rotate(-45, 150, 25)');
+        arrow.setAttribute('transform', 'rotate(-45, 150, 25)');
+        curText.innerText = "← Current (I)";
+        curArrow.setAttribute('transform', 'translate(50, 10) scale(-1, 1) translate(-50, -10)');
+        
+        loop1.style.stroke = 'var(--color-accent)';
+        loop2.style.stroke = 'var(--color-accent)';
+        loop1.style.animation = 'pulse 1s infinite';
+        loop2.style.animation = 'pulse 1s infinite reverse';
+        
+        // Hand translates to center right, thumb points left
+        if (hand) hand.setAttribute('transform', 'translate(175, 85) scale(-1, 1)');
+        
+        // Loop arrows: Left points DOWN, Right points UP
+        if (arrowL) arrowL.setAttribute('points', '115,105 118,95 112,95');
+        if (arrowR) arrowR.setAttribute('points', '185,95 188,105 182,105');
+        if (arrowL) arrowL.setAttribute('fill', 'var(--color-accent)');
+        if (arrowR) arrowR.setAttribute('fill', 'var(--color-accent)');
+      }
+    }
+
+    function animateOerstedDots() {
+      const dots = document.querySelectorAll('#oerstedDotsGroup circle');
+      if (dots.length === 0) return;
+      
+      const speed = 2; // px per tick
+      const minX = 50;
+      const maxX = 250;
+      
+      for (let i = 0; i < oerstedDotPos.length; i++) {
+        if (oerstedCurrentState === 'RIGHT') {
+          oerstedDotPos[i] += speed;
+          if (oerstedDotPos[i] > maxX) {
+            oerstedDotPos[i] = minX;
+          }
+        } else {
+          oerstedDotPos[i] -= speed;
+          if (oerstedDotPos[i] < minX) {
+            oerstedDotPos[i] = maxX;
+          }
+        }
+        
+        if (dots[i]) {
+          dots[i].setAttribute('cx', oerstedDotPos[i]);
+        }
+      }
+    }
+
+    // ==========================================
+    // Slide 6: Electromagnet Strength Sandbox
+    // ==========================================
+    let emCore = 'Iron'; // 'Iron', 'Copper', 'Wood'
+
+    function initElectromagnet() {
+      setCoreMaterial('Iron');
+      updateElectromagnet();
+    }
+
+    function setCoreMaterial(mat) {
+      emCore = mat;
+      
+      // Update core buttons active state
+      document.getElementById('coreIron').classList.toggle('active', mat === 'Iron');
+      document.getElementById('coreCopper').classList.toggle('active', mat === 'Copper');
+      document.getElementById('coreWood').classList.toggle('active', mat === 'Wood');
+      
+      // Update core rendering text and color
+      const coreText = document.getElementById('emCoreText');
+      const coreObj = document.getElementById('emCoreObj');
+      if (mat === 'Iron') {
+        coreText.innerText = 'IRON CORE';
+        coreObj.setAttribute('fill', '#475569'); // Dark slate
+        coreObj.setAttribute('stroke', '#334155');
+      } else if (mat === 'Copper') {
+        coreText.innerText = 'COPPER BAR';
+        coreObj.setAttribute('fill', '#b45309'); // Copper orange
+        coreObj.setAttribute('stroke', '#92400e');
+      } else {
+        coreText.innerText = 'WOOD DOWEL';
+        coreObj.setAttribute('fill', '#854d0e'); // Wood brown
+        coreObj.setAttribute('stroke', '#713f12');
+      }
+      
+      updateElectromagnet();
+    }
+
+    function updateElectromagnet() {
+      const v = parseFloat(document.getElementById('sliderEmVoltage').value);
+      const n = parseInt(document.getElementById('sliderEmLoops').value);
+      
+      document.getElementById('emVoltageVal').innerText = `${v.toFixed(1)} V`;
+      document.getElementById('emLoopsVal').innerText = `${n} Turns`;
+      document.getElementById('emBatteryText').innerText = v === 0 ? 'OFF' : `${v.toFixed(1)} V`;
+      
+      // Calculate field strength
+      let coreMultiplier = 1;
+      if (emCore === 'Iron') coreMultiplier = 1000;
+      else if (emCore === 'Copper') coreMultiplier = 1;
+      else coreMultiplier = 0.001; // Wood
+      
+      const formulaVal = v * n * coreMultiplier;
+      // Normalizing for a nice displays
+      let displayField = Math.round(v * n * (coreMultiplier / 1000) * 10);
+      if (v === 0) displayField = 0;
+      
+      document.getElementById('emFieldStrengthText').innerText = displayField;
+      
+      // Calculate number of clips lifted
+      // Standard range: 0 to 36 clips (30 turns, 12V iron core)
+      let clipsCount = 0;
+      if (emCore === 'Iron' && v > 0) {
+        clipsCount = Math.round((v * n) / 10);
+      } else if (emCore === 'Copper' && v === 12 && n === 30) {
+        clipsCount = 1; // barely lifts one at max
+      }
+      
+      document.getElementById('emClipsText').innerText = `${clipsCount} Clips`;
+      
+      // Redraw electromagnet wire wraps SVG
+      drawElectromagnetWiresSVG(n);
+      
+      // Draw hanging paperclips
+      drawHangingPaperclips(clipsCount);
+      
+      // Animate field lines
+      const fieldG = document.getElementById('emFieldLines');
+      if (v > 0 && emCore !== 'Wood') {
+        fieldG.setAttribute('opacity', (v / 12) * (emCore === 'Iron' ? 1.0 : 0.2));
+        const strokeW = Math.max(1, (n / 10) * 2);
+        document.getElementById('emLineLeft1').setAttribute('stroke-width', strokeW);
+        document.getElementById('emLineRight1').setAttribute('stroke-width', strokeW);
+      } else {
+        fieldG.setAttribute('opacity', '0');
+      }
+    }
+
+    function drawElectromagnetWiresSVG(turns) {
+      const coilG = document.getElementById('emCoilGroup');
+      coilG.innerHTML = '';
+      
+      // Width of the core is 180 (from x=120 to 300)
+      const startX = 135;
+      const endX = 285;
+      const gap = (endX - startX) / (turns - 1);
+      
+      let paths = '';
+      for (let i = 0; i < turns; i++) {
+        const x = startX + i * gap;
+        // Coil wraps behind (drawn as single line) and front curve
+        paths += `
+          <!-- Wrap behind -->
+          <line x1="${x - 4}" y1="125" x2="${x + 4}" y2="145" stroke="#78350f" stroke-width="2.5" opacity="0.3"/>
+          <!-- Wrap in front -->
+          <path d="M ${x - 4} 125 Q ${x + 6} 115 ${x + 8} 135 Q ${x + 8} 155 ${x + 4} 145" fill="none" stroke="#f59e0b" stroke-width="2.5" filter="drop-shadow(0 0 1px rgba(245,158,11,0.5))"/>
+        `;
+      }
+      
+      // Lead wires to battery
+      paths += `
+        <!-- Lead left -->
+        <path d="M 120 220 L 120 135 L 131 125" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+        <!-- Lead right -->
+        <path d="M 290 220 L 290 135 L 285 145" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+      `;
+      coilG.innerHTML = paths;
+    }
+
+    function drawHangingPaperclips(count) {
+      const clipsG = document.getElementById('emPaperclipsGroup');
+      clipsG.innerHTML = '';
+      
+      if (count === 0) return;
+      
+      let clipsHTML = '';
+      // We clip them near the left tip (around x=120, y=135)
+      // They hang down like a bunch of grapes
+      for (let i = 0; i < count; i++) {
+        // Random clustering positions hanging under left side of core
+        const angle = -10 + Math.random() * 20;
+        const ox = 15 + (i % 3) * 6 - Math.random() * 5;
+        const oy = 12 + Math.floor(i / 3) * 12 + Math.random() * 5;
+        
+        clipsHTML += `
+          <g transform="translate(${ox}, ${oy}) rotate(${angle})">
+            <!-- Paperclip shape -->
+            <path d="M 0 0 L 0 10 A 3 3 0 0 0 6 10 L 6 3 A 2 2 0 0 0 2 3 L 2 7" fill="none" stroke="#9ca3af" stroke-width="1.5"/>
+          </g>
+        `;
+      }
+      clipsG.innerHTML = clipsHTML;
+    }
+
+    // ==========================================
+    // Slide 7: Relay and Fuse Protection Sim
+    // ==========================================
+    let relayActive = false;
+    let fuseApplianceLoad = 0; // Cumulative current draw
+    let fuseBlown = false;
+    const activeAppliances = {
+      Toaster: false,
+      Microwave: false,
+      Heater: false
+    };
+
+    function initRelayAndFuse() {
+      relayActive = false;
+      document.getElementById('btnRelaySwitch').innerText = 'Control Switch: OFF';
+      document.getElementById('btnRelaySwitch').classList.remove('active');
+      
+      activeAppliances.Toaster = false;
+      activeAppliances.Microwave = false;
+      activeAppliances.Heater = false;
+      fuseApplianceLoad = 0;
+      fuseBlown = false;
+      
+      document.getElementById('btnAppToaster').classList.remove('active');
+      document.getElementById('btnAppMicrowave').classList.remove('active');
+      document.getElementById('btnAppHeater').classList.remove('active');
+      document.getElementById('btnReplaceFuse').style.display = 'none';
+      
+      updateRelayCircuit();
+      updateFuseCircuit();
+    }
+
+    function toggleRelaySwitch() {
+      relayActive = !relayActive;
+      
+      const btn = document.getElementById('btnRelaySwitch');
+      btn.innerText = relayActive ? 'Control Switch: ON' : 'Control Switch: OFF';
+      btn.classList.toggle('active', relayActive);
+      
+      updateRelayCircuit();
+    }
+
+    function updateRelayCircuit() {
+      const arm = document.getElementById('relayArmature');
+      const bulb = document.getElementById('relayBulb');
+      const filament = document.getElementById('relayBulbFilament');
+      const coilText = document.getElementById('relayCoilFieldText');
+      const hWire = document.getElementById('relayHingeWire');
+      
+      const step1 = document.getElementById('relayStep1');
+      const step2 = document.getElementById('relayStep2');
+      const step3 = document.getElementById('relayStep3');
+      const step4 = document.getElementById('relayStep4');
+      
+      if (relayActive) {
+        // Step 1: Switch closes, low power wires glow and animate immediately
+        hWire.setAttribute('y2', '70'); 
+        
+        const wireL1 = document.getElementById('lowPowerWireBottom');
+        const wireL2 = document.getElementById('lowPowerWireTop');
+        const wireL3 = document.getElementById('lowPowerWireToCoil');
+        
+        if (wireL1) {
+          wireL1.style.stroke = 'var(--color-success)';
+          wireL1.classList.add('wire-active');
+        }
+        if (wireL2) {
+          wireL2.style.stroke = 'var(--color-success)';
+          wireL2.classList.add('wire-active');
+        }
+        if (wireL3) {
+          wireL3.style.stroke = 'var(--color-success)';
+          wireL3.classList.add('wire-active');
+        }
+        if (hWire) {
+          hWire.style.stroke = 'var(--color-success)';
+          hWire.classList.add('wire-active');
+        }
+        
+        if (step1) step1.classList.add('active');
+        
+        // Step 2: Coil magnetizes, pulls armature to close the contacts
+        setTimeout(() => {
+          if (!relayActive) return;
+          if (step2) step2.classList.add('active');
+          arm.setAttribute('transform', 'rotate(8.5, 160, 45)'); 
+          if (coilText) {
+            coilText.style.color = 'var(--color-primary)';
+            coilText.innerText = 'MAGNETIC';
+          }
+        }, 150);
+        
+        // Step 3: High power contacts touch, wires glow and animate current
+        setTimeout(() => {
+          if (!relayActive) return;
+          if (step3) step3.classList.add('active');
+          
+          const wireH1 = document.getElementById('highPowerWireBottom');
+          const wireH2 = document.getElementById('highPowerWireTop');
+          const wireH3 = document.getElementById('highPowerWireToBulb');
+          
+          if (wireH1) {
+            wireH1.style.stroke = 'var(--color-warning)';
+            wireH1.classList.add('wire-active');
+          }
+          if (wireH2) {
+            wireH2.style.stroke = 'var(--color-warning)';
+            wireH2.classList.add('wire-active');
+          }
+          if (wireH3) {
+            wireH3.style.stroke = 'var(--color-warning)';
+            wireH3.classList.add('wire-active');
+          }
+        }, 300);
+        
+        // Step 4: Bulb lights up
+        setTimeout(() => {
+          if (!relayActive) return;
+          if (step4) step4.classList.add('active');
+          if (bulb) {
+            bulb.style.fill = 'rgba(253, 224, 71, 0.4)';
+            bulb.style.stroke = 'var(--color-warning)';
+            bulb.style.filter = 'drop-shadow(0 0 15px var(--color-warning))';
+          }
+          if (filament) filament.style.stroke = '#fff';
+        }, 450);
+      } else {
+        // Deactivate all steps immediately
+        if (step1) step1.classList.remove('active');
+        if (step2) step2.classList.remove('active');
+        if (step3) step3.classList.remove('active');
+        if (step4) step4.classList.remove('active');
+        
+        // Revert control loop immediately
+        hWire.setAttribute('y2', '45'); 
+        
+        const wireL1 = document.getElementById('lowPowerWireBottom');
+        const wireL2 = document.getElementById('lowPowerWireTop');
+        const wireL3 = document.getElementById('lowPowerWireToCoil');
+        
+        if (wireL1) {
+          wireL1.style.stroke = '#3b82f6';
+          wireL1.classList.remove('wire-active');
+        }
+        if (wireL2) {
+          wireL2.style.stroke = '#3b82f6';
+          wireL2.classList.remove('wire-active');
+        }
+        if (wireL3) {
+          wireL3.style.stroke = '#3b82f6';
+          wireL3.classList.remove('wire-active');
+        }
+        if (hWire) {
+          hWire.style.stroke = '#ef4444';
+          hWire.classList.remove('wire-active');
+        }
+        
+        // Revert coil & armature immediately
+        if (coilText) {
+          coilText.style.color = '#9ca3af';
+          coilText.innerText = 'COIL';
+        }
+        arm.setAttribute('transform', 'rotate(0, 160, 45)'); 
+        
+        // Revert high power loop immediately
+        const wireH1 = document.getElementById('highPowerWireBottom');
+        const wireH2 = document.getElementById('highPowerWireTop');
+        const wireH3 = document.getElementById('highPowerWireToBulb');
+        
+        if (wireH1) {
+          wireH1.style.stroke = '#2a3554';
+          wireH1.classList.remove('wire-active');
+        }
+        if (wireH2) {
+          wireH2.style.stroke = '#2a3554';
+          wireH2.classList.remove('wire-active');
+        }
+        if (wireH3) {
+          wireH3.style.stroke = '#2a3554';
+          wireH3.classList.remove('wire-active');
+        }
+        
+        if (bulb) {
+          bulb.style.fill = '#111827';
+          bulb.style.stroke = '#374151';
+          bulb.style.filter = 'none';
+        }
+        if (filament) filament.style.stroke = '#9ca3af';
+      }
+    }
+
+    function toggleAppliance(name, current) {
+      if (fuseBlown) return;
+      
+      activeAppliances[name] = !activeAppliances[name];
+      document.getElementById(`btnApp${name}`).classList.toggle('active', activeAppliances[name]);
+      
+      // Sum current loads
+      fuseApplianceLoad = 0;
+      if (activeAppliances.Toaster) fuseApplianceLoad += 4;
+      if (activeAppliances.Microwave) fuseApplianceLoad += 5;
+      if (activeAppliances.Heater) fuseApplianceLoad += 8;
+      
+      updateFuseCircuit();
+    }
+
+    function updateFuseCircuit() {
+      const curDisp = document.getElementById('fuseCurrentDisplay');
+      const statusText = document.getElementById('fuseStatusText');
+      const fuseWire = document.getElementById('fuseElementWire');
+      
+      curDisp.innerText = `Current: ${fuseApplianceLoad} A`;
+      
+      if (fuseApplianceLoad > 10) {
+        // BLOW FUSE!
+        fuseBlown = true;
+        fuseApplianceLoad = 0;
+        curDisp.innerText = `Current: 0 A`;
+        curDisp.style.color = 'var(--color-danger)';
+        
+        statusText.innerText = '💥 FUSE BLOWN (OVERLOAD!)';
+        statusText.style.fill = 'var(--color-danger)';
+        
+        // Melt wire animation
+        fuseWire.setAttribute('stroke', 'var(--color-danger)');
+        fuseWire.style.animation = 'pulse 0.2s 3';
+        setTimeout(() => {
+          fuseWire.style.display = 'none';
+        }, 600);
+        
+        // Deactivate all appliances
+        activeAppliances.Toaster = false;
+        activeAppliances.Microwave = false;
+        activeAppliances.Heater = false;
+        document.getElementById('btnAppToaster').classList.remove('active');
+        document.getElementById('btnAppMicrowave').classList.remove('active');
+        document.getElementById('btnAppHeater').classList.remove('active');
+        
+        document.getElementById('btnReplaceFuse').style.display = 'block';
+        
+        // Highlight wire paths cut
+        document.getElementById('fuseWireLeft').style.stroke = 'var(--color-danger)';
+        document.getElementById('fuseWireRight').style.stroke = 'var(--color-danger)';
+      } else {
+        curDisp.style.color = fuseApplianceLoad > 0 ? 'var(--color-warning)' : 'var(--color-success)';
+        statusText.innerText = 'FUSE INTACT (10A LIMIT)';
+        statusText.style.fill = 'var(--color-text-secondary)';
+        fuseWire.style.display = 'block';
+        fuseWire.setAttribute('stroke', fuseApplianceLoad > 0 ? 'var(--color-warning)' : '#f59e0b');
+        
+        document.getElementById('fuseWireLeft').style.stroke = fuseApplianceLoad > 0 ? 'var(--color-warning)' : 'var(--color-success)';
+        document.getElementById('fuseWireRight').style.stroke = fuseApplianceLoad > 0 ? 'var(--color-warning)' : 'var(--color-success)';
+      }
+    }
+
+    function replaceFuse() {
+      fuseBlown = false;
+      document.getElementById('btnReplaceFuse').style.display = 'none';
+      updateFuseCircuit();
+    }
+
+    // ==========================================
+    // Slide 8: Playable 10-Question Quiz Game
+    // ==========================================
+    const quizQuestions = [
+      {
+        q: "Which logic gate outputs a 1 ONLY when both inputs are 1?",
+        opts: ["OR", "XOR", "AND", "NAND"],
+        correct: 2,
+        exp: "AND logic requires BOTH inputs to be high (1) to produce a high output (1). If either input is 0, the AND gate outputs 0."
+      },
+      {
+        q: "If a NOT gate's input is a 1, what is the output?",
+        opts: ["0", "1", "High Voltage", "Both 1 and 2"],
+        correct: 0,
+        exp: "The NOT gate is an inverter. It flips the binary input, changing a 1 to a 0, and a 0 to a 1."
+      },
+      {
+        q: "Which gate is represented by a standard OR gate with a small inversion circle at its output?",
+        opts: ["XOR", "NOR", "NAND", "XNOR"],
+        correct: 1,
+        exp: "NOR stands for 'NOT OR'. Its schematic symbol is the OR gate shape with a small inversion bubble at the output node."
+      },
+      {
+        q: "An XOR gate has inputs A=1 and B=1. What is the output?",
+        opts: ["1", "0", "Error", "High Voltage"],
+        correct: 1,
+        exp: "XOR (Exclusive OR) outputs a 1 ONLY when the inputs are strictly different. When A=1 and B=1, the inputs are identical, so XOR outputs a 0."
+      },
+      {
+        q: "What happens to an electromagnet's strength if you replace its iron core with a plastic pen?",
+        opts: ["It gets stronger", "It stays the same", "It drops to nearly zero", "It reverses polarity"],
+        correct: 2,
+        exp: "Iron is ferromagnetic and concentrates the magnetic field lines. Plastic is non-magnetic (modifier near 0), so magnetic strength drops to nearly zero."
+      },
+      {
+        q: "Which parameter does NOT increase the strength of an electromagnet?",
+        opts: ["Increasing the current", "Increasing coil loops", "Using an iron core", "Reversing current direction"],
+        correct: 3,
+        exp: "Reversing current direction flips the magnetic poles (North and South), but it does not change the physical strength of the magnet."
+      },
+      {
+        q: "How does a fuse protect an electrical circuit?",
+        opts: ["It increases the voltage", "It melts to break the loop", "It stores electrical charge", "It reverses current flow"],
+        correct: 1,
+        exp: "Fuses contain a thin metal ribbon designed to heat up and melt if current exceeds safety limits, opening the circuit to prevent fire hazards."
+      },
+      {
+        q: "Why is an electromagnetic relay useful in engineering?",
+        opts: ["It stores current like a battery", "It uses a small voltage to switch a high voltage loop", "It changes AC to DC", "It decreases resistance"],
+        correct: 1,
+        exp: "Relays allow safe, low-power control signals (like a microcontroller output) to switch on dangerous, high-voltage secondary loads via an electromagnet."
+      },
+      {
+        q: "Which gate outputs a 0 ONLY when both inputs are 1?",
+        opts: ["AND", "NAND", "OR", "NOR"],
+        correct: 1,
+        exp: "NAND is the exact opposite of AND. Since AND outputs a 1 only when both are 1, NAND outputs a 0 only when both are 1."
+      },
+      {
+        q: "A solenoid is best described as:",
+        opts: ["A chemical battery", "A coil of wire acting as an electromagnet", "A logic gate inverter", "A type of circuit fuse"],
+        correct: 1,
+        exp: "A solenoid is a cylindrical coil of wire. When current runs through it, it produces a magnetic field, acting as an electromagnet."
+      }
+    ];
+
+    let quizCurrentIdx = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+    let quizTimerInterval = null;
+    let quizTimeRemaining = 30; // seconds
+
+    function initQuiz() {
+      quizCurrentIdx = 0;
+      quizScore = 0;
+      quizAnswered = false;
+      
+      document.getElementById('quizContainer').style.display = 'flex';
+      document.getElementById('quizFinishedPanel').style.display = 'none';
+      
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      quizAnswered = false;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      document.getElementById('quizQuestionNum').innerText = `Question ${quizCurrentIdx + 1} of ${quizQuestions.length}`;
+      document.getElementById('btnQuizNext').style.display = 'none';
+      document.getElementById('quizExplanation').style.display = 'none';
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      document.getElementById('quizQuestionText').innerText = qData.q;
+      
+      // Render options
+      const optContainer = document.getElementById('quizOptions');
+      optContainer.innerHTML = '';
+      qData.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn-option';
+        btn.innerHTML = `<span style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: var(--color-primary);">${String.fromCharCode(65 + idx)}</span> ${opt}`;
+        btn.onclick = () => submitQuizAnswer(idx);
+        optContainer.appendChild(btn);
+      });
+      
+      // Start Timer
+      startQuizTimer();
+    }
+
+    function startQuizTimer() {
+      clearInterval(quizTimerInterval);
+      quizTimeRemaining = 30;
+      const bar = document.getElementById('quizTimerBar');
+      bar.style.width = '100%';
+      bar.style.background = 'var(--color-accent)';
+      
+      quizTimerInterval = setInterval(() => {
+        quizTimeRemaining -= 0.1;
+        const percent = (quizTimeRemaining / 30) * 100;
+        bar.style.width = `${percent}%`;
+        
+        if (quizTimeRemaining <= 10) {
+          bar.style.background = 'var(--color-danger)';
+        }
+        
+        if (quizTimeRemaining <= 0) {
+          clearInterval(quizTimerInterval);
+          submitQuizAnswer(-1); // Time out
+        }
+      }, 100);
+    }
+
+    function submitQuizAnswer(selectedIdx) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+      clearInterval(quizTimerInterval);
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      const options = document.querySelectorAll('.quiz-btn-option');
+      
+      // Highlighting answers
+      if (selectedIdx === qData.correct) {
+        options[selectedIdx].classList.add('correct');
+        quizScore += 100;
+        document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      } else {
+        if (selectedIdx !== -1) {
+          options[selectedIdx].classList.add('incorrect');
+        }
+        options[qData.correct].classList.add('correct');
+      }
+      
+      // Disable options hover/cursor
+      options.forEach(opt => opt.style.pointerEvents = 'none');
+      
+      // Show explanation
+      document.getElementById('quizExplanationText').innerText = qData.exp;
+      document.getElementById('quizExplanation').style.display = 'block';
+      
+      // Show next button
+      document.getElementById('btnQuizNext').style.display = 'block';
+    }
+
+    function nextQuizQuestion() {
+      quizCurrentIdx++;
+      if (quizCurrentIdx < quizQuestions.length) {
+        showQuizQuestion();
+      } else {
+        // Show finished panel
+        document.getElementById('quizContainer').style.display = 'none';
+        
+        const finishPanel = document.getElementById('quizFinishedPanel');
+        finishPanel.style.display = 'flex';
+        document.getElementById('quizFinalScoreText').innerText = `You scored ${quizScore} out of ${quizQuestions.length * 100} points!`;
+      }
+    }
+
+    function restartQuiz() {
+      initQuiz();
+    }
+
+    // ==========================================
+    // Init Application
+    // ==========================================
+    window.onload = () => {
+      initSlides();
+    };
+
+  </script>
+</body>
+</html>

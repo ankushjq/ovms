@@ -1,0 +1,11 @@
+Question,Answer 1,Answer 2,Answer 3,Answer 4,Time limit (seconds),Correct answer(s)
+What force is responsible for making a current-carrying coil rotate inside a magnetic field?,Coulomb force,Lorentz force,Frictional drag,The Force of gravity,20,2
+What component in a DC motor reverses current direction every half-turn to keep it spinning in one direction?,Rotor armature,Carbon brushes,Split-ring commutator,Stator magnets,20,3
+Which law describes how a changing magnetic field induces an electromotive force (EMF) in a conductor?,Ohm's Law,Faraday's Law of Induction,Coulomb's Law,Murphy's Law of Sparks,20,2
+"Lenz's Law states that the direction of an induced current will always...",Oppose the change in magnetic flux that created it,Align with the magnetic north pole,Flow clockwise,Flow to the lowest resistance branch,20,1
+What happens to the resistance of a Negative Temperature Coefficient (NTC) Thermistor as temperature INCREASES?,It increases,It decreases,It stays exactly the same,It oscillates rapidly,20,2
+How many pins must be connected to use a potentiometer as a variable voltage divider?,Just 1 pin,Exactly 2 pins,All 3 pins,No pins (it works wirelessly),20,3
+How does a Light Dependent Resistor (LDR) behave when you block all light from hitting it?,Its resistance drops to zero,Its resistance increases dramatically,It begins to glow in the dark,It acts as a battery cell,20,2
+"In a lab mystery box, a component only allows current to flow in one direction. What is it?",Resistor,Capacitor,Diode or LED,SPST Switch,20,3
+"When using a digital multimeter (DMM) to measure the voltage drop across a resistor, how must the probes be connected?",In series (breaking the circuit),In parallel (across the resistor),Directly to the battery terminals,Wrapped around the resistor leads,20,2
+Why do transformers only operate on Alternating Current (AC) and not Direct Current (DC)?,AC voltage is always higher than DC,"DC creates a steady field, so there is no flux change to induce voltage",DC current burns out the transformer's iron core,AC stands for 'Amplified Current' which transformers need,20,2

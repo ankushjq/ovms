@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Olympiad Circuit Lab - Class 3: Resistors, Kirchhoff, & Lab Measurements</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for rendering LaTeX formulas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    /* ==========================================
+       Design System & Core Variables
+       ========================================== */
+    :root {
+      --color-bg: #0b0f19;
+      --color-surface: #131a2c;
+      --color-surface-hover: #1e2942;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-text-primary: #f3f4f6;
+      --color-text-secondary: #9ca3af;
+      
+      /* Neon Electric Theme Colors */
+      --color-primary: hsl(145, 100%, 45%); /* Neon Green Theme for Class 3 */
+      --color-accent: hsl(195, 100%, 50%);  /* Electric Blue */
+      --color-warning: hsl(35, 100%, 50%);  /* Neon Amber */
+      --color-danger: hsl(0, 100%, 60%);    /* Neon Red */
+      --color-purple: hsl(280, 100%, 65%);  /* Neon Purple */
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      
+      --transition-speed: 0.3s;
+      --border-radius: 16px;
+      --shadow-neon: 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      outline: none;
+      color: inherit;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* ==========================================
+       Layout Structure
+       ========================================== */
+    header {
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .class-switcher-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border: 1px dashed var(--color-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .class-switcher-link:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .progress-container {
+      width: 180px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-toggle-presenter {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-toggle-presenter:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-toggle-presenter.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .main-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-deck {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #070a12 100%);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1.5rem;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    /* ==========================================
+       Presenter Console Sidebar
+       ========================================== */
+    .presenter-panel {
+      width: 320px;
+      background: #0f1422;
+      border-left: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 9;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .presenter-panel.active {
+      transform: translateX(0);
+      position: relative;
+    }
+
+    .presenter-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0b0f19;
+    }
+
+    .presenter-body {
+      flex: 1;
+      padding: 1.25rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .speaker-script-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 8px;
+      padding: 1rem;
+      color: var(--color-text-primary);
+    }
+
+    .speaker-actions-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 1rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* ==========================================
+       Glassmorphic Component Panels
+       ========================================== */
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.45);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      transition: border-color var(--transition-speed) ease;
+    }
+
+    .glass-panel:hover {
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    /* Split layout structures */
+    .split-layout-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .split-layout-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .slide-title-wrapper {
+      border-left: 4px solid var(--color-primary);
+      padding-left: 1rem;
+    }
+
+    .slide-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .slide-title {
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    /* Welcome view styles */
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .welcome-card {
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .welcome-card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .welcome-card-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--color-primary);
+    }
+
+    .welcome-card-icon.blue {
+      background: rgba(0, 210, 255, 0.08);
+      border-color: rgba(0, 210, 255, 0.2);
+    }
+
+    .welcome-card-icon.blue svg {
+      fill: var(--color-accent);
+    }
+
+    .welcome-card-icon.purple {
+      background: rgba(176, 38, 255, 0.08);
+      border-color: rgba(176, 38, 255, 0.2);
+    }
+
+    .welcome-card-icon.purple svg {
+      fill: var(--color-purple);
+    }
+
+    /* ==========================================
+       Simulation 1: Resistor Color Code
+       ========================================== */
+    .resistor-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .resistor-svg {
+      width: 100%;
+      max-width: 380px;
+      height: 120px;
+    }
+
+    .resistor-selectors {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .band-selector-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .band-selector-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+    }
+
+    .band-select {
+      background: #1e293b;
+      border: 1px solid var(--color-border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: var(--font-body);
+      outline: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .band-select:focus {
+      border-color: var(--color-primary);
+    }
+
+    .resistor-result-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      font-family: var(--font-display);
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+      margin-top: 0.5rem;
+    }
+
+    /* Challenge Mode Widget */
+    .challenge-widget {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.02);
+    }
+
+    .btn-challenge-toggle {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--color-border);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn-challenge-toggle.active {
+      background: var(--color-primary);
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .challenge-target {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--color-warning);
+      text-align: center;
+      margin: 0.5rem 0;
+    }
+
+    .btn-check-answer {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-check-answer:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    /* ==========================================
+       Simulation 2: Kirchhoff solver
+       ========================================== */
+    .solver-circuit-container {
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      padding: 1rem;
+      position: relative;
+    }
+
+    .solver-sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .slider-control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .slider-header-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .range-input {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      outline: none;
+      border-radius: 3px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    .solver-math-card {
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .solver-math-card h4 {
+      font-size: 0.9rem;
+      color: var(--color-accent);
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .equation-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-family: monospace;
+    }
+
+    /* ==========================================
+       Simulation 3: Multimeter sandbox
+       ========================================== */
+    .dmm-workbench {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1rem;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .dmm-circuit-canvas {
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      padding: 0.5rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .test-node-btn {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #fff;
+      transition: all 0.2s ease;
+      z-index: 5;
+    }
+
+    .test-node-btn:hover {
+      transform: scale(1.2);
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 10px var(--color-primary);
+    }
+
+    .test-node-btn.red-probe-attached {
+      background: var(--color-danger) !important;
+      border-color: #fff !important;
+      box-shadow: 0 0 12px var(--color-danger);
+    }
+
+    .test-node-btn.black-probe-attached {
+      background: #000 !important;
+      border-color: #fff !important;
+      box-shadow: 0 0 12px #fff;
+    }
+
+    .dmm-device-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .dmm-screen {
+      background: #101622;
+      border: 3px solid #1e293b;
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      font-family: 'Courier New', Courier, monospace;
+      color: #38bdf8;
+      box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.15);
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .dmm-screen-val {
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+    }
+
+    .dmm-screen-unit {
+      font-size: 0.8rem;
+      color: #0284c7;
+      text-transform: uppercase;
+    }
+
+    .dmm-dial-area {
+      display: flex;
+      justify-content: space-around;
+      background: #1e293b;
+      padding: 8px;
+      border-radius: var(--border-radius);
+    }
+
+    .btn-dmm-mode {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-dmm-mode.active {
+      background: var(--color-primary);
+      color: #0b0f19;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-clear-probes {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--color-danger);
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-clear-probes:hover {
+      background: var(--color-danger);
+      color: #fff;
+    }
+
+    /* ==========================================
+       Quiz styles
+       ========================================== */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .quiz-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .quiz-timer-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .quiz-timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--color-warning);
+      transition: width 1s linear;
+    }
+
+    .quiz-card {
+      padding: 1.5rem;
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .quiz-question {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .quiz-option-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .quiz-option-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .quiz-option-btn.correct {
+      background: rgba(16, 185, 129, 0.08) !important;
+      border-color: var(--color-success) !important;
+      color: var(--color-success);
+    }
+
+    .quiz-option-btn.wrong {
+      background: rgba(239, 68, 68, 0.08) !important;
+      border-color: var(--color-danger) !important;
+      color: var(--color-danger);
+    }
+
+    .quiz-option-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .quiz-option-btn.correct .quiz-option-letter {
+      background: var(--color-success);
+      color: #0b0f19;
+    }
+
+    .quiz-option-btn.wrong .quiz-option-letter {
+      background: var(--color-danger);
+      color: #fff;
+    }
+
+    .quiz-explanation-card {
+      background: rgba(16, 185, 129, 0.04);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .quiz-explanation-card h4 {
+      font-size: 0.95rem;
+      color: var(--color-success);
+      margin-bottom: 0.25rem;
+    }
+
+    .quiz-action-area {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-quiz-next {
+      background: var(--color-primary);
+      color: #0b0f19;
+      font-weight: bold;
+      padding: 10px 24px;
+      border-radius: 30px;
+      transition: all 0.2s ease;
+      display: none;
+    }
+
+    .btn-quiz-next:hover {
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .quiz-finished-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1.5rem;
+      padding: 3rem;
+      display: none;
+    }
+
+    .quiz-finished-icon {
+      font-size: 4rem;
+      animation: float 2s infinite alternate ease-in-out;
+    }
+
+    /* ==========================================
+       Bottom Control Bar
+       ========================================== */
+    .control-bar {
+      background: #0f1422;
+      border-top: 1px solid var(--color-border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide-indicators {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .indicator-dot:hover {
+      background: var(--color-primary);
+    }
+
+    .indicator-dot.active {
+      background: var(--color-primary);
+      width: 24px;
+      border-radius: 5px;
+      box-shadow: 0 0 8px var(--color-primary);
+    }
+
+    .navigation-controls {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn-nav svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       Header
+       ========================================== -->
+  <header>
+    <a href="index.html" class="brand">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 14h9v8l10-12h-9z"/>
+      </svg>
+      <span class="brand-title">CIRCUIT LAB ⚡ DIV B</span>
+    </a>
+    
+    <div class="header-actions">
+      <a href="class1.html" class="class-switcher-link">Class 1</a>
+      <a href="class2.html" class="class-switcher-link">Class 2</a>
+      <a href="class4.html" class="class-switcher-link">Class 4</a>
+      <div class="progress-container" title="Course Progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <button class="btn-toggle-presenter" id="presenterToggleBtn" onclick="togglePresenterMode()">
+        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Console</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       Main Workspace
+       ========================================== -->
+  <div class="main-workspace">
+    
+    <!-- Slide Deck Container -->
+    <div class="slide-deck" id="slideDeck">
+
+      <!-- SLIDE 1: Welcome & Overview -->
+      <div class="slide active" id="slide1">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class 3: Welcome</span>
+          <h2 class="slide-title">Advanced Loops & Measurements</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            <div>
+              <div class="glass-panel" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(0, 210, 255, 0.05));">
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--color-primary);">Class 3 Core Goals ⚡</h3>
+                <p style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary);">
+                  Welcome back, circuit champions! Today we wrap up the Core Direct Current (DC) syllabus for Science Olympiad. Since we are online today, we will use our custom virtual laboratory sandboxes to master resistor reading, circuit solver laws, and multimeter testing.
+                </p>
+              </div>
+              
+              <div class="welcome-grid">
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                  </div>
+                  <h4 style="font-size: 0.95rem;">Resistor Codes</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Learn to decode 4-band and 5-band color rings to calculate values and tolerances.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon blue">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                  </div>
+                  <h4 style="font-size: 0.95rem;">Kirchhoff's Laws</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Apply conservation of charge (KCL) and energy (KVL) to solve double-loop systems.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon purple">
+                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.2 1.8 4 4 4h1.7c.8 1.6 2.2 2.8 3.9 3.2V21H8v2h8v-2h-3.6v-3.8c1.7-.4 3.1-1.6 3.9-3.2H19c2.2 0 4-1.8 4-4V7c0-1.1-.9-2-2-2zm-12 5H5V7h2v3zm12 0h-2V7h2v3z"/></svg>
+                  </div>
+                  <h4 style="font-size: 0.95rem;">DMM Lab Station</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Practice placing voltmeter and ammeter probes safely on active circuits.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Recall Quiz Box -->
+            <div class="glass-panel quick-calc-box" style="display: flex; flex-direction: column; justify-content: center; gap: 0.75rem;">
+              <h3 style="font-size: 1.1rem; color: var(--color-accent); border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Prerequisite Check</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary);">Recap: A logic circuit has an AND gate. Its inputs are A=1 and B=1. What is the output? What if it was a NAND gate instead?</p>
+              <div style="font-size: 1rem; font-weight: 700; color: var(--color-primary); margin-top: 0.5rem; font-family: monospace;">
+                AND Output = 1 <br>
+                NAND Output = 0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Resistor Color Codes Theory -->
+      <div class="slide" id="slide2">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Resistors</span>
+          <h2 class="slide-title">Decoding Resistor Bands (4-Band &amp; 5-Band)</h2>
+        </div>
+        <div class="slide-content">
+          <p style="font-size: 0.95rem; color: var(--color-text-secondary);">
+            Standard resistors use colored rings to encode their resistance value and tolerance limit. Being able to decode these quickly under time constraints is key.
+          </p>
+          
+          <div class="split-layout-equal" style="align-items: center;">
+            <div class="glass-panel" style="font-size: 0.85rem; line-height: 1.6;">
+              <h4 style="color: var(--color-primary); margin-bottom: 0.5rem; font-size: 1rem;">The Calculation Rules</h4>
+              <p style="margin-bottom: 0.5rem;">
+                <strong>4-Band Resistor:</strong><br>
+                Value = (Band 1 Digit &times; 10 + Band 2 Digit) &times; Multiplier &Omega; &plusmn; Tolerance %
+              </p>
+              <p style="margin-bottom: 0.5rem;">
+                <strong>5-Band Resistor (Precision):</strong><br>
+                Value = (Band 1 &times; 100 + Band 2 &times; 10 + Band 3) &times; Multiplier &Omega; &plusmn; Tolerance %
+              </p>
+              <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; border-left: 3px solid var(--color-warning);">
+                <strong>Mnemonic Aid:</strong> "<strong>B</strong>ad <strong>B</strong>eers <strong>R</strong>ot <strong>O</strong>ur <strong>Y</strong>oung <strong>G</strong>uts <strong>B</strong>ut <strong>V</strong>odka <strong>G</strong>oes <strong>W</strong>ell"<br>
+                (Black=0, Brown=1, Red=2, Orange=3, Yellow=4, Green=5, Blue=6, Violet=7, Gray=8, White=9)
+              </div>
+            </div>
+            
+            <div class="glass-panel">
+              <h4 style="color: var(--color-accent); margin-bottom: 0.75rem; font-size: 1rem;">Tolerance Bands</h4>
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1.5px solid var(--color-border); color: #fff;">
+                    <th style="padding: 6px;">Color</th>
+                    <th style="padding: 6px;">Multiplier</th>
+                    <th style="padding: 6px;">Tolerance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid var(--color-border);">
+                    <td style="padding: 6px; font-weight: bold; color: #d97706;">Gold</td>
+                    <td style="padding: 6px;">0.1</td>
+                    <td style="padding: 6px; font-weight: bold; color: var(--color-warning);">&plusmn; 5%</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--color-border);">
+                    <td style="padding: 6px; font-weight: bold; color: #9ca3af;">Silver</td>
+                    <td style="padding: 6px;">0.01</td>
+                    <td style="padding: 6px; font-weight: bold; color: var(--color-text-secondary);">&plusmn; 10%</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--color-border);">
+                    <td style="padding: 6px; font-weight: bold; color: #b45309;">Brown</td>
+                    <td style="padding: 6px;">10</td>
+                    <td style="padding: 6px; font-weight: bold; color: #b45309;">&plusmn; 1%</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px; font-weight: bold; color: #ef4444;">Red</td>
+                    <td style="padding: 6px;">100</td>
+                    <td style="padding: 6px; font-weight: bold; color: #ef4444;">&plusmn; 2%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Interactive Resistor Sandbox -->
+      <div class="slide" id="slide3">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Resistors</span>
+          <h2 class="slide-title">Interactive Resistor Color Code Sandbox</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            
+            <!-- Resistor Workbench -->
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1rem; justify-content: space-between;">
+              <div class="resistor-display">
+                <!-- SVG Resistor -->
+                <svg class="resistor-svg" viewBox="0 0 380 120">
+                  <!-- Leads -->
+                  <line x1="10" y1="60" x2="370" y2="60" stroke="#94a3b8" stroke-width="6"/>
+                  <!-- Resistor body -->
+                  <path d="M 60 60 C 60 30, 90 25, 120 25 L 260 25 C 290 25, 320 30, 320 60 C 320 90, 290 95, 260 95 L 120 95 C 90 95, 60 90, 60 60 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="3" id="resistorBodySVG"/>
+                  <!-- Color Bands -->
+                  <rect x="90" y="25" width="16" height="70" fill="#92400e" id="resBand1SVG"/>
+                  <rect x="140" y="27" width="14" height="66" fill="#701a75" id="resBand2SVG"/>
+                  <rect x="190" y="27" width="14" height="66" fill="#92400e" id="resMultiplierSVG"/>
+                  <rect x="270" y="25" width="16" height="70" fill="#d97706" id="resToleranceSVG"/>
+                </svg>
+                <div class="resistor-result-value" id="resistorValText">150 &Omega; &plusmn; 5%</div>
+              </div>
+              
+              <div class="resistor-selectors">
+                <div class="band-selector-group">
+                  <label>Band 1</label>
+                  <select class="band-select" id="selBand1" onchange="updateResistorCalculation()">
+                    <option value="1" style="background:#78350f;">Brown (1)</option>
+                    <option value="2" style="background:#b91c1c;">Red (2)</option>
+                    <option value="3" style="background:#ea580c;">Orange (3)</option>
+                    <option value="4" style="background:#ca8a04;">Yellow (4)</option>
+                    <option value="5" style="background:#16a34a;">Green (5)</option>
+                    <option value="6" style="background:#2563eb;">Blue (6)</option>
+                    <option value="7" style="background:#7c3aed;">Violet (7)</option>
+                    <option value="8" style="background:#4b5563;">Gray (8)</option>
+                    <option value="9" style="background:#fff; color:#000;">White (9)</option>
+                  </select>
+                </div>
+                <div class="band-selector-group">
+                  <label>Band 2</label>
+                  <select class="band-select" id="selBand2" onchange="updateResistorCalculation()">
+                    <option value="0" style="background:#000;">Black (0)</option>
+                    <option value="1" style="background:#78350f;">Brown (1)</option>
+                    <option value="2" style="background:#b91c1c;">Red (2)</option>
+                    <option value="3" style="background:#ea580c;">Orange (3)</option>
+                    <option value="4" style="background:#ca8a04;">Yellow (4)</option>
+                    <option value="5" style="background:#16a34a;" selected>Green (5)</option>
+                    <option value="6" style="background:#2563eb;">Blue (6)</option>
+                    <option value="7" style="background:#7c3aed;">Violet (7)</option>
+                    <option value="8" style="background:#4b5563;">Gray (8)</option>
+                    <option value="9" style="background:#fff; color:#000;">White (9)</option>
+                  </select>
+                </div>
+                <div class="band-selector-group">
+                  <label>Multiplier</label>
+                  <select class="band-select" id="selMultiplier" onchange="updateResistorCalculation()">
+                    <option value="1" style="background:#000;">Black (x1)</option>
+                    <option value="10" style="background:#78350f;" selected>Brown (x10)</option>
+                    <option value="100" style="background:#b91c1c;">Red (x100)</option>
+                    <option value="1000" style="background:#ea580c;">Orange (x1k)</option>
+                    <option value="10000" style="background:#ca8a04;">Yellow (x10k)</option>
+                    <option value="100000" style="background:#16a34a;">Green (x100k)</option>
+                    <option value="1000000" style="background:#2563eb;">Blue (x1M)</option>
+                    <option value="0.1" style="background:#d97706;">Gold (x0.1)</option>
+                    <option value="0.01" style="background:#9ca3af;">Silver (x0.01)</option>
+                  </select>
+                </div>
+                <div class="band-selector-group">
+                  <label>Tolerance</label>
+                  <select class="band-select" id="selTolerance" onchange="updateResistorCalculation()">
+                    <option value="5" style="background:#d97706;" selected>Gold (&plusmn;5%)</option>
+                    <option value="10" style="background:#9ca3af;">Silver (&plusmn;10%)</option>
+                    <option value="1" style="background:#78350f;">Brown (&plusmn;1%)</option>
+                    <option value="2" style="background:#b91c1c;">Red (&plusmn;2%)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Resistor Challenge Mode -->
+            <div class="glass-panel challenge-widget" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
+                <h3 style="font-size: 1.1rem; color: var(--color-warning);">Olympiad Challenge</h3>
+                <button class="btn-challenge-toggle" id="btnToggleChallenge" onclick="toggleChallengeMode()">Challenge: OFF</button>
+              </div>
+              
+              <div id="challengeDetailsArea" style="flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; gap: 0.5rem;">
+                <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Turn on Challenge Mode to test your speed-matching color rings.</p>
+                <div class="challenge-target" id="challengeTargetText" style="display:none;">---</div>
+              </div>
+              
+              <button class="btn-check-answer" id="btnCheckAnswer" onclick="checkChallengeAnswer()" style="display:none;">Verify Code</button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Kirchhoff's Laws Theory -->
+      <div class="slide" id="slide4">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Loops &amp; Nodes</span>
+          <h2 class="slide-title">Kirchhoff's Laws (KCL &amp; KVL)</h2>
+        </div>
+        <div class="slide-content">
+          <p style="font-size: 0.95rem; color: var(--color-text-secondary);">
+            Ohm's Law is sufficient for simple layouts, but solving compound grids requires Kirchhoff's two conservation laws:
+          </p>
+          
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <h3 style="color: var(--color-primary); font-size: 1.2rem;">Current Law (KCL)</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5;">
+                <strong>Conservation of Charge:</strong> The total current entering any electrical junction (node) must exactly equal the total current leaving that node. No charge can accumulate.
+              </p>
+              <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; text-align: center; border-left: 3px solid var(--color-primary);">
+                $$\sum I_{in} = \sum I_{out} \implies I_1 = I_2 + I_3$$
+              </div>
+            </div>
+            
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <h3 style="color: var(--color-accent); font-size: 1.2rem;">Voltage Law (KVL)</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5;">
+                <strong>Conservation of Energy:</strong> The algebraic sum of all potential differences (voltages) around any closed loop in a circuit must equal zero. Gains equal drops.
+              </p>
+              <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; text-align: center; border-left: 3px solid var(--color-accent);">
+                $$\sum V_{gains} - \sum V_{drops} = 0 \implies V_{battery} - V_{R1} - V_{R2} = 0$$
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Kirchhoff Loop Solver Sandbox -->
+      <div class="slide" id="slide5">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Loops &amp; Nodes</span>
+          <h2 class="slide-title">Kirchhoff Double-Loop System Solver</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            
+            <!-- Circuit Sandbox Diagram -->
+            <div class="solver-circuit-container" style="display: flex; flex-direction: column; gap: 0.5rem; justify-content: center;">
+              <svg width="100%" height="160" viewBox="0 0 360 160" id="solverSVG">
+                <!-- Outer Loop rect wires -->
+                <rect x="40" y="20" width="280" height="120" stroke="#4b5563" stroke-width="3.5" fill="none"/>
+                <!-- Central junction wire branch -->
+                <line x1="180" y1="20" x2="180" y2="140" stroke="#4b5563" stroke-width="3.5"/>
+                
+                <!-- Voltage Source V1 -->
+                <rect x="25" y="65" width="30" height="30" rx="3" fill="#ef4444" />
+                <text x="40" y="83" font-family="monospace" font-size="10" fill="#000" text-anchor="middle" font-weight="bold" id="txtSourceV1">12V</text>
+                
+                <!-- Resistor R1 -->
+                <rect x="90" y="10" width="40" height="20" fill="#3b82f6" rx="2"/>
+                <text x="110" y="23" font-family="monospace" font-size="8" fill="#fff" text-anchor="middle" id="txtResR1">10&Omega;</text>
+                
+                <!-- Resistor R2 (parallel branch 1) -->
+                <rect x="160" y="70" width="40" height="20" fill="#a855f7" rx="2" transform="rotate(90, 180, 80)"/>
+                <text x="180" y="83" font-family="monospace" font-size="8" fill="#fff" text-anchor="middle" id="txtResR2">20&Omega;</text>
+                
+                <!-- Resistor R3 (parallel branch 2) -->
+                <rect x="300" y="70" width="40" height="20" fill="#14b8a6" rx="2" transform="rotate(90, 320, 80)"/>
+                <text x="320" y="83" font-family="monospace" font-size="8" fill="#fff" text-anchor="middle" id="txtResR3">30&Omega;</text>
+                
+                <!-- Current Directions -->
+                <!-- I1 arrow -->
+                <path d="M 70 20 L 78 16 L 78 24 Z" fill="var(--color-accent)" id="arrI1"/>
+                <text x="70" y="12" font-size="8" fill="var(--color-accent)" font-weight="bold" id="lblI1">I1=1.2A</text>
+                
+                <!-- I2 arrow -->
+                <path d="M 180 50 L 176 42 L 184 42 Z" fill="#c084fc" id="arrI2"/>
+                <text x="195" y="52" font-size="8" fill="#c084fc" font-weight="bold" id="lblI2">I2=0.72A</text>
+                
+                <!-- I3 arrow -->
+                <path d="M 250 20 L 258 16 L 258 24 Z" fill="#2dd4bf" id="arrI3"/>
+                <text x="250" y="12" font-size="8" fill="#2dd4bf" font-weight="bold" id="lblI3">I3=0.48A</text>
+              </svg>
+              
+              <div class="solver-math-card glass-panel" style="padding: 0.75rem;">
+                <h4>Kirchhoff's Node equations (KCL)</h4>
+                <ul class="equation-list">
+                  <li id="kclEq" style="color: var(--color-primary);">I1 = I2 + I3 => 1.20 A = 0.72 A + 0.48 A</li>
+                  <li id="kvlEq" style="color: var(--color-accent);">V1 - V_R1 - V_R2 = 0 => 12.0V - 4.8V - 7.2V = 0</li>
+                </ul>
+              </div>
+            </div>
+            
+            <!-- Controls / Sliders -->
+            <div class="glass-panel solver-sliders" style="display: flex; flex-direction: column; justify-content: space-around;">
+              <div class="slider-control-group">
+                <div class="slider-header-info">
+                  <span>Source Voltage (V1)</span>
+                  <span id="lblValV1" style="color: var(--color-danger);">12 V</span>
+                </div>
+                <input type="range" class="range-input" id="slideV1" min="5" max="24" value="12" step="1" oninput="solveKirchhoffCircuit()">
+              </div>
+              
+              <div class="slider-control-group">
+                <div class="slider-header-info">
+                  <span>Resistor R1 (Series)</span>
+                  <span id="lblValR1" style="color: #3b82f6;">10 &Omega;</span>
+                </div>
+                <input type="range" class="range-input" id="slideR1" min="1" max="100" value="10" step="1" oninput="solveKirchhoffCircuit()">
+              </div>
+              
+              <div class="slider-control-group">
+                <div class="slider-header-info">
+                  <span>Resistor R2 (Parallel 1)</span>
+                  <span id="lblValR2" style="color: #a855f7;">20 &Omega;</span>
+                </div>
+                <input type="range" class="range-input" id="slideR2" min="1" max="100" value="20" step="1" oninput="solveKirchhoffCircuit()">
+              </div>
+              
+              <div class="slider-control-group">
+                <div class="slider-header-info">
+                  <span>Resistor R3 (Parallel 2)</span>
+                  <span id="lblValR3" style="color: #14b8a6;">30 &Omega;</span>
+                </div>
+                <input type="range" class="range-input" id="slideR3" min="1" max="100" value="30" step="1" oninput="solveKirchhoffCircuit()">
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: Practical Measurements & Wheatstone Theory -->
+      <div class="slide" id="slide6">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Practical Lab</span>
+          <h2 class="slide-title">Lab Stations: Multimeters &amp; Wheatstone Bridges</h2>
+        </div>
+        <div class="slide-content">
+          <p style="font-size: 0.95rem; color: var(--color-text-secondary);">
+            Science Olympiad lab stations heavily test how to physically hook up meters and analyze balanced resistance bridges.
+          </p>
+          
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+              <h3 style="color: var(--color-warning); font-size: 1rem;">Meter Placement Rules</h3>
+              <p>
+                <strong>Voltmeter (V):</strong> Must always connect in <strong>parallel</strong> across the component to measure the potential difference. Very high internal resistance.
+              </p>
+              <p>
+                <strong>Ammeter (A):</strong> Must connect in <strong>series</strong> (breaking the wire path). Must never connect in parallel (which creates a dead short circuit!). Very low resistance.
+              </p>
+              <p>
+                <strong>Ohmmeter (&Omega;):</strong> Component must be completely <strong>isolated</strong> from power (power source OFF or disconnected) to prevent meter damage.
+              </p>
+            </div>
+            
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+              <h3 style="color: var(--color-accent); font-size: 1rem;">The Wheatstone Bridge</h3>
+              <p>
+                A Wheatstone Bridge is a diamond network of 4 resistors used to determine an unknown resistance $R_x$.
+              </p>
+              <p>
+                When balanced, the galvanometer in the center reads <strong>0V / 0A</strong>.
+              </p>
+              <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; text-align: center; border-left: 3px solid var(--color-accent);">
+                $$\text{Balanced condition:} \implies R_x = \frac{R_2}{R_1} \times R_3$$
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: PhET Circuit Lab Simulator -->
+      <div class="slide" id="slide7">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Practical Lab</span>
+          <h2 class="slide-title">Virtual Multimeter &amp; Circuit Construction Lab</h2>
+        </div>
+        <div class="slide-content" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <p style="font-size:0.9rem; color:var(--color-text-secondary);">
+              Use the official PhET Circuit Construction Kit below to build virtual circuits, wire ammeters in series, and measure voltages in parallel.
+            </p>
+            <a href="https://phet.colorado.edu/en/simulations/circuit-construction-kit-dc" target="_blank" class="btn-check-answer" style="padding:6px 16px; font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:0;">Launch PhET in New Tab 🚀</a>
+          </div>
+          <div style="flex:1; width:100%; height:100%; border-radius:12px; overflow:hidden; border:2px solid var(--color-border); background:#000;">
+            <iframe src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_all.html" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: Checkpoint Prep -->
+      <div class="slide" id="slide8">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class Checkpoint</span>
+          <h2 class="slide-title">20-Minute Quiz: Loops, Resistors, &amp; Lab Showdown</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal" style="align-items: center;">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+              <h3 style="font-size: 2.2rem; color: var(--color-primary);">Game Rules</h3>
+              <p style="font-size: 0.95rem; color: var(--color-text-secondary); line-height: 1.6;">
+                Get ready for the final competitive review session. We have 10 exam-level multiple-choice questions loaded directly in the slides.
+              </p>
+              <ul class="topics-list" style="font-size: 0.85rem; color: var(--color-text-secondary);">
+                <li>30 seconds per question to lock in answers</li>
+                <li>Simple stand-alone calculators are allowed</li>
+                <li>Questions cover color codes, KCL, KVL, and DMM safety</li>
+              </ul>
+            </div>
+            <div class="glass-panel" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; gap: 1rem;">
+              <div style="font-size: 5rem; animation: float 3s infinite alternate ease-in-out;">🏆</div>
+              <button class="btn-start" onclick="jumpToSlide(9)" style="padding: 12px 30px; font-size: 1.1rem; width: 100%;">Enter Arena ⚡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: Checkpoint Quiz Arena -->
+      <div class="slide" id="slide9">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class Checkpoint</span>
+          <h2 class="slide-title">Class 3 Checkpoint: Competitive Loop &amp; Lab Arena</h2>
+        </div>
+        <div class="slide-content">
+          <div class="quiz-container" id="quizContainer">
+            <div class="quiz-stats">
+              <span class="quiz-question-num" id="quizQuestionNum">Question 1 of 10</span>
+              <span class="quiz-score-val" id="quizScore">Score: 0 pts</span>
+            </div>
+            
+            <div class="quiz-timer-bar-container">
+              <div class="quiz-timer-bar" id="quizTimerBar"></div>
+            </div>
+            
+            <div class="glass-panel quiz-card">
+              <div class="quiz-question" id="quizQuestionText">
+                Question text loads here...
+              </div>
+            </div>
+            
+            <div class="quiz-options" id="quizOptions">
+              <!-- Options drawn by script -->
+            </div>
+            
+            <div class="quiz-explanation-card" id="quizExplanation">
+              <h4>Explanation</h4>
+              <p id="quizExplanationText">Explanation text...</p>
+            </div>
+            
+            <div class="quiz-action-area">
+              <button class="btn-quiz-next" id="btnQuizNext" onclick="nextQuizQuestion()">Next Question</button>
+            </div>
+          </div>
+          
+          <!-- Quiz Finished Screen -->
+          <div class="glass-panel quiz-finished-panel" id="quizFinishedPanel">
+            <div class="quiz-finished-icon">🏆</div>
+            <h3 style="font-size: 2rem;">Quiz Completed!</h3>
+            <p style="font-size: 1.1rem; color: var(--color-text-secondary);" id="quizFinalScoreText">You scored 0 out of 1000 points!</p>
+            <button class="btn-restart-quiz" onclick="restartQuiz()">Try Again</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Presenter Notes Panel Sidebar -->
+    <div class="presenter-panel" id="presenterPanel">
+      <div class="presenter-header">
+        <h3>
+          <svg style="width: 18px; height: 18px; fill: currentColor; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+          </svg>
+          Presenter Console
+        </h3>
+        <button onclick="togglePresenterMode()" style="color: var(--color-text-secondary); font-size: 0.8rem; font-weight: 600;">Close</button>
+      </div>
+      
+      <div class="presenter-body" id="presenterBody">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       Bottom Control Bar
+       ========================================== -->
+  <div class="control-bar">
+    <div class="slide-indicators" id="slideIndicators">
+      <!-- Indicators generated dynamically -->
+    </div>
+    
+    <div class="navigation-controls">
+      <button class="btn-nav" id="btnPrev" onclick="navigateSlide(-1)" title="Previous Slide">
+        <svg viewBox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </button>
+      <button class="btn-nav" id="btnNext" onclick="navigateSlide(1)" title="Next Slide">
+        <svg viewBox="0 0 24 24">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       Scripts & Interaction Logic
+       ========================================== -->
+  <script>
+    // ==========================================
+    // Slide Navigation & State
+    // ==========================================
+    const totalSlides = 9;
+    let currentSlide = 1;
+    let presenterModeActive = false;
+
+    // Speaker Scripts dictionary matching slide IDs
+    const presenterNotes = {
+      1: {
+        script: "Welcome back, future Circuit Lab champions! Today we are meeting online via Zoom again, which means we have our virtual laboratory tools active. Today, we wrap up the Core Direct Current (DC) syllabus for Science Olympiad. We will cover resistor decoding, conservation laws (Kirchhoff's KCL/KVL), and practical lab measurements. Before we begin, look at the right panel prerequisite check—what is the output of AND vs NAND when inputs are both 1? Write your answers in Zoom chat!",
+        actions: "Welcome students as they log in. Verify everyone can see your shared screen. Review the prerequisite check—make sure everyone remembers NAND is AND inverted (output 0)."
+      },
+      2: {
+        script: "Let's kick off with Part 1: Resistors. Resistors use colored rings to encode their nominal values and tolerance limits. A 4-band resistor has two digit bands, a multiplier, and a tolerance. A 5-band precision resistor has three digit bands. To remember the colors, we use the classic mnemonic 'BB ROY of Great Britain had a Very Good Wife'. Pay close attention to tolerance colors: Gold is plus/minus 5% and Silver is plus/minus 10%.",
+        actions: "Present the calculation rules for 4-band vs 5-band. Review the color chart and mnemonic with the class, asking a student to name what color matches digit 5 (Green)."
+      },
+      3: {
+        script: "Now let's test our skills on our interactive Resistor Color Code Sandbox! I can select colors for the digit, multiplier, and tolerance bands using the dropdowns. Watch the resistor body and computed value update instantly. Now, let's toggle Challenge Mode! The sandbox will generate a random target value, and you have to configure the correct bands to match. Let's see who can solve three challenges first!",
+        actions: "Demonstrate changing dropdown select boxes and show color bands updating. Turn on Challenge Mode and solve the first challenge together with the class. Have students guide you on what colors to select."
+      },
+      4: {
+        script: "Next is Part 2: Kirchhoff's Laws. Simple series and parallel circuits are solved with Ohm's Law, but complex grids require Kirchhoff's Current and Voltage laws. The Current Law (KCL) is conservation of charge: total current entering a junction node equals total current leaving. The Voltage Law (KVL) is conservation of energy: the sum of all voltage drops and gains in any closed loop must equal zero.",
+        actions: "Discuss conservation of charge vs energy. Walk through the node and loop equations on the slide, making sure they understand that junction current splits but is never lost."
+      },
+      5: {
+        script: "Let's visualize this live using our Kirchhoff Double-Loop Loop Solver Sandbox. Here is a circuit with a voltage source and three resistors forming a double-loop. Use the sliders on the right to adjust values. Watch the branch currents (I1, I2, I3) recalculate. See how current I1 entering the junction equals I2 + I3 splitting down the branches. And look at KVL: Voltage gains exactly balance drops around the loops!",
+        actions: "Drag sliders to change R1, R2, and R3. Show how current splits. Point out the real-time KCL node equation below the diagram and explain how changing branch resistance splits currents."
+      },
+      6: {
+        script: "Now for Part 3: Practical Lab Measurements. In Olympiad matches, you must know how to place multimeter probes correctly. Voltmeter probes connect in parallel across a load. Ammeter probes connect in series—which means breaking the loop so current passes through the meter. Never connect an ammeter in parallel across power, or you will cause a short circuit and blow a fuse! Also, cover the Wheatstone Bridge—when balanced, the center reads 0, and Rx = (R2/R1) x R3.",
+        actions: "Review safety guidelines. Emphasize series vs parallel ammeter rules. Have students copy the Wheatstone formula into their binders."
+      },
+      7: {
+        script: "Let's practice probe safety on our Virtual Multimeter Probe Lab Sandbox. You can click Volts, Amps, or Ohms. First click attaches the Red probe, second attaches the Black probe. Toggle the switch to open or close the loop. Try measuring the battery voltage (A and E). Now, try setting the meter to Ammeter and connecting it across the battery (A and E). What happens? Boom! Short circuit! The fuse blows! You must replace the fuse to reset the workbench.",
+        actions: "Attach voltmeter probes to A and E to show 9V. Set switch to CLOSED. Then show ammeter mode. Intentionally connect ammeter probes to A and E when switch is closed to trigger the 'FUSE BLOWN' overlay. Demonstrate replacing the fuse."
+      },
+      8: {
+        script: "It is now time for our 20-minute checkpoint quiz showdown! The quiz has 10 high-quality competitive questions loaded directly in the slides. I will read each question, and you will have 30 seconds to lock in your answer. Keep your calculators ready and think carefully about color codes and loops. Good luck!",
+        actions: "Encourage students to open their second tabs or prepare to answer. Click the button to enter the quiz arena."
+      },
+      9: {
+        script: "Let's solve the checkpoint quiz. Read the question, observe the timers, and ask students to type their selected option (1, 2, 3, 4) in the Zoom chat. Click the correct answer to show the physics explanation card. Discuss any misconceptions before ending the class.",
+        actions: "Coordinate the live student response flow. Guide the quiz slides step-by-step."
+      }
+    };
+
+    function initSlides() {
+      // Generate indicators
+      const indicatorContainer = document.getElementById('slideIndicators');
+      indicatorContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'indicator-dot' + (i === 1 ? ' active' : '');
+        dot.onclick = () => jumpToSlide(i);
+        indicatorContainer.appendChild(dot);
+      }
+      updateNavigationState();
+    }
+
+    function navigateSlide(direction) {
+      const next = currentSlide + direction;
+      if (next >= 1 && next <= totalSlides) {
+        jumpToSlide(next);
+      }
+    }
+
+    function jumpToSlide(slideNum) {
+      // Stop quiz timer if running
+      if (quizTimerInterval) {
+        clearInterval(quizTimerInterval);
+      }
+
+      // Hide all slides
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach(s => s.classList.remove('active'));
+
+      // Show target slide
+      const target = document.getElementById(`slide${slideNum}`);
+      if (target) {
+        target.classList.add('active');
+        currentSlide = slideNum;
+      }
+
+      // Update progress bar
+      const bar = document.getElementById('progressBar');
+      if (bar) {
+        bar.style.width = `${((currentSlide - 1) / (totalSlides - 1)) * 100}%`;
+      }
+
+      // Update indicator dots
+      const dots = document.querySelectorAll('.indicator-dot');
+      dots.forEach((d, idx) => {
+        if (idx + 1 === currentSlide) {
+          d.classList.add('active');
+        } else {
+          d.classList.remove('active');
+        }
+      });
+
+      // Update presenter notes
+      updatePresenterNotes();
+      updateNavigationState();
+
+      // Trigger slide specific initializations
+      if (currentSlide === 3) {
+        updateResistorCalculation();
+      } else if (currentSlide === 5) {
+        solveKirchhoffCircuit();
+      } else if (currentSlide === 7) {
+        // PhET Simulation slide active
+      } else if (currentSlide === 9) {
+        initQuiz();
+      }
+    }
+
+    function updateNavigationState() {
+      const prev = document.getElementById('btnPrev');
+      const next = document.getElementById('btnNext');
+      if (prev) prev.style.opacity = currentSlide === 1 ? '0.4' : '1';
+      if (next) next.style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+    }
+
+    function togglePresenterMode() {
+      presenterModeActive = !presenterModeActive;
+      const btn = document.getElementById('presenterToggleBtn');
+      const panel = document.getElementById('presenterPanel');
+      if (btn) btn.classList.toggle('active', presenterModeActive);
+      if (panel) panel.classList.toggle('active', presenterModeActive);
+      
+      // Delay resize to adjust sliders
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 350);
+    }
+
+    function updatePresenterNotes() {
+      const body = document.getElementById('presenterBody');
+      if (!body) return;
+      
+      const notes = presenterNotes[currentSlide];
+      if (notes) {
+        body.innerHTML = `
+          <div class="speaker-script-box">
+            <h4 style="color:var(--color-primary); font-size:0.85rem; text-transform:uppercase; margin-bottom:0.4rem; letter-spacing:0.05em;">🗣️ Script (What to say)</h4>
+            <p>${notes.script}</p>
+          </div>
+          <div class="speaker-actions-box">
+            <h4 style="color:var(--color-accent); font-size:0.85rem; text-transform:uppercase; margin-bottom:0.4rem; letter-spacing:0.05em;">🛠️ Actions (What to do)</h4>
+            <p>${notes.actions}</p>
+          </div>
+        `;
+      } else {
+        body.innerHTML = `<p style="color:var(--color-text-secondary)">No notes available for this slide.</p>`;
+      }
+    }
+
+    // Keyboard handlers
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        // Prevent default space scroll
+        e.preventDefault();
+        navigateSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        navigateSlide(-1);
+      } else if (e.key.toLowerCase() === 'p') {
+        togglePresenterMode();
+      }
+    });
+
+    // ==========================================
+    // Simulation 1: Resistor Color Code Logic
+    // ==========================================
+    const resColors = {
+      0: { name: "Black", hex: "#000000", font: "#ffffff" },
+      1: { name: "Brown", hex: "#78350f", font: "#ffffff" },
+      2: { name: "Red", hex: "#b91c1c", font: "#ffffff" },
+      3: { name: "Orange", hex: "#ea580c", font: "#ffffff" },
+      4: { name: "Yellow", hex: "#eab308", font: "#000000" },
+      5: { name: "Green", hex: "#16a34a", font: "#ffffff" },
+      6: { name: "Blue", hex: "#2563eb", font: "#ffffff" },
+      7: { name: "Violet", hex: "#7c3aed", font: "#ffffff" },
+      8: { name: "Gray", hex: "#4b5563", font: "#ffffff" },
+      9: { name: "White", hex: "#ffffff", font: "#000000" }
+    };
+
+    const multiplierColors = {
+      1: { hex: "#000000" },
+      10: { hex: "#78350f" },
+      100: { hex: "#b91c1c" },
+      1000: { hex: "#ea580c" },
+      10000: { hex: "#eab308" },
+      100000: { hex: "#16a34a" },
+      1000000: { hex: "#2563eb" },
+      0.1: { hex: "#d97706" },
+      0.01: { hex: "#9ca3af" }
+    };
+
+    const toleranceColors = {
+      5: { hex: "#d97706" },
+      10: { hex: "#9ca3af" },
+      1: { hex: "#78350f" },
+      2: { hex: "#b91c1c" }
+    };
+
+    let challengeModeActive = false;
+    let challengeTargetVal = 0;
+    let challengeTargetTol = 5;
+    let challengeList = [
+      { val: 270, tol: 5, label: "270 Ω ± 5%" },
+      { val: 10000, tol: 10, label: "10 kΩ ± 10%" },
+      { val: 47, tol: 5, label: "47 Ω ± 5%" },
+      { val: 3300, tol: 1, label: "3.3 kΩ ± 1%" },
+      { val: 5.6, tol: 5, label: "5.6 Ω ± 5%" }
+    ];
+    let currentChallengeIdx = 0;
+
+    function updateResistorCalculation() {
+      const b1Val = parseInt(document.getElementById('selBand1').value);
+      const b2Val = parseInt(document.getElementById('selBand2').value);
+      const multVal = parseFloat(document.getElementById('selMultiplier').value);
+      const tolVal = parseInt(document.getElementById('selTolerance').value);
+
+      // Apply SVG color highlights
+      document.getElementById('resBand1SVG').setAttribute('fill', resColors[b1Val].hex);
+      document.getElementById('resBand2SVG').setAttribute('fill', resColors[b2Val].hex);
+      document.getElementById('resMultiplierSVG').setAttribute('fill', multiplierColors[multVal].hex);
+      document.getElementById('resToleranceSVG').setAttribute('fill', toleranceColors[tolVal].hex);
+
+      // Compute Ohm resistance
+      const baseVal = (b1Val * 10) + b2Val;
+      const resistance = baseVal * multVal;
+
+      // Format output string
+      let formattedVal = "";
+      if (resistance >= 1000000) {
+        formattedVal = `${(resistance / 1000000).toFixed(1).replace('.0', '')} MΩ`;
+      } else if (resistance >= 1000) {
+        formattedVal = `${(resistance / 1000).toFixed(1).replace('.0', '')} kΩ`;
+      } else {
+        formattedVal = `${resistance.toFixed(2).replace('.00', '').replace(/(\.\d)0/, '$1')} Ω`;
+      }
+
+      document.getElementById('resistorValText').innerText = `${formattedVal} ± ${tolVal}%`;
+    }
+
+    function toggleChallengeMode() {
+      challengeModeActive = !challengeModeActive;
+      const btn = document.getElementById('btnToggleChallenge');
+      const targetTxt = document.getElementById('challengeTargetText');
+      const checkBtn = document.getElementById('btnCheckAnswer');
+      
+      btn.classList.toggle('active', challengeModeActive);
+      btn.innerText = challengeModeActive ? "Challenge: ON" : "Challenge: OFF";
+      
+      if (challengeModeActive) {
+        targetTxt.style.display = 'block';
+        checkBtn.style.display = 'block';
+        currentChallengeIdx = 0;
+        loadNextResistorChallenge();
+      } else {
+        targetTxt.style.display = 'none';
+        checkBtn.style.display = 'none';
+        document.getElementById('challengeDetailsArea').innerHTML = `
+          <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Turn on Challenge Mode to test your speed-matching color rings.</p>
+        `;
+      }
+    }
+
+    function loadNextResistorChallenge() {
+      const challenge = challengeList[currentChallengeIdx];
+      challengeTargetVal = challenge.val;
+      challengeTargetTol = challenge.tol;
+      
+      document.getElementById('challengeDetailsArea').innerHTML = `
+        <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Match the resistor color bands to the target value below:</p>
+        <div class="challenge-target" id="challengeTargetText">${challenge.label}</div>
+        <p style="font-size: 0.75rem; color: var(--color-accent); font-weight: bold;">Goal: ${currentChallengeIdx + 1} of ${challengeList.length}</p>
+      `;
+    }
+
+    function checkChallengeAnswer() {
+      if (!challengeModeActive) return;
+
+      const b1Val = parseInt(document.getElementById('selBand1').value);
+      const b2Val = parseInt(document.getElementById('selBand2').value);
+      const multVal = parseFloat(document.getElementById('selMultiplier').value);
+      const tolVal = parseInt(document.getElementById('selTolerance').value);
+
+      const baseVal = (b1Val * 10) + b2Val;
+      const currentResistance = baseVal * multVal;
+
+      if (Math.abs(currentResistance - challengeTargetVal) < 0.001 && tolVal === challengeTargetTol) {
+        // CORRECT
+        currentChallengeIdx++;
+        if (currentChallengeIdx < challengeList.length) {
+          alert("🎉 Correct! Let's load the next challenge.");
+          loadNextResistorChallenge();
+        } else {
+          alert("🏆 Congratulations! You solved all resistor color challenges!");
+          toggleChallengeMode();
+        }
+      } else {
+        alert("❌ Incorrect value/tolerance. Look at the multiplier and band digits, and try again!");
+      }
+    }
+
+    // ==========================================
+    // Simulation 2: Kirchhoff Double-Loop Logic
+    // ==========================================
+    function solveKirchhoffCircuit() {
+      const V1 = parseFloat(document.getElementById('slideV1').value);
+      const R1 = parseFloat(document.getElementById('slideR1').value);
+      const R2 = parseFloat(document.getElementById('slideR2').value);
+      const R3 = parseFloat(document.getElementById('slideR3').value);
+
+      // Labels update
+      document.getElementById('lblValV1').innerText = `${V1} V`;
+      document.getElementById('lblValR1').innerText = `${R1} Ω`;
+      document.getElementById('lblValR2').innerText = `${R2} Ω`;
+      document.getElementById('lblValR3').innerText = `${R3} Ω`;
+
+      document.getElementById('txtSourceV1').innerText = `${V1}V`;
+      document.getElementById('txtResR1').innerText = `${R1}Ω`;
+      document.getElementById('txtResR2').innerText = `${R2}Ω`;
+      document.getElementById('txtResR3').innerText = `${R3}Ω`;
+
+      // Solve math:
+      // Parallel branch equivalent: R23 = (R2 * R3) / (R2 + R3)
+      const R23 = (R2 * R3) / (R2 + R3);
+      // Total equivalent resistance: Rtot = R1 + R23
+      const Rtot = R1 + R23;
+      
+      // Total current: I1 = V1 / Rtot
+      const I1 = V1 / Rtot;
+      
+      // Voltage at junction: V_junc = V1 - I1 * R1
+      const V_junc = V1 - (I1 * R1);
+      
+      // Branch currents:
+      const I2 = V_junc / R2;
+      const I3 = V_junc / R3;
+
+      // Update text variables on SVG
+      document.getElementById('lblI1').textContent = `I1=${I1.toFixed(2)}A`;
+      document.getElementById('lblI2').textContent = `I2=${I2.toFixed(2)}A`;
+      document.getElementById('lblI3').textContent = `I3=${I3.toFixed(2)}A`;
+
+      // Update calculations equations
+      document.getElementById('kclEq').innerText = `KCL Junction Node: I1 = I2 + I3 => ${I1.toFixed(2)} A = ${I2.toFixed(2)} A + ${I3.toFixed(2)} A`;
+      
+      const vDrop1 = I1 * R1;
+      const vDrop2 = I2 * R2;
+      document.getElementById('kvlEq').innerText = `KVL Left Loop: V1 - V_R1 - V_R2 = 0 => ${V1.toFixed(1)}V - ${vDrop1.toFixed(1)}V - ${vDrop2.toFixed(1)}V = 0V`;
+    }
+
+    // Custom DMM simulator code removed in favor of embedded PhET Circuit construction simulation.
+
+    // ==========================================
+    // Slide 9: 10-Question Playable Quiz Logic
+    // ==========================================
+    const quizQuestions = [
+      {
+        q: "What is the resistance of a resistor with bands: Red, Violet, Brown, Gold?",
+        opts: ["27 Ω ± 10%", "270 Ω ± 5%", "2.7 kΩ ± 5%", "270 Ω ± 10%"],
+        correct: 1,
+        exp: "Red = 2, Violet = 7, Brown = multiplier x10. Value = 27 x 10 = 270 Ohms. Gold = ±5% tolerance."
+      },
+      {
+        q: "A 5-band resistor has bands: Yellow, Violet, Black, Orange, Brown. What is its value?",
+        opts: ["470 kΩ ± 1%", "47 kΩ ± 5%", "470 kΩ ± 5%", "4.7 kΩ ± 1%"],
+        correct: 0,
+        exp: "Yellow = 4, Violet = 7, Black = 0. Orange = multiplier x1k. Value = 470 x 1000 = 470,000 Ohms (470 kΩ). Brown = ±1%."
+      },
+      {
+        q: "Kirchhoff's Current Law (KCL) is a statement of conservation of:",
+        opts: ["Energy", "Charge", "Momentum", "Resistance"],
+        correct: 1,
+        exp: "KCL states that charge cannot be created or destroyed at nodes, so the sum of currents entering must equal the sum leaving."
+      },
+      {
+        q: "If 3A and 5A of current enter a junction, and one wire leaving has 2A, what is the current in the other leaving wire?",
+        opts: ["6 A", "8 A", "10 A", "4 A"],
+        correct: 0,
+        exp: "Total current in = 3 + 5 = 8A. Leaving must equal 8A. With one branch taking 2A, the other must carry 8 - 2 = 6A."
+      },
+      {
+        q: "To measure the voltage drop across a resistor, how must the voltmeter be connected?",
+        opts: ["In series with the resistor", "In parallel with the resistor", "Directly to the battery only", "In series with the switch"],
+        correct: 1,
+        exp: "Voltage is potential difference and must be measured across the component (in parallel) without breaking the circuit."
+      },
+      {
+        q: "What happens if you connect a multimeter set to Ammeter mode in parallel across a battery?",
+        opts: ["You measure the voltage", "It functions normally", "You cause a short circuit and blow a fuse", "Resistance increases"],
+        correct: 2,
+        exp: "Ammeters have near-zero resistance. Connecting one in parallel across a battery creates a direct bypass short circuit, blowing the DMM fuse."
+      },
+      {
+        q: "In a single loop circuit, there is a 12V source and three 2-ohm resistors in series. What is the current?",
+        opts: ["6 A", "2 A", "4 A", "12 A"],
+        correct: 1,
+        exp: "Equivalent series resistance = 2 + 2 + 2 = 6 Ohms. Current I = V / R = 12 / 6 = 2 Amps."
+      },
+      {
+        q: "A Wheatstone bridge is balanced with R1 = 100 Ω, R2 = 200 Ω, and R3 = 150 Ω. What is Rx?",
+        opts: ["300 Ω", "75 Ω", "150 Ω", "450 Ω"],
+        correct: 0,
+        exp: "Rx = (R2 / R1) * R3 => (200 / 100) * 150 = 2 * 150 = 300 Ohms."
+      },
+      {
+        q: "Which resistor tolerance band is represented by the color Gold?",
+        opts: ["± 10%", "± 1%", "± 5%", "± 2%"],
+        correct: 2,
+        exp: "Gold represents a high-quality ±5% tolerance band, whereas Silver represents ±10%."
+      },
+      {
+        q: "Kirchhoff's Voltage Law (KVL) states that the sum of all voltage drops and gains in any closed loop is:",
+        opts: ["Equal to the current", "Zero", "Infinite", "Dependent on resistance"],
+        correct: 1,
+        exp: "Because electric potential must have a single value at any point, traversing any completed loop returns you to the same energy state, making the sum zero."
+      }
+    ];
+
+    let quizCurrentIdx = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+    let quizTimerInterval = null;
+    let quizTimeRemaining = 30; // seconds
+
+    function initQuiz() {
+      quizCurrentIdx = 0;
+      quizScore = 0;
+      quizAnswered = false;
+      
+      document.getElementById('quizContainer').style.display = 'flex';
+      document.getElementById('quizFinishedPanel').style.display = 'none';
+      
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      quizAnswered = false;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      document.getElementById('quizQuestionNum').innerText = `Question ${quizCurrentIdx + 1} of ${quizQuestions.length}`;
+      document.getElementById('btnQuizNext').style.display = 'none';
+      document.getElementById('quizExplanation').style.display = 'none';
+
+      const qData = quizQuestions[quizCurrentIdx];
+      document.getElementById('quizQuestionText').innerText = qData.q;
+
+      // Draw options
+      const optContainer = document.getElementById('quizOptions');
+      optContainer.innerHTML = '';
+      
+      qData.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.onclick = () => selectQuizOption(idx);
+        
+        const letter = String.fromCharCode(65 + idx); // A, B, C, D
+        btn.innerHTML = `<span class="quiz-option-letter">${letter}</span> <span>${opt}</span>`;
+        optContainer.appendChild(btn);
+      });
+
+      // Start timer
+      startQuizTimer();
+    }
+
+    function startQuizTimer() {
+      if (quizTimerInterval) clearInterval(quizTimerInterval);
+      
+      quizTimeRemaining = 30;
+      const bar = document.getElementById('quizTimerBar');
+      bar.style.width = '100%';
+      bar.style.background = 'var(--color-warning)';
+
+      quizTimerInterval = setInterval(() => {
+        quizTimeRemaining--;
+        bar.style.width = `${(quizTimeRemaining / 30) * 100}%`;
+        
+        if (quizTimeRemaining <= 10) {
+          bar.style.background = 'var(--color-danger)';
+        }
+
+        if (quizTimeRemaining <= 0) {
+          clearInterval(quizTimerInterval);
+          revealQuizCorrectAnswer(-1); // Timeout
+        }
+      }, 1000);
+    }
+
+    function selectQuizOption(selectedIdx) {
+      if (quizAnswered) return;
+      clearInterval(quizTimerInterval);
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      quizAnswered = true;
+
+      const btns = document.querySelectorAll('.quiz-option-btn');
+      
+      if (selectedIdx === qData.correct) {
+        // Correct answer gets 100 points
+        quizScore += 100;
+        btns[selectedIdx].classList.add('correct');
+      } else {
+        if (selectedIdx !== -1) {
+          btns[selectedIdx].classList.add('wrong');
+        }
+        btns[qData.correct].classList.add('correct');
+      }
+
+      revealQuizCorrectAnswer(selectedIdx);
+    }
+
+    function revealQuizCorrectAnswer(selectedIdx) {
+      quizAnswered = true;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      const expCard = document.getElementById('quizExplanation');
+      const expText = document.getElementById('quizExplanationText');
+      
+      expText.innerText = qData.exp;
+      expCard.style.display = 'block';
+
+      // Show Next button or Finished button
+      const nextBtn = document.getElementById('btnQuizNext');
+      nextBtn.style.display = 'block';
+      if (quizCurrentIdx === quizQuestions.length - 1) {
+        nextBtn.innerText = "Finish Quiz";
+      } else {
+        nextBtn.innerText = "Next Question";
+      }
+    }
+
+    function nextQuizQuestion() {
+      quizCurrentIdx++;
+      if (quizCurrentIdx < quizQuestions.length) {
+        showQuizQuestion();
+      } else {
+        // Finish Quiz show stats
+        document.getElementById('quizContainer').style.display = 'none';
+        
+        const finishPanel = document.getElementById('quizFinishedPanel');
+        finishPanel.style.display = 'flex';
+        
+        document.getElementById('quizFinalScoreText').innerText = `You scored ${quizScore} out of ${quizQuestions.length * 100} points!`;
+      }
+    }
+
+    function restartQuiz() {
+      initQuiz();
+    }
+
+    // Window load init
+    window.onload = () => {
+      initSlides();
+      updateResistorCalculation();
+      solveKirchhoffCircuit();
+    };
+  </script>
+</body>
+</html>

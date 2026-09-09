@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Olympiad Circuit Lab - Class 5: Power, Energy &amp; Batteries</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for rendering LaTeX formulas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    /* ==========================================
+       Design System & Core Variables
+       ========================================== */
+    :root {
+      --color-bg: #0b0f19;
+      --color-surface: #131a2c;
+      --color-surface-hover: #1e2942;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-text-primary: #f3f4f6;
+      --color-text-secondary: #9ca3af;
+      
+      /* Glowing Neon Theme Colors */
+      --color-primary: hsl(50, 100%, 55%);   /* Neon Yellow/Gold for Class 5 */
+      --color-accent: hsl(280, 100%, 65%);   /* Neon Purple */
+      --color-success: hsl(145, 100%, 45%);  /* Neon Green */
+      --color-warning: hsl(35, 100%, 50%);   /* Neon Amber / Orange */
+      --color-danger: hsl(0, 100%, 60%);     /* Neon Red */
+      --color-info: hsl(195, 100%, 50%);     /* Electric Blue */
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      
+      --transition-speed: 0.3s;
+      --border-radius: 16px;
+      --shadow-neon: 0 0 20px rgba(250, 204, 21, 0.15);
+      --shadow-danger: 0 0 20px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      outline: none;
+      color: inherit;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* ==========================================
+       Layout Structure
+       ========================================== */
+    header {
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-warning));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .class-switcher-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border: 1px dashed var(--color-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .class-switcher-link:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(250, 204, 21, 0.05);
+    }
+
+    .progress-container {
+      width: 180px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-warning));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+    }
+
+    .btn-toggle-presenter {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-toggle-presenter:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
+    }
+
+    .btn-toggle-presenter.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-warning));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+    }
+
+    .main-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-deck {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #070a12 100%);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1.5rem;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    /* ==========================================
+       Presenter Console Sidebar
+       ========================================== */
+    .presenter-panel {
+      width: 320px;
+      background: #0f1422;
+      border-left: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 9;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .presenter-panel.active {
+      transform: translateX(0);
+      position: relative;
+    }
+
+    .presenter-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presenter-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .speaker-script-box {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-info);
+      padding: 0.9rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+    }
+
+    .speaker-actions-box {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-accent);
+      padding: 0.9rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* ==========================================
+       Glass Panels & Layout Grids
+       ========================================== */
+    .glass-panel {
+      background: rgba(19, 26, 44, 0.45);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.75rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .slide-title-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .slide-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .slide-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .split-layout-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .split-layout-2 {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .welcome-card {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
+
+    .welcome-card:hover {
+      border-color: var(--color-primary);
+    }
+
+    .welcome-card-icon {
+      font-size: 1.75rem;
+      margin: 0 auto;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(250, 204, 21, 0.08);
+      color: var(--color-primary);
+    }
+
+    .welcome-card-icon.blue {
+      background: rgba(0, 210, 255, 0.08);
+      color: var(--color-info);
+    }
+
+    .welcome-card-icon.purple {
+      background: rgba(176, 38, 255, 0.08);
+      color: var(--color-accent);
+    }
+
+    /* Math equation blocks */
+    .math-callout {
+      background: rgba(250, 204, 21, 0.02);
+      border: 1px solid rgba(250, 204, 21, 0.15);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .warn-callout {
+      background: rgba(245, 158, 11, 0.03);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* ==========================================
+       Simulation 1: Voltaic Cell Sandbox Styles
+       ========================================== */
+    .cell-workbench {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.25rem;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .cell-visualizer {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 1rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .cell-canvas-container {
+      flex: 1;
+      position: relative;
+      background: #080c14;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .cell-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .cell-controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      justify-content: space-between;
+    }
+
+    .bb-select-element {
+      background: #141b2e;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
+      outline: none;
+      width: 100%;
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+
+    .bb-select-element:focus {
+      border-color: var(--color-primary);
+    }
+
+    .btn-power-circuit {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-warning));
+      color: #0b0f19;
+      font-weight: 700;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-neon);
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-power-circuit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(250, 204, 21, 0.4);
+    }
+
+    .btn-power-circuit:active {
+      transform: translateY(0);
+    }
+
+    .cell-stats-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    /* ==========================================
+       Simulation 2: Resistor Burnout Styles
+       ========================================== */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+
+    .rc-slider {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      outline: none;
+      border-radius: 3px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    .rc-slider:hover {
+      accent-color: var(--color-warning);
+    }
+
+    /* ==========================================
+       Simulation 3: Appliance billing tracker
+       ========================================== */
+    .appliance-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .appliance-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .appliance-card.active {
+      background: rgba(250, 204, 21, 0.05);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.1);
+    }
+
+    .appliance-details h5 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .appliance-details p {
+      font-size: 0.72rem;
+      color: var(--color-text-secondary);
+      font-family: monospace;
+    }
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: #334155;
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.2s ease;
+    }
+
+    .appliance-card.active .toggle-switch {
+      background: var(--color-success);
+    }
+
+    .toggle-handle {
+      width: 14px;
+      height: 14px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: left 0.2s ease;
+    }
+
+    .appliance-card.active .toggle-handle {
+      left: 19px;
+    }
+
+    .digital-meter {
+      background: #040711;
+      border: 2px solid #1e293b;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: 'Space Grotesk', monospace;
+      text-align: center;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+    }
+
+    .digital-meter-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--color-success);
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+    }
+
+    /* ==========================================
+       Hands-on Activity Layout
+       ========================================== */
+    .lab-box {
+      background: rgba(250, 204, 21, 0.02);
+      border-left: 4px solid var(--color-primary);
+      padding: 1rem;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    /* ==========================================
+       Checkpoint Quiz Showdown Styles
+       ========================================== */
+    .quiz-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .quiz-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .quiz-question-container {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+    }
+
+    .quiz-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .quiz-option-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s ease;
+      color: var(--color-text-primary);
+    }
+
+    .quiz-option-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .quiz-option-letter {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--color-primary);
+      font-size: 0.85rem;
+    }
+
+    .quiz-option-btn.correct {
+      background: rgba(16, 185, 129, 0.15) !important;
+      border-color: var(--color-success) !important;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .quiz-option-btn.correct .quiz-option-letter {
+      background: var(--color-success);
+      color: #0b0f19;
+    }
+
+    .quiz-option-btn.wrong {
+      background: rgba(239, 68, 68, 0.15) !important;
+      border-color: var(--color-danger) !important;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .quiz-option-btn.wrong .quiz-option-letter {
+      background: var(--color-danger);
+      color: #0b0f19;
+    }
+
+    .quiz-explanation-card {
+      background: rgba(0, 210, 255, 0.03);
+      border: 1px dashed rgba(0, 210, 255, 0.25);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .quiz-timer-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .quiz-timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--color-primary);
+      transition: width 1s linear;
+    }
+
+    /* Finished panel */
+    .quiz-finished-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ==========================================
+       Footer & Progress Indicators
+       ========================================== */
+    .controls-bar {
+      background: rgba(11, 15, 25, 0.9);
+      border-top: 1px solid var(--color-border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide-indicators {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .indicator-dot.active {
+      background: var(--color-primary);
+      transform: scale(1.3);
+      box-shadow: 0 0 8px var(--color-primary);
+    }
+
+    .navigation-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn-nav svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       Header
+       ========================================== -->
+  <header>
+    <a href="index.html" class="brand">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 14h9v8l10-12h-9z"/>
+      </svg>
+      <span class="brand-title">CIRCUIT LAB ⚡ DIV B</span>
+    </a>
+    
+    <div class="header-actions">
+      <a href="class1.html" class="class-switcher-link">Class 1</a>
+      <a href="class2.html" class="class-switcher-link">Class 2</a>
+      <a href="class3.html" class="class-switcher-link">Class 3</a>
+      <a href="class4.html" class="class-switcher-link">Class 4</a>
+      <div class="progress-container" title="Course Progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <button class="btn-toggle-presenter" id="presenterToggleBtn" onclick="togglePresenterMode()">
+        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Console</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       Main Workspace
+       ========================================== -->
+  <div class="main-workspace">
+    
+    <!-- Slide Deck Container -->
+    <div class="slide-deck" id="slideDeck">
+
+      <!-- SLIDE 1: Welcome & Overview -->
+      <div class="slide active" id="slide1">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class 5: Welcome</span>
+          <h2 class="slide-title">Power, Energy &amp; Battery Chemistry</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            <div>
+              <div class="glass-panel" style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.05), rgba(245, 158, 11, 0.05)); margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--color-primary);">Class 5 Core Goals ⚡</h3>
+                <p style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary);">
+                  Welcome, future physicists! Today we unlock the math of **Electrical Power &amp; Energy**. We will learn how to calculate power dissipation, figure out household energy bills in Kilowatt-Hours, and peek inside chemical batteries to see how Voltaic Cells act as electron pumps.
+                </p>
+              </div>
+              
+              <div class="welcome-grid">
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon">⚡</div>
+                  <h4 style="font-size: 0.95rem;">Power Equations</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Master Joule heating formulas ($P=VI$, $I^2R$) to calculate heat dissipation.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon blue">💰</div>
+                  <h4 style="font-size: 0.95rem;">Energy Billing</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Calculate energy consumption in Kilowatt-hours (kWh) and solve cost problems.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon purple">🔋</div>
+                  <h4 style="font-size: 0.8rem; color: var(--color-text-secondary);">Voltaic Cells</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">See how different metals and electrolytes create electrical potential.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Prerequisite Check Box -->
+            <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: center; gap: 0.75rem;">
+              <h3 style="font-size: 1.1rem; color: var(--color-accent); border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Prerequisite Check</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary);">Review: If a circuit runs with a 9V battery and 300 Ω resistor, what is the current in milliamperes?</p>
+              <div style="font-size: 0.88rem; font-weight: 700; color: var(--color-primary); margin-top: 0.5rem; font-family: monospace; line-height: 1.4;">
+                Ohm's Law: I = V / R <br>
+                I = 9V / 300 Ω = 0.03 A<br>
+                Current = 30 mA
+              </div>
+              <div class="warn-callout" style="margin-top: 0.5rem; font-size: 0.78rem;">
+                <strong>Test Trap Reminder:</strong> Science Olympiad exams constantly hide current in milliamperes (mA). Always convert to Amperes (divide by 1000) before solving other math equations!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Electrical Power Theory -->
+      <div class="slide" id="slide2">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Power Math</span>
+          <h2 class="slide-title">What is Electrical Power? (Joule Heating)</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">Work and Wattage</h4>
+              <p>
+                **Electrical Power ($P$)** is the rate at which electrical energy is converted into another form (like heat, light, or mechanical motion). It is measured in **Watts (W)**, where 1 Watt equals 1 Joule per second.
+              </p>
+              <p>
+                Analogy: Think of voltage as water pressure and current as flow rate. Power is how much work a water wheel can do!
+              </p>
+              <div class="math-callout" style="color: var(--color-primary); font-size: 1rem; border-color: rgba(250, 204, 21, 0.3);">
+                The Core Equation:<br>
+                <strong>P = V &times; I</strong><br>
+                Power (W) = Voltage (V) &times; Current (A)
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-info); font-size: 1rem;">Alternate Formulas (Substituting Ohm's Law)</h4>
+              <p>
+                By combining $P = VI$ with Ohm's Law ($V = IR$), we can derive two other extremely useful power equations. These let us solve for power even if we don't know the voltage or current!
+              </p>
+              <div class="math-callout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem; border-color: rgba(0, 210, 255, 0.2);">
+                <div>
+                  <strong>If you don't know V:</strong><br>
+                  Substitute $V = IR$<br>
+                  $P = (IR)I = \mathbf{I^2R}$
+                </div>
+                <div>
+                  <strong>If you don't know I:</strong><br>
+                  Substitute $I = V/R$<br>
+                  $P = V(V/R) = \mathbf{V^2/R}$
+                </div>
+              </div>
+              <div class="warn-callout" style="font-size: 0.8rem;">
+                <strong>💡 SciOly Tip:</strong> The $P = I^2R$ formula shows that if you double the current through a wire, the heat power dissipation **quadruples** ($2^2 = 4$). This is why electrical grids transmit power at ultra-high voltages to keep current low and prevent transmission line heat loss!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Electrical Energy & Time -->
+      <div class="slide" id="slide3">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Power Math</span>
+          <h2 class="slide-title">Electrical Energy &amp; Time ($E = P \times t$)</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-success); font-size: 1rem;">Energy: Work Over Time</h4>
+              <p>
+                **Power** is the *rate* of doing work, but **Energy ($E$)** is the *total amount* of work done over a period of time.
+              </p>
+              <div class="math-callout" style="color: var(--color-success); border-color: rgba(34, 197, 94, 0.2);">
+                Formula: E = P &times; t <br>
+                E = Energy (Joules, J)<br>
+                P = Power (Watts, W)<br>
+                t = Time (Seconds, s)
+              </div>
+              <p>
+                Since 1 Watt = 1 Joule/sec, running a 10W LED bulb for 10 seconds consumes **100 Joules** of electrical energy.
+              </p>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-warning); font-size: 1rem;">The Kilowatt-Hour (kWh)</h4>
+              <p>
+                Joules are tiny! A typical home consumes millions of Joules per hour. Because of this, power utility companies use a much larger unit for billing: the **Kilowatt-Hour (kWh)**.
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li>1 kilowatt (kW) = 1,000 Watts</li>
+                <li>1 Kilowatt-Hour is the energy consumed by running a 1,000W appliance for 1 hour.</li>
+                <li><strong>Conversion:</strong> $1\text{ kWh} = 1,000\text{ W} \times 3,600\text{ seconds} = 3,600,000\text{ Joules}$ (3.6 Megajoules!)</li>
+              </ul>
+              <div class="warn-callout" style="font-size: 0.8rem;">
+                <strong>Trap:</strong> Never multiply kilowatts by minutes! Always convert time into hours before calculating Kilowatt-Hours ($kWh$).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Utility Bill Math -->
+      <div class="slide" id="slide4">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Power Math</span>
+          <h2 class="slide-title">Utility Bill Math &amp; Energy Audits</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem; line-height: 1.45;">
+              <h4 style="color: var(--color-accent); font-size: 1rem; margin-bottom: 0.25rem;">Billing Calculations</h4>
+              <p>
+                To calculate how much money it costs to run any electrical appliance, follow these three steps:
+              </p>
+              <ol style="margin-left: 1.2rem; display: flex; flex-direction: column; gap: 0.3rem;">
+                <li>Convert the appliance Wattage into Kilowatts (divide by 1,000).</li>
+                <li>Multiply Kilowatts by the total operating time in Hours to get $kWh$.</li>
+                <li>Multiply the total $kWh$ by the power rate (e.g., $\$0.15$ per $kWh$).</li>
+              </ol>
+              <div style="background: rgba(255,255,255,0.02); padding: 0.75rem; border-radius: 8px; border-left: 3px solid var(--color-accent);">
+                <strong>Formula:</strong><br>
+                $\text{Cost} = \left(\frac{\text{Watts}}{1000}\right) \times \text{Hours} \times \text{Rate per kWh}$
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">Typical Power Ratings</h4>
+              <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem; color: var(--color-text-secondary);">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--color-border); color: var(--color-text-primary);">
+                    <th style="padding: 0.4rem 0;">Appliance</th>
+                    <th style="padding: 0.4rem 0; text-align: right;">Wattage</th>
+                    <th style="padding: 0.4rem 0; text-align: right;">kW</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                    <td style="padding: 0.4rem 0;">LED Light Bulb</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">10 W</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">0.01 kW</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                    <td style="padding: 0.4rem 0;">Laptop Computer</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">50 W</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">0.05 kW</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                    <td style="padding: 0.4rem 0;">Microwave</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">1,000 W</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">1.00 kW</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                    <td style="padding: 0.4rem 0;">Space Heater</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">1,500 W</td>
+                    <td style="padding: 0.4rem 0; text-align: right;">1.50 kW</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="warn-callout" style="font-size: 0.78rem; border-color: rgba(250, 204, 21, 0.15);">
+                <strong>Example problem:</strong> Run a 1.5 kW space heater for 4 hours at a rate of $15\phi$ per kWh. <br>
+                $\text{Energy} = 1.5\text{ kW} \times 4\text{ hours} = 6\text{ kWh}$.<br>
+                $\text{Cost} = 6\text{ kWh} \times \$0.15 = \$0.90$.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Inside a Battery (Voltaic Cells) -->
+      <div class="slide" id="slide5">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Batteries</span>
+          <h2 class="slide-title">Inside a Battery: Chemical Voltaic Cells</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-warning); font-size: 1.05rem;">The Chemical Electron Pump</h4>
+              <p>
+                A battery does not create charge—it acts like an **electron pump** using chemical reactions to force electrons through a circuit. It consists of:
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li><strong>Anode (-)</strong>: The negative electrode where **oxidation** occurs, releasing electrons into the wire.</li>
+                <li><strong>Cathode (+)</strong>: The positive electrode where **reduction** occurs, accepting incoming electrons.</li>
+                <li><strong>Electrolyte</strong>: The liquid or paste conductor (containing free ions) separating the electrodes.</li>
+              </ul>
+              <div class="warn-callout" style="font-size: 0.8rem; border-color: rgba(245, 158, 11, 0.2);">
+                <strong>🔑 Mnemonic:</strong> **AN OX** and **RED CAT** (Oxidation at the Anode, Reduction at the Cathode).
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-info); font-size: 1.05rem;">Voltaic Pile History &amp; Materials</h4>
+              <p>
+                Invented by **Alessandro Volta** in 1800, the first battery stack (the Voltaic Pile) piled alternating discs of Zinc and Copper separated by cardboard soaked in saltwater.
+              </p>
+              <p>
+                The cell voltage is determined by the difference in **reduction potential** between the two metals. The further apart they are on the metal activity series, the higher the voltage!
+              </p>
+              <div style="background: rgba(255,255,255,0.02); padding: 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.78rem;">
+                Metal Standard Reduction Potentials:<br>
+                - Silver (Ag): +0.80 V (Strong cathode)<br>
+                - Copper (Cu): +0.34 V<br>
+                - Iron (Fe): -0.44 V<br>
+                - Zinc (Zn): -0.76 V (Strong anode)<br>
+                Expected Cu-Zn Cell potential: 0.34V - (-0.76V) = 1.10 V.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: Battery Configurations -->
+      <div class="slide" id="slide6">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Batteries</span>
+          <h2 class="slide-title">Battery Configurations: Series vs. Parallel</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1.05rem;">Series Battery Path (Voltage Boost)</h4>
+              <p>
+                Connecting cells in **series** (positive terminal of one cell connected to negative of next) adds their chemical potentials directly.
+              </p>
+              <div class="math-callout" style="color: var(--color-primary); border-color: rgba(250, 204, 21, 0.2);">
+                $V_{total} = V_1 + V_2 + V_3 ...$<br>
+                Capacity (Amp-hours, Ah) remains the same!
+              </div>
+              <p style="color: var(--color-text-secondary); font-size: 0.82rem;">
+                Example: Four 1.5V AA batteries connected in series yield a total voltage of **6.0V**, but retain the same capacity (e.g., 2,000 mAh).
+              </p>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-accent); font-size: 1.05rem;">Parallel Battery Path (Capacity Boost)</h4>
+              <p>
+                Connecting cells in **parallel** (positive connected to positive, negative to negative) creates multiple current paths.
+              </p>
+              <div class="math-callout" style="color: var(--color-accent); border-color: rgba(168, 85, 247, 0.2);">
+                $V_{total} = V_{single}$ (Voltage remains unchanged)<br>
+                $\text{Capacity}_{total} = \text{Capacity}_1 + \text{Capacity}_2 + ...$
+              </div>
+              <p style="color: var(--color-text-secondary); font-size: 0.82rem;">
+                Example: Four 1.5V AA batteries connected in parallel output only **1.5V**, but quadruple the capacity to **8,000 mAh** (letting the circuit run four times longer!).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: Practical Resistor Safety -->
+      <div class="slide" id="slide7">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Practical Lab Safety</span>
+          <h2 class="slide-title">Resistor Power Ratings: Preventing Burnouts</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-danger); font-size: 1.05rem;">Resistor Power Capacity</h4>
+              <p>
+                Every physical resistor has a maximum **power rating** (typically $0.25\text{W}$, $0.5\text{W}$, or $1\text{W}$) which defines how much heat energy it can safely radiate away per second.
+              </p>
+              <p>
+                If a circuit forces a resistor to dissipate more power than its rating, the component will heat up rapidly.
+              </p>
+              <div class="math-callout" style="color: var(--color-danger); border-color: rgba(239, 68, 68, 0.2);">
+                Condition for Burnout:<br>
+                $\mathbf{P_{actual} \ge P_{rating}}$
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-warning); font-size: 1.05rem;">The Magic Smoke &amp; Failures</h4>
+              <p>
+                When a resistor burns out:
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li>It will smell metallic, turn black, and emit smoke.</li>
+                <li>The conductive carbon film burns away, creating an **open circuit** (infinite resistance, blocking current).</li>
+                <li>In some cases, it may short out or crack in half.</li>
+              </ul>
+              <div class="warn-callout" style="font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.02);">
+                <strong>🧪 Safety First:</strong> Never touch a resistor in a live breadboard circuit if you smell burning! Turn off the power supply immediately.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: Interactive Simulation 1 - Voltaic Cell Sandbox -->
+      <div class="slide" id="slide8">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Voltaic Cell Chemistry Sandbox</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer">
+              <div class="cell-canvas-container">
+                <canvas class="cell-canvas" id="cellCanvas"></canvas>
+              </div>
+              <div class="cell-stats-card" id="cellStats">
+                <div>Anode (Oxidation): <span id="lblAnode" style="color: var(--color-danger);">Zinc (Zn)</span></div>
+                <div>Cathode (Reduction): <span id="lblCathode" style="color: var(--color-info);">Copper (Cu)</span></div>
+                <div>Electrolyte Solution: <span id="lblElectrolyte" style="color: var(--color-success);">Saltwater</span></div>
+                <div>Calculated Potential ($E_{cell}$): <span id="lblPotential" style="color: var(--color-primary); font-weight: bold;">1.10 V</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Cell Design</h4>
+              
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Anode Metal (-)</span>
+                <select class="bb-select-element" id="selectAnode" onchange="updateCellSimulation()">
+                  <option value="Zn" selected>Zinc (-0.76 V)</option>
+                  <option value="Fe">Iron (-0.44 V)</option>
+                  <option value="Pb">Lead (-0.13 V)</option>
+                  <option value="Cu">Copper (+0.34 V)</option>
+                  <option value="Ag">Silver (+0.80 V)</option>
+                </select>
+              </div>
+
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Cathode Metal (+)</span>
+                <select class="bb-select-element" id="selectCathode" onchange="updateCellSimulation()">
+                  <option value="Zn">Zinc (-0.76 V)</option>
+                  <option value="Fe">Iron (-0.44 V)</option>
+                  <option value="Pb">Lead (-0.13 V)</option>
+                  <option value="Cu" selected>Copper (+0.34 V)</option>
+                  <option value="Ag">Silver (+0.80 V)</option>
+                </select>
+              </div>
+
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Electrolyte</span>
+                <select class="bb-select-element" id="selectElectrolyte" onchange="updateCellSimulation()">
+                  <option value="saltwater" selected>Saltwater (Good conductivity)</option>
+                  <option value="acid">Lemon Acid (Excellent conductivity)</option>
+                  <option value="purewater">Pure Water (Extremely resistive)</option>
+                </select>
+              </div>
+
+              <div style="font-size: 0.72rem; line-height: 1.4; color: var(--color-text-secondary);">
+                <strong>Rules:</strong> Electrons flow from Anode to Cathode. If you select identical metals, voltage will drop to **0.00 V** because there is no reduction potential difference.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: Interactive Simulation 2 - Resistor Power Burnout Sandbox -->
+      <div class="slide" id="slide9">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Resistor Power Dissipation &amp; Burnout</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer">
+              <div class="cell-canvas-container" style="min-height: 220px;">
+                <canvas class="cell-canvas" id="burnoutCanvas"></canvas>
+              </div>
+              <div class="cell-stats-card">
+                <div>Current ($I = V/R$): <span id="burnI" style="color: var(--color-info);">0.0 mA</span></div>
+                <div>Power Dissipated ($P = I^2R$): <span id="burnP" style="color: var(--color-warning);">0.00 W</span></div>
+                <div>Status: <span id="burnStatus" style="font-weight: bold; color: var(--color-success);">Safe</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Circuit Controls</h4>
+              
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Applied Voltage (V)</span>
+                  <span id="lblBurnV" style="color: var(--color-info);">10.0 V</span>
+                </div>
+                <input type="range" class="rc-slider" id="burnV" min="0" max="24" step="0.5" value="10" oninput="updateBurnoutSimulation()">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Resistance (R)</span>
+                  <span id="lblBurnR" style="color: var(--color-warning);">200 Ω</span>
+                </div>
+                <input type="range" class="rc-slider" id="burnR" min="10" max="1000" step="10" value="200" oninput="updateBurnoutSimulation()">
+              </div>
+
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Resistor Power Rating:</span>
+                <select class="bb-select-element" id="burnRating" onchange="updateBurnoutSimulation()">
+                  <option value="0.25" selected>1/4 Watt (0.25 W)</option>
+                  <option value="0.5">1/2 Watt (0.50 W)</option>
+                  <option value="1.0">1 Watt (1.00 W)</option>
+                </select>
+              </div>
+
+              <button class="btn-power-circuit" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--color-border); box-shadow: none;" onclick="resetResistorBurnout()">Replace Resistor 🛠️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 10: Interactive Simulation 3 - Home Appliance Billing Calculator -->
+      <div class="slide" id="slide10">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Home Appliance Energy Billing Calculator</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer" style="justify-content: flex-start; gap: 1rem;">
+              <h4 style="font-size: 1rem; color: var(--color-primary);">Select Appliances to Run:</h4>
+              
+              <div class="appliance-grid">
+                <div class="appliance-card" id="appLED" onclick="toggleAppliance('LED', 10)">
+                  <div class="appliance-details">
+                    <h5>LED Bulb</h5>
+                    <p>10 W (0.01 kW)</p>
+                  </div>
+                  <div class="toggle-switch">
+                    <div class="toggle-handle"></div>
+                  </div>
+                </div>
+
+                <div class="appliance-card" id="appPC" onclick="toggleAppliance('PC', 200)">
+                  <div class="appliance-details">
+                    <h5>Computer</h5>
+                    <p>200 W (0.20 kW)</p>
+                  </div>
+                  <div class="toggle-switch">
+                    <div class="toggle-handle"></div>
+                  </div>
+                </div>
+
+                <div class="appliance-card" id="appMicrowave" onclick="toggleAppliance('Microwave', 1000)">
+                  <div class="appliance-details">
+                    <h5>Microwave</h5>
+                    <p>1,000 W (1.0 kW)</p>
+                  </div>
+                  <div class="toggle-switch">
+                    <div class="toggle-handle"></div>
+                  </div>
+                </div>
+
+                <div class="appliance-card" id="appHeater" onclick="toggleAppliance('Heater', 1500)">
+                  <div class="appliance-details">
+                    <h5>Space Heater</h5>
+                    <p>1,500 W (1.5 kW)</p>
+                  </div>
+                  <div class="toggle-switch">
+                    <div class="toggle-handle"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="digital-meter">
+                <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 0.2rem; letter-spacing: 0.05em;">Smart Utility Energy Meter</div>
+                <div class="digital-meter-display"><span id="lblMeterKWh">0.0000</span> kWh</div>
+                <div style="font-size: 1.15rem; color: var(--color-primary); font-weight: bold; margin-top: 0.2rem;">Total Bill: $<span id="lblMeterCost">0.00</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Billing Parameters</h4>
+              
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Electricity Rate ($/kWh)</span>
+                  <span id="lblMeterRate" style="color: var(--color-success); font-family: monospace;">$0.15</span>
+                </div>
+                <input type="range" class="rc-slider" id="meterRate" min="0.05" max="0.45" step="0.01" value="0.15" oninput="updateMeterParams()">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Time Accel Speed Dial</span>
+                  <span id="lblMeterSpeed" style="color: var(--color-info); font-family: monospace;">100x</span>
+                </div>
+                <input type="range" class="rc-slider" id="meterSpeed" min="1" max="1000" step="10" value="100" oninput="updateMeterParams()">
+              </div>
+
+              <div class="cell-stats-card">
+                <div>Running Load: <span id="lblTotalWatts" style="color: var(--color-warning);">0 Watts</span></div>
+                <div>Equivalent kW: <span id="lblTotalKW" style="color: var(--color-info);">0.00 kW</span></div>
+                <div>Elapsed Hours: <span id="lblElapsedHours" style="color: var(--color-success);">0.0 hrs</span></div>
+              </div>
+
+              <button class="btn-power-circuit" onclick="resetMeterSimulation()">Reset Smart Meter 🔄</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 11: Hands-On Activity -->
+      <div class="slide" id="slide11">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Hands-On Activity</span>
+          <h2 class="slide-title">Lab Task: Designing for Power Safety</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.45;">
+              <h4 style="color: var(--color-primary); font-size: 1.05rem;">The Challenge: Safe Resistor Selection</h4>
+              <p>
+                In Division B laboratory events, you may be asked to choose a resistor that keeps current under a limit *while* ensuring you do not exceed its power rating. Let's design!
+              </p>
+              <div class="lab-box">
+                <h5 style="color: var(--color-warning); font-size: 0.9rem;">Materials Required:</h5>
+                <p style="font-size: 0.82rem; color: var(--color-text-secondary); margin-left: 0.5rem;">
+                  - 9V Battery or adjustable DC breadboard power supply<br>
+                  - Multimeter (set to measure DC voltage/current)<br>
+                  - Resistors: $10\,\Omega$, $100\,\Omega$, and $330\,\Omega$ ($1/4\,\text{W}$ rated)
+                </p>
+              </div>
+              <p>
+                Let's perform calculations: What is the heat power dissipated when each resistor is hooked directly to a 9V battery?
+              </p>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.45;">
+              <h4 style="color: var(--color-accent); font-size: 1.05rem;">Step-by-Step Task &amp; Analysis</h4>
+              <ol style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                <li><strong>Analyze the 330 Ω Resistor:</strong><br>
+                  $P = V^2 / R = 9^2 / 330 = 81 / 330 = 0.245\text{ W}$.<br>
+                  Compare: $0.245\text{W} < 0.25\text{W}$ (Safe! Resistor will get slightly warm but won't blow).
+                </li>
+                <li><strong>Analyze the 100 Ω Resistor:</strong><br>
+                  $P = V^2 / R = 9^2 / 100 = 81 / 100 = 0.81\text{ W}$.<br>
+                  Compare: $0.81\text{W} > 0.25\text{W}$ (Dangerous! Over three times the rating. The resistor will burn and smoke).
+                </li>
+                <li><strong>Analyze the 10 Ω Resistor:</strong><br>
+                  $P = 9^2 / 10 = 8.1\text{ W}$ (Instant blowout/fire risk! Never do this!).
+                </li>
+              </ol>
+              <div class="warn-callout" style="font-size: 0.78rem; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.02);">
+                <strong>⚠️ Teacher Supervision Required:</strong> Keep your hands away from the resistor body when applying power to verify calculations!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 12: Checkpoint Quiz Showdown -->
+      <div class="slide" id="slide12">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Checkpoint Battle</span>
+          <h2 class="slide-title">Module 5 Concept Checkpoint</h2>
+        </div>
+        <div class="slide-content">
+          <div class="glass-panel quiz-card">
+            
+            <div id="quizContainer" style="display: flex; flex-direction: column; gap: 1rem; height: 100%; justify-content: space-between;">
+              <div class="quiz-header-row">
+                <span id="quizQuestionNum" style="font-weight: 700; color: var(--color-primary); font-size: 0.95rem;">Question 1 of 6</span>
+                <span id="quizScore" style="font-family: monospace; font-weight: bold; color: var(--color-success);">Score: 0 pts</span>
+              </div>
+              
+              <div class="quiz-question-container">
+                <h3 id="quizQuestionText" style="font-size: 1.15rem; line-height: 1.5;">Question text loads here...</h3>
+              </div>
+              
+              <div class="quiz-options-grid" id="quizOptions">
+                <!-- Buttons loaded dynamically -->
+              </div>
+              
+              <div class="quiz-explanation-card" id="quizExplanation">
+                <strong style="color: var(--color-info);">🧠 Explainer:</strong> <span id="quizExplanationText">Explanation details...</span>
+              </div>
+              
+              <div>
+                <button class="btn-power-circuit" id="btnQuizNext" style="display: none; width: 100%; font-size: 0.9rem;" onclick="nextQuizQuestion()">Next Question ➡️</button>
+                <div class="quiz-timer-container">
+                  <div class="quiz-timer-bar" id="quizTimerBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Finished Panel -->
+            <div class="quiz-finished-panel" id="quizFinishedPanel" style="display: none;">
+              <span style="font-size: 3rem;">🏆</span>
+              <h2 style="font-size: 2rem; color: var(--color-primary);">Quiz Showdown Completed!</h2>
+              <p id="quizFinalScoreText" style="font-size: 1.15rem; color: var(--color-text-secondary);">You scored 0 out of 600 points!</p>
+              <button class="btn-power-circuit" style="margin-top: 1rem;" onclick="restartQuiz()">Restart Quiz Showdown 🔄</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Presenter Console Panel -->
+    <div class="presenter-panel" id="presenterPanel">
+      <div class="presenter-header">
+        <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Notes</span>
+      </div>
+      <div class="presenter-body" id="presenterBody">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       Footer Controls
+       ========================================== -->
+  <div class="controls-bar">
+    <div class="slide-indicators" id="slideIndicators">
+      <!-- Dots loaded dynamically -->
+    </div>
+    
+    <div style="font-size: 0.8rem; color: var(--color-text-secondary); font-family: monospace;">
+      Use Left/Right Arrows or Spacebar to navigate. Press 'P' to toggle presenter scripts.
+    </div>
+    
+    <div class="navigation-buttons">
+      <button class="btn-nav" id="btnPrev" onclick="navigateSlide(-1)" title="Previous Slide (Left Arrow)">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59L14 6z"/></svg>
+      </button>
+      <button class="btn-nav" id="btnNext" onclick="navigateSlide(1)" title="Next Slide (Right Arrow/Space)">
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       Slide JavaScript Logic
+       ========================================== -->
+  <script>
+    // ==========================================
+    // Slide Navigation & State
+    // ==========================================
+    const totalSlides = 12;
+    let currentSlide = 1;
+    let presenterModeActive = false;
+
+    // Speaker Scripts dictionary matching slide IDs
+    const presenterNotes = {
+      1: {
+        script: "Welcome back class! Today, we start Module 5. We will be studying Power, Energy, and battery cells. Middle schoolers sometimes struggle with Kilowatt-Hours and battery chemistry, so we have custom interactive sandboxes built directly in the slides to demonstrate cell potentials and appliance cost calculations. Let's do a quick prerequisite check to recall Ohm's law. Tell me in the chat—if you have 9V and 300 ohms, how much current flows?",
+        actions: "Welcome students as they enter. Review the prerequisite check box on the right. Ask students to answer in Zoom chat to build alignment."
+      },
+      2: {
+        script: "Let's dig into Slide 2: What is electrical power? Power is the rate of energy conversion, measured in Watts. The core formula is P equals V times I. But by using Ohm's law, we can derive two alternative formulas: I-squared-R and V-squared over R. Emphasize that power is directly proportional to current squared—so higher currents mean vastly higher heat losses!",
+        actions: "Introduce the formulas. Have students write down all three variations of the power formula. Discuss why power grids use high voltages to minimize current and heating."
+      },
+      3: {
+        script: "Now we look at Energy. Energy is the total work done over time: E equals P times t. The standard SI unit is the Joule, but Joules are too small for real-life utilities. Instead, we use the Kilowatt-Hour. Explain that 1 kWh represents running a 1,000 Watt appliance for exactly one hour. Walk them through the conversion to Joules: 3.6 million Joules!",
+        actions: "Explain the distinction between power (rate) and energy (total work). Walk through conversion from Watts to kW and hours to seconds."
+      },
+      4: {
+        script: "Let's practice some utility billing math! This is a classic written test question. To find the cost of running any appliance: convert Watts to kW, multiply by hours, and multiply by the cost per kWh. Walk through the typical power ratings of household devices in our table and review the space heater example problem on the right.",
+        actions: "Guide the students through the steps on the board. Make sure they understand that they must divide Watts by 1,000 to get Kilowatts first!"
+      },
+      5: {
+        script: "Let's discuss battery chemistry! A battery is an electron pump that converts chemical energy into electrical current. Inside any voltaic cell, oxidation occurs at the negative anode, releasing electrons, and reduction occurs at the positive cathode, accepting them. Explain Volta's pile history and zinc-copper chemistry. Mention the reduction potential differences.",
+        actions: "Explain anode/cathode oxidation-reduction using the AN OX and RED CAT mnemonics. Discuss standard reduction potential differences."
+      },
+      6: {
+        script: "Now let's examine battery configurations. This is another major test trap. In a series pathway, voltages add together, but capacity stays the same. In a parallel pathway, the voltage remains equal to a single cell, but current capacity adds together, making the battery pack last much longer! Go over the examples for both.",
+        actions: "Show series vs. parallel cell alignments. Work out the calculations for AA batteries, highlighting voltage vs. capacity (Ah)."
+      },
+      7: {
+        script: "Practical safety is critical in Science Olympiad lab events. Resistors have a power rating (usually a quarter watt) that they cannot exceed. Exceeding this makes the carbon film glow red, smoke, and melt—which is what we call letting the magic smoke escape. The resistor then becomes an open circuit. Let's look at safety rules.",
+        actions: "Show students 1/4W vs 1W resistors if available. Explain that operating a resistor above its rated limit destroys the device and is a fire hazard."
+      },
+      8: {
+        script: "Let's test our battery chemistry concepts in the Voltaic Cell Sandbox! Select different anode and cathode metals. Observe how the chemical reactions and electron flow adjust. Watch what happens when you pick Zinc for both electrodes. The cell potential drops to zero because there's no reduction potential difference!",
+        actions: "Interact with the Anode/Cathode selectors. Toggle between different metals to find the maximum possible cell potential (Silver and Zinc, ~1.56V) and explain why identical metals yield 0V."
+      },
+      9: {
+        script: "Next is the Resistor Burnout Sandbox. Here we apply voltage across a resistor. Select a 1/4W resistor and slide the voltage up. As the power dissipation exceeds 0.25 Watts, notice the resistor starts glowing red, smoking, and then explodes! Notice how the current drops to zero when it blows. Click 'Replace Resistor' to reset.",
+        actions: "Slide voltage up and resistance down. Point out the power calculations in real-time. Show the transition from safe to hot (glowing red) to burnout (smoking and exploding)."
+      },
+      10: {
+        script: "Now we play with our Smart Utility Billing simulation! Toggle different home appliances on and off. Watch the Smart Meter spin faster when you activate high-wattage items like the Space Heater and Microwave. Use the rate and speed sliders to see the total bill accumulate in real-time.",
+        actions: "Toggle the appliances. Slide rate up/down. Dial the time acceleration to maximum speed so students can watch the kilowatt-hours and dollars climb. Have students calculate the expected hourly cost of running the PC and bulb."
+      },
+      11: {
+        script: "Let's look at our hands-on task. Students will calculate the power dissipation of three standard resistors in a 9V circuit to verify which ones are safe to use. Point out the calculations: the 330 ohm resistor is safe, but the 100 ohm resistor exceeds 1/4W and the 10 ohm resistor is an instant blowout hazard.",
+        actions: "Review the safety steps. Emphasize why carrying out power math beforehand is critical to preventing damage to real physical components."
+      },
+      12: {
+        script: "Finally, let's run our Module 5 Quiz Showdown! We have 6 high-quality concept questions covering formulas, cell oxidation, battery configurations, and resistor burnout safety. Open your calculators and let's go!",
+        actions: "Run the checkpoint quiz live. Read the questions, guide students to think about power equations and cell chemistry, and reveal the answers."
+      }
+    };
+
+    function initSlides() {
+      // Generate indicators
+      const indicatorContainer = document.getElementById('slideIndicators');
+      indicatorContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'indicator-dot' + (i === 1 ? ' active' : '');
+        dot.onclick = () => jumpToSlide(i);
+        indicatorContainer.appendChild(dot);
+      }
+      updateNavigationState();
+      updatePresenterNotes();
+    }
+
+    function navigateSlide(direction) {
+      const next = currentSlide + direction;
+      if (next >= 1 && next <= totalSlides) {
+        jumpToSlide(next);
+      }
+    }
+
+    function jumpToSlide(slideNum) {
+      // Stop active animation loops/intervals
+      if (quizTimerInterval) clearInterval(quizTimerInterval);
+      stopCellLoop();
+      stopBurnoutLoop();
+      stopMeterLoop();
+
+      // Hide all slides
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach(s => s.classList.remove('active'));
+
+      // Show target slide
+      const target = document.getElementById(`slide${slideNum}`);
+      if (target) {
+        target.classList.add('active');
+        currentSlide = slideNum;
+      }
+
+      // Update progress bar
+      const bar = document.getElementById('progressBar');
+      if (bar) {
+        bar.style.width = `${((currentSlide - 1) / (totalSlides - 1)) * 100}%`;
+      }
+
+      // Update indicator dots
+      const dots = document.querySelectorAll('.indicator-dot');
+      dots.forEach((d, idx) => {
+        if (idx + 1 === currentSlide) {
+          d.classList.add('active');
+        } else {
+          d.classList.remove('active');
+        }
+      });
+
+      // Update presenter notes
+      updatePresenterNotes();
+      updateNavigationState();
+
+      // Trigger slide specific initializations
+      if (currentSlide === 8) {
+        startCellLoop();
+      } else if (currentSlide === 9) {
+        startBurnoutLoop();
+      } else if (currentSlide === 10) {
+        startMeterLoop();
+      } else if (currentSlide === 12) {
+        initQuiz();
+      }
+    }
+
+    function updateNavigationState() {
+      const prev = document.getElementById('btnPrev');
+      const next = document.getElementById('btnNext');
+      if (prev) prev.style.opacity = currentSlide === 1 ? '0.4' : '1';
+      if (next) next.style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+    }
+
+    function togglePresenterMode() {
+      presenterModeActive = !presenterModeActive;
+      const btn = document.getElementById('presenterToggleBtn');
+      const panel = document.getElementById('presenterPanel');
+      if (btn) btn.classList.toggle('active', presenterModeActive);
+      if (panel) panel.classList.toggle('active', presenterModeActive);
+      
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 350);
+    }
+
+    function updatePresenterNotes() {
+      const body = document.getElementById('presenterBody');
+      if (!body) return;
+      
+      const notes = presenterNotes[currentSlide];
+      if (notes) {
+        body.innerHTML = `
+          <div class="speaker-script-box">
+            <h4 style="color:var(--color-primary); font-size:0.85rem; text-transform:uppercase; margin-bottom:0.4rem; letter-spacing:0.05em;">🗣️ Script (What to say)</h4>
+            <p>${notes.script}</p>
+          </div>
+          <div class="speaker-actions-box">
+            <h4 style="color:var(--color-accent); font-size:0.85rem; text-transform:uppercase; margin-bottom:0.4rem; letter-spacing:0.05em;">🛠️ Actions (What to do)</h4>
+            <p>${notes.actions}</p>
+          </div>
+        `;
+      } else {
+        body.innerHTML = `<p style="color:var(--color-text-secondary)">No notes available for this slide.</p>`;
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        navigateSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        navigateSlide(-1);
+      } else if (e.key.toLowerCase() === 'p') {
+        togglePresenterMode();
+      }
+    });
+
+
+    // ==========================================
+    // Simulation 1: Voltaic Cell Sandbox Logic
+    // ==========================================
+    let cellCanvas = document.getElementById('cellCanvas');
+    let cellCtx = cellCanvas.getContext('2d');
+    let cellLoopId = null;
+    let electronAnimTime = 0;
+    
+    // Potentials relative to SHE (Standard Hydrogen Electrode)
+    const potentials = {
+      'Zn': -0.76,
+      'Fe': -0.44,
+      'Pb': -0.13,
+      'Cu': 0.34,
+      'Ag': 0.80
+    };
+
+    const metalNames = {
+      'Zn': 'Zinc',
+      'Fe': 'Iron',
+      'Pb': 'Lead',
+      'Cu': 'Copper',
+      'Ag': 'Silver'
+    };
+
+    function initCellCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = cellCanvas.parentNode.getBoundingClientRect();
+      cellCanvas.width = rect.width * dpr;
+      cellCanvas.height = rect.height * dpr;
+      cellCtx.scale(dpr, dpr);
+      cellCanvas.style.width = rect.width + 'px';
+      cellCanvas.style.height = rect.height + 'px';
+    }
+
+    function updateCellSimulation() {
+      const anodeVal = document.getElementById('selectAnode').value;
+      const cathodeVal = document.getElementById('selectCathode').value;
+      const electrolyte = document.getElementById('selectElectrolyte').value;
+      
+      const anodePot = potentials[anodeVal];
+      const cathodePot = potentials[cathodeVal];
+      
+      let potential = cathodePot - anodePot;
+      
+      // Potential must be positive to run spontaneously
+      if (potential < 0) {
+        // Swap anode and cathode labels for the chemistry engine
+        potential = 0.00;
+      }
+      
+      if (anodeVal === cathodeVal) {
+        potential = 0.00;
+      }
+
+      if (electrolyte === 'purewater') {
+        potential = 0.00;
+      }
+      
+      document.getElementById('lblAnode').innerText = `${metalNames[anodeVal]} (${anodeVal})`;
+      document.getElementById('lblCathode').innerText = `${metalNames[cathodeVal]} (${cathodeVal})`;
+      document.getElementById('lblElectrolyte').innerText = electrolyte === 'saltwater' ? 'Saltwater (NaCl)' : electrolyte === 'acid' ? 'Lemon Acid (Citric)' : 'Pure Water (No Ions)';
+      document.getElementById('lblPotential').innerText = `${potential.toFixed(2)} V`;
+    }
+
+    function startCellLoop() {
+      initCellCanvas();
+      window.addEventListener('resize', initCellCanvas);
+      updateCellSimulation();
+      
+      if (!cellLoopId) {
+        lastCellTime = performance.now();
+        cellAnimationLoop(lastCellTime);
+      }
+    }
+
+    function stopCellLoop() {
+      if (cellLoopId) {
+        cancelAnimationFrame(cellLoopId);
+        cellLoopId = null;
+      }
+      window.removeEventListener('resize', initCellCanvas);
+    }
+
+    let lastCellTime = 0;
+    function cellAnimationLoop(ts) {
+      const dt = Math.min((ts - lastCellTime) / 1000, 0.1);
+      lastCellTime = ts;
+      
+      electronAnimTime += dt * 45;
+      renderCellSandbox();
+      
+      cellLoopId = requestAnimationFrame(cellAnimationLoop);
+    }
+
+    function renderCellSandbox() {
+      const w = cellCanvas.width / (window.devicePixelRatio || 1);
+      const h = cellCanvas.height / (window.devicePixelRatio || 1);
+      
+      cellCtx.clearRect(0, 0, w, h);
+      
+      // Grid lines
+      cellCtx.strokeStyle = 'rgba(255,255,255,0.02)';
+      cellCtx.lineWidth = 1;
+      const grid = 20;
+      for (let x = 0; x < w; x += grid) {
+        cellCtx.beginPath(); cellCtx.moveTo(x, 0); cellCtx.lineTo(x, h); cellCtx.stroke();
+      }
+      for (let y = 0; y < h; y += grid) {
+        cellCtx.beginPath(); cellCtx.moveTo(0, y); cellCtx.lineTo(w, y); cellCtx.stroke();
+      }
+      
+      const anodeVal = document.getElementById('selectAnode').value;
+      const cathodeVal = document.getElementById('selectCathode').value;
+      const electrolyte = document.getElementById('selectElectrolyte').value;
+      const isWorking = (anodeVal !== cathodeVal) && (potentials[cathodeVal] - potentials[anodeVal] > 0) && (electrolyte !== 'purewater');
+      
+      // 1. Draw Beaker/Cup
+      cellCtx.fillStyle = 'rgba(30, 41, 59, 0.5)';
+      cellCtx.strokeStyle = '#64748b';
+      cellCtx.lineWidth = 3;
+      cellCtx.beginPath();
+      cellCtx.moveTo(w*0.15, h*0.2);
+      cellCtx.lineTo(w*0.15, h*0.8);
+      cellCtx.lineTo(w*0.85, h*0.8);
+      cellCtx.lineTo(w*0.85, h*0.2);
+      cellCtx.stroke();
+      
+      // 2. Draw electrolyte solution
+      cellCtx.fillStyle = electrolyte === 'saltwater' ? 'rgba(0, 210, 255, 0.12)' :
+                          electrolyte === 'acid' ? 'rgba(234, 179, 8, 0.08)' : 'rgba(255, 255, 255, 0.04)';
+      cellCtx.fillRect(w*0.16, h*0.35, w*0.68, h*0.44);
+      
+      cellCtx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      cellCtx.font = 'bold 9px sans-serif';
+      cellCtx.textAlign = 'center';
+      cellCtx.fillText(electrolyte.toUpperCase() + ' ELECTROLYTE', w*0.5, h*0.75);
+      
+      // 3. Draw Electrodes (plates)
+      // Left Anode
+      cellCtx.fillStyle = anodeVal === 'Zn' ? '#a1a1aa' : anodeVal === 'Fe' ? '#b45309' : anodeVal === 'Pb' ? '#4b5563' : anodeVal === 'Cu' ? '#ea580c' : '#e2e8f0';
+      cellCtx.fillRect(w*0.25, h*0.15, 24, h*0.5);
+      cellCtx.fillStyle = '#fff';
+      cellCtx.font = 'bold 10px Space Grotesk';
+      cellCtx.fillText(anodeVal, w*0.25 + 12, h*0.25);
+      cellCtx.fillText("ANODE (-)", w*0.25 + 12, h*0.1);
+      
+      // Right Cathode
+      cellCtx.fillStyle = cathodeVal === 'Zn' ? '#a1a1aa' : cathodeVal === 'Fe' ? '#b45309' : cathodeVal === 'Pb' ? '#4b5563' : cathodeVal === 'Cu' ? '#ea580c' : '#e2e8f0';
+      cellCtx.fillRect(w*0.65, h*0.15, 24, h*0.5);
+      cellCtx.fillStyle = '#fff';
+      cellCtx.fillText(cathodeVal, w*0.65 + 12, h*0.25);
+      cellCtx.fillText("CATHODE (+)", w*0.65 + 12, h*0.1);
+      
+      // 4. Draw connecting wire and digital voltmeter
+      cellCtx.strokeStyle = '#475569';
+      cellCtx.lineWidth = 2;
+      cellCtx.beginPath();
+      cellCtx.moveTo(w*0.25 + 12, h*0.15);
+      cellCtx.lineTo(w*0.25 + 12, h*0.05);
+      cellCtx.lineTo(w*0.65 + 12, h*0.05);
+      cellCtx.lineTo(w*0.65 + 12, h*0.15);
+      cellCtx.stroke();
+      
+      // Draw Voltmeter Box
+      cellCtx.fillStyle = '#1e293b';
+      cellCtx.strokeStyle = varPotentialDiff() > 0 ? 'var(--color-primary)' : '#475569';
+      cellCtx.lineWidth = 1.5;
+      cellCtx.fillRect(w*0.45 - 25, h*0.05 - 15, 50, 24);
+      cellCtx.strokeRect(w*0.45 - 25, h*0.05 - 15, 50, 24);
+      
+      cellCtx.fillStyle = varPotentialDiff() > 0 ? 'var(--color-primary)' : '#94a3b8';
+      cellCtx.font = 'bold 9px monospace';
+      cellCtx.textAlign = 'center';
+      cellCtx.fillText(`${varPotentialDiff().toFixed(2)}V`, w*0.45, h*0.05 + 1);
+
+      // 5. Electron animation (Only if working)
+      if (isWorking) {
+        cellCtx.fillStyle = '#22c55e';
+        const numE = 8;
+        const totalLen = (w * 0.4) + (h * 0.2); // Anode wire, bridge, cathode wire
+        
+        for (let i = 0; i < numE; i++) {
+          let dist = (i * (totalLen / numE) + electronAnimTime) % totalLen;
+          let ex = 0, ey = 0;
+          
+          const seg1 = h * 0.1; // Up from anode
+          const seg2 = w * 0.4; // Across bridge
+          
+          if (dist < seg1) {
+            ex = w * 0.25 + 12;
+            ey = h * 0.15 - dist;
+          } else if (dist < seg1 + seg2) {
+            ex = w * 0.25 + 12 + (dist - seg1);
+            ey = h * 0.05;
+          } else {
+            ex = w * 0.65 + 12;
+            ey = h * 0.05 + (dist - seg1 - seg2);
+          }
+          
+          cellCtx.beginPath();
+          cellCtx.arc(ex, ey, 2.5, 0, Math.PI*2);
+          cellCtx.fill();
+        }
+        
+        // Draw chemical reaction bubbles in electrolyte
+        cellCtx.fillStyle = 'rgba(255,255,255,0.4)';
+        for (let i = 0; i < 6; i++) {
+          const bx = w*0.25 + (Math.sin(electronAnimTime*0.2 + i)*12);
+          const by = h*0.45 + ((i*15 + electronAnimTime*0.5) % 45);
+          cellCtx.beginPath();
+          cellCtx.arc(bx, by, 1.5 + (i%2), 0, Math.PI*2);
+          cellCtx.fill();
+          
+          const cx = w*0.65 + (Math.cos(electronAnimTime*0.1 + i)*12);
+          const cy = h*0.45 + ((i*12 + electronAnimTime*0.4) % 45);
+          cellCtx.beginPath();
+          cellCtx.arc(cx, cy, 1.5 + (i%3), 0, Math.PI*2);
+          cellCtx.fill();
+        }
+      }
+    }
+
+    function varPotentialDiff() {
+      const anodeVal = document.getElementById('selectAnode').value;
+      const cathodeVal = document.getElementById('selectCathode').value;
+      const electrolyte = document.getElementById('selectElectrolyte').value;
+      
+      if (anodeVal === cathodeVal || electrolyte === 'purewater') return 0;
+      
+      const potential = potentials[cathodeVal] - potentials[anodeVal];
+      return potential > 0 ? potential : 0;
+    }
+
+
+    // ==========================================
+    // Simulation 2: Resistor Burnout Sandbox Logic
+    // ==========================================
+    let burnoutCanvas = document.getElementById('burnoutCanvas');
+    let burnoutCtx = burnoutCanvas.getContext('2d');
+    let burnoutLoopId = null;
+    let burnoutTime = 0;
+    let resistorBlown = false;
+    let resistorTemperature = 0; // 0 to 100
+
+    function initBurnoutCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = burnoutCanvas.parentNode.getBoundingClientRect();
+      burnoutCanvas.width = rect.width * dpr;
+      burnoutCanvas.height = rect.height * dpr;
+      burnoutCtx.scale(dpr, dpr);
+      burnoutCanvas.style.width = rect.width + 'px';
+      burnoutCanvas.style.height = rect.height + 'px';
+    }
+
+    function updateBurnoutSimulation() {
+      if (resistorBlown) return;
+
+      const v = parseFloat(document.getElementById('burnV').value);
+      const r = parseFloat(document.getElementById('burnR').value);
+      const rating = parseFloat(document.getElementById('burnRating').value);
+
+      document.getElementById('lblBurnV').innerText = `${v.toFixed(1)} V`;
+      document.getElementById('lblBurnR').innerText = `${r} Ω`;
+
+      const current = v / r; // Amps
+      const power = v * current; // Watts
+
+      document.getElementById('burnI').innerText = `${(current * 1000).toFixed(1)} mA`;
+      document.getElementById('burnP').innerText = `${power.toFixed(3)} W`;
+
+      const ratio = power / rating;
+      
+      if (ratio >= 2.0) {
+        resistorBlown = true;
+        document.getElementById('burnStatus').innerText = "💥 DESTROYED (BLOWN OUT)";
+        document.getElementById('burnStatus').style.color = "var(--color-danger)";
+        document.getElementById('burnI').innerText = "0.0 mA";
+        document.getElementById('burnP').innerText = "0.000 W";
+      } else if (ratio >= 1.0) {
+        resistorTemperature = (ratio - 1.0) * 100;
+        document.getElementById('burnStatus').innerText = "🔥 OVERHEATING (RISKY)";
+        document.getElementById('burnStatus').style.color = "var(--color-warning)";
+      } else {
+        resistorTemperature = 0;
+        document.getElementById('burnStatus').innerText = "Safe";
+        document.getElementById('burnStatus').style.color = "var(--color-success)";
+      }
+    }
+
+    function resetResistorBurnout() {
+      resistorBlown = false;
+      resistorTemperature = 0;
+      updateBurnoutSimulation();
+    }
+
+    function startBurnoutLoop() {
+      initBurnoutCanvas();
+      window.addEventListener('resize', initBurnoutCanvas);
+      updateBurnoutSimulation();
+      
+      if (!burnoutLoopId) {
+        lastBurnoutTime = performance.now();
+        burnoutAnimationLoop(lastBurnoutTime);
+      }
+    }
+
+    function stopBurnoutLoop() {
+      if (burnoutLoopId) {
+        cancelAnimationFrame(burnoutLoopId);
+        burnoutLoopId = null;
+      }
+      window.removeEventListener('resize', initBurnoutCanvas);
+    }
+
+    let lastBurnoutTime = 0;
+    function burnoutAnimationLoop(ts) {
+      const dt = Math.min((ts - lastBurnoutTime)/1000, 0.1);
+      lastBurnoutTime = ts;
+      burnoutTime += dt;
+      
+      renderBurnoutSandbox();
+      burnoutLoopId = requestAnimationFrame(burnoutAnimationLoop);
+    }
+
+    function renderBurnoutSandbox() {
+      const w = burnoutCanvas.width / (window.devicePixelRatio || 1);
+      const h = burnoutCanvas.height / (window.devicePixelRatio || 1);
+      
+      burnoutCtx.clearRect(0,0,w,h);
+      
+      // Grid lines
+      burnoutCtx.strokeStyle = 'rgba(255,255,255,0.02)';
+      burnoutCtx.lineWidth = 1;
+      const grid = 20;
+      for (let x = 0; x < w; x += grid) {
+        burnoutCtx.beginPath(); burnoutCtx.moveTo(x, 0); burnoutCtx.lineTo(x, h); burnoutCtx.stroke();
+      }
+      for (let y = 0; y < h; y += grid) {
+        burnoutCtx.beginPath(); burnoutCtx.moveTo(0, y); burnoutCtx.lineTo(w, y); burnoutCtx.stroke();
+      }
+
+      // Draw simple circuit wire line
+      burnoutCtx.strokeStyle = '#475569';
+      burnoutCtx.lineWidth = 2.5;
+      burnoutCtx.beginPath();
+      burnoutCtx.moveTo(w*0.1, h*0.5);
+      burnoutCtx.lineTo(w*0.35, h*0.5);
+      burnoutCtx.moveTo(w*0.65, h*0.5);
+      burnoutCtx.lineTo(w*0.9, h*0.5);
+      burnoutCtx.stroke();
+      
+      // Draw battery terminal blocks
+      burnoutCtx.fillStyle = '#1e293b';
+      burnoutCtx.fillRect(w*0.05, h*0.4, w*0.05, h*0.2);
+      burnoutCtx.fillRect(w*0.9, h*0.4, w*0.05, h*0.2);
+      
+      // Draw Resistor Cylinder
+      const rx = w*0.35;
+      const ry = h*0.5 - 16;
+      const rw = w*0.3;
+      const rh = 32;
+      
+      if (resistorBlown) {
+        // Blown burnt resistor
+        burnoutCtx.fillStyle = '#1e293b';
+        burnoutCtx.fillRect(rx, ry, rw, rh);
+        burnoutCtx.strokeStyle = '#090d16';
+        burnoutCtx.strokeRect(rx, ry, rw, rh);
+        
+        // Burnt crack
+        burnoutCtx.strokeStyle = '#020617';
+        burnoutCtx.lineWidth = 3;
+        burnoutCtx.beginPath();
+        burnoutCtx.moveTo(rx + rw*0.5, ry);
+        burnoutCtx.lineTo(rx + rw*0.5, ry + rh);
+        burnoutCtx.stroke();
+        
+        // Smoke particles (random rising circles)
+        burnoutCtx.fillStyle = 'rgba(255,255,255,0.06)';
+        for (let i = 0; i < 5; i++) {
+          const sx = rx + rw*0.5 + (Math.sin(burnoutTime*2 + i)*12);
+          const sy = ry + 8 - ((i*10 + burnoutTime*12) % 60);
+          burnoutCtx.beginPath();
+          burnoutCtx.arc(sx, sy, 3 + (i%3), 0, Math.PI*2);
+          burnoutCtx.fill();
+        }
+      } else {
+        // Standard resistor body color (tan)
+        burnoutCtx.fillStyle = '#d97706';
+        
+        // Glow effect if hot
+        if (resistorTemperature > 0) {
+          const glowAlpha = Math.min(0.8, resistorTemperature / 100);
+          
+          burnoutCtx.shadowColor = '#ef4444';
+          burnoutCtx.shadowBlur = 15;
+          burnoutCtx.fillStyle = `rgb(${217 + Math.round(resistorTemperature*0.38)}, ${119 - Math.round(resistorTemperature*0.8)}, ${6 - Math.round(resistorTemperature*0.06)})`;
+        } else {
+          burnoutCtx.shadowBlur = 0;
+        }
+        
+        burnoutCtx.fillRect(rx, ry, rw, rh);
+        burnoutCtx.strokeStyle = '#f59e0b';
+        burnoutCtx.lineWidth = 1;
+        burnoutCtx.strokeRect(rx, ry, rw, rh);
+        burnoutCtx.shadowBlur = 0; // Reset
+        
+        // Color bands dynamically based on resistance slider
+        const rVal = parseFloat(document.getElementById('burnR').value);
+        let band1Color = '#78350f'; // Brown
+        let band2Color = '#000000'; // Black
+        let band3Color = '#ea580c'; // Orange multiplier (100)
+        
+        if (rVal < 100) {
+          band1Color = rVal >= 50 ? '#16a34a' : '#78350f';
+          band2Color = '#000000';
+          band3Color = '#000000';
+        } else if (rVal < 1000) {
+          const firstDigit = Math.floor(rVal / 100);
+          band1Color = firstDigit === 1 ? '#78350f' : firstDigit === 2 ? '#ef4444' : firstDigit === 3 ? '#ea580c' : '#eab308';
+          band2Color = '#000000';
+          band3Color = '#78350f';
+        } else {
+          band1Color = '#78350f';
+          band2Color = '#000000';
+          band3Color = '#ea580c';
+        }
+
+        // Draw 3 color bands
+        burnoutCtx.fillStyle = band1Color;
+        burnoutCtx.fillRect(rx + 12, ry, 6, rh);
+        burnoutCtx.fillStyle = band2Color;
+        burnoutCtx.fillRect(rx + 24, ry, 6, rh);
+        burnoutCtx.fillStyle = band3Color;
+        burnoutCtx.fillRect(rx + 36, ry, 6, rh);
+        
+        // Draw tolerance band (Gold)
+        burnoutCtx.fillStyle = '#f59e0b';
+        burnoutCtx.fillRect(rx + rw - 14, ry, 5, rh);
+      }
+    }
+
+
+    // ==========================================
+    // Simulation 3: Appliance Energy Billing Logic
+    // ==========================================
+    let meterActiveAppliances = {};
+    let meterTotalWatts = 0;
+    let meterElapsedHours = 0;
+    let meterKWh = 0;
+    let meterCost = 0;
+    let meterRate = 0.15;
+    let meterTimeSpeed = 100;
+    let meterLoopId = null;
+    let lastMeterTime = 0;
+
+    function toggleAppliance(name, watts) {
+      const card = document.getElementById(`app${name}`);
+      if (meterActiveAppliances[name]) {
+        delete meterActiveAppliances[name];
+        card.classList.remove('active');
+      } else {
+        meterActiveAppliances[name] = watts;
+        card.classList.add('active');
+      }
+      recomputeActiveLoad();
+    }
+
+    function recomputeActiveLoad() {
+      meterTotalWatts = 0;
+      for (let k in meterActiveAppliances) {
+        meterTotalWatts += meterActiveAppliances[k];
+      }
+      
+      document.getElementById('lblTotalWatts').innerText = `${meterTotalWatts} Watts`;
+      document.getElementById('lblTotalKW').innerText = `${(meterTotalWatts / 1000).toFixed(3)} kW`;
+    }
+
+    function updateMeterParams() {
+      meterRate = parseFloat(document.getElementById('meterRate').value);
+      meterTimeSpeed = parseFloat(document.getElementById('meterSpeed').value);
+      
+      document.getElementById('lblMeterRate').innerText = `$${meterRate.toFixed(2)}`;
+      document.getElementById('lblMeterSpeed').innerText = `${meterTimeSpeed}x`;
+    }
+
+    function resetMeterSimulation() {
+      meterElapsedHours = 0;
+      meterKWh = 0;
+      meterCost = 0;
+      document.getElementById('lblMeterKWh').innerText = "0.0000";
+      document.getElementById('lblMeterCost').innerText = "0.00";
+      document.getElementById('lblElapsedHours').innerText = "0.0 hrs";
+    }
+
+    function startMeterLoop() {
+      recomputeActiveLoad();
+      updateMeterParams();
+      
+      if (!meterLoopId) {
+        lastMeterTime = performance.now();
+        meterAnimationLoop(lastMeterTime);
+      }
+    }
+
+    function stopMeterLoop() {
+      if (meterLoopId) {
+        cancelAnimationFrame(meterLoopId);
+        meterLoopId = null;
+      }
+    }
+
+    function meterAnimationLoop(ts) {
+      const dtMs = ts - lastMeterTime;
+      lastMeterTime = ts;
+      
+      const dtSeconds = dtMs / 1000;
+      const dtSimulatedHours = (dtSeconds * meterTimeSpeed) / 3600;
+      
+      meterElapsedHours += dtSimulatedHours;
+      
+      const kwLoad = meterTotalWatts / 1000;
+      const consumedKWh = kwLoad * dtSimulatedHours;
+      
+      meterKWh += consumedKWh;
+      meterCost = meterKWh * meterRate;
+      
+      document.getElementById('lblMeterKWh').innerText = meterKWh.toFixed(5);
+      document.getElementById('lblMeterCost').innerText = meterCost.toFixed(2);
+      document.getElementById('lblElapsedHours').innerText = `${meterElapsedHours.toFixed(1)} hrs`;
+      
+      meterLoopId = requestAnimationFrame(meterAnimationLoop);
+    }
+
+
+    // ==========================================
+    // Slide 12: Checkpoint Quiz Showdown Logic
+    // ==========================================
+    const quizQuestions = [
+      {
+        q: "What is the electrical power dissipated by a 100 Ω resistor connected to a 10V battery?",
+        opts: ["0.1 Watts", "1.0 Watts", "10.0 Watts", "100.0 Watts"],
+        correct: 1,
+        exp: "P = V^2 / R = 10^2 / 100 = 100 / 100 = 1.0 Watt."
+      },
+      {
+        q: "If a 2,000 W space heater runs for 3 hours, how much energy does it consume in kilowatt-hours (kWh)?",
+        opts: ["0.6 kWh", "2.0 kWh", "6.0 kWh", "600 kWh"],
+        correct: 2,
+        exp: "E = P * t. Convert 2000W to 2.0 kW. E = 2.0 kW * 3 hrs = 6.0 kWh."
+      },
+      {
+        q: "In a chemical cell (battery), at which electrode does OXIDATION occur (releasing electrons)?",
+        opts: ["Cathode", "Anode", "Electrolyte", "Junction"],
+        correct: 1,
+        exp: "Oxidation (loss of electrons) occurs at the ANODE. (Mnemonic: AN OX / RED CAT)."
+      },
+      {
+        q: "Connecting two identical batteries in PARALLEL has what effect?",
+        opts: ["Voltage is doubled, capacity stays the same", "Voltage stays the same, capacity is doubled", "Both voltage and capacity are doubled", "Voltage is halved, capacity is doubled"],
+        correct: 1,
+        exp: "Parallel connections keep voltage unchanged (e.g. 1.5V) but combine capacities (Amp-hours) to run the circuit longer."
+      },
+      {
+        q: "If you double the current (I) through a resistor, what happens to the power dissipated by it?",
+        opts: ["It is halved", "It is doubled", "It is tripled", "It quadruples"],
+        correct: 3,
+        exp: "Since power is proportional to the square of current (P = I^2 * R), doubling current multiplies power by 2^2 = 4 times."
+      },
+      {
+        q: "A student connects a 1/4 Watt (0.25W) resistor to a 9V circuit, drawing 30mA of current. Will it survive?",
+        opts: ["Yes, power is under 0.25W", "No, power is 0.27W, which exceeds the limit", "No, power is 2.7W, which will blow it instantly", "Yes, power is 0.027W"],
+        correct: 1,
+        exp: "P = V * I = 9V * 0.03A = 0.27W. Since 0.27W > 0.25W, the resistor exceeds its rating and will overheat and fail."
+      }
+    ];
+
+    let quizCurrentIdx = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+    let quizTimerInterval = null;
+    let quizTimeRemaining = 30;
+
+    function initQuiz() {
+      quizCurrentIdx = 0;
+      quizScore = 0;
+      quizAnswered = false;
+      
+      document.getElementById('quizContainer').style.display = 'flex';
+      document.getElementById('quizFinishedPanel').style.display = 'none';
+      
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      quizAnswered = false;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      document.getElementById('quizQuestionNum').innerText = `Question ${quizCurrentIdx + 1} of ${quizQuestions.length}`;
+      document.getElementById('btnQuizNext').style.display = 'none';
+      document.getElementById('quizExplanation').style.display = 'none';
+
+      const qData = quizQuestions[quizCurrentIdx];
+      document.getElementById('quizQuestionText').innerText = qData.q;
+
+      const optContainer = document.getElementById('quizOptions');
+      optContainer.innerHTML = '';
+      
+      qData.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.onclick = () => selectQuizOption(idx);
+        
+        const letter = String.fromCharCode(65 + idx);
+        btn.innerHTML = `<span class="quiz-option-letter">${letter}</span> <span>${opt}</span>`;
+        optContainer.appendChild(btn);
+      });
+
+      startQuizTimer();
+    }
+
+    function startQuizTimer() {
+      if (quizTimerInterval) clearInterval(quizTimerInterval);
+      
+      quizTimeRemaining = 30;
+      const bar = document.getElementById('quizTimerBar');
+      bar.style.width = '100%';
+      bar.style.background = 'var(--color-primary)';
+
+      quizTimerInterval = setInterval(() => {
+        quizTimeRemaining--;
+        bar.style.width = `${(quizTimeRemaining / 30) * 100}%`;
+        
+        if (quizTimeRemaining <= 10) {
+          bar.style.background = 'var(--color-danger)';
+        }
+
+        if (quizTimeRemaining <= 0) {
+          clearInterval(quizTimerInterval);
+          revealQuizCorrectAnswer(-1);
+        }
+      }, 1000);
+    }
+
+    function selectQuizOption(selectedIdx) {
+      if (quizAnswered) return;
+      clearInterval(quizTimerInterval);
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      quizAnswered = true;
+
+      const btns = document.querySelectorAll('.quiz-option-btn');
+      
+      if (selectedIdx === qData.correct) {
+        quizScore += 100;
+        btns[selectedIdx].classList.add('correct');
+      } else {
+        if (selectedIdx !== -1) {
+          btns[selectedIdx].classList.add('wrong');
+        }
+        btns[qData.correct].classList.add('correct');
+      }
+
+      revealQuizCorrectAnswer(selectedIdx);
+    }
+
+    function revealQuizCorrectAnswer(selectedIdx) {
+      quizAnswered = true;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      const expCard = document.getElementById('quizExplanation');
+      const expText = document.getElementById('quizExplanationText');
+      
+      expText.innerText = qData.exp;
+      expCard.style.display = 'block';
+
+      const nextBtn = document.getElementById('btnQuizNext');
+      nextBtn.style.display = 'block';
+      if (quizCurrentIdx === quizQuestions.length - 1) {
+        nextBtn.innerText = "Finish Quiz";
+      } else {
+        nextBtn.innerText = "Next Question";
+      }
+    }
+
+    function nextQuizQuestion() {
+      quizCurrentIdx++;
+      if (quizCurrentIdx < quizQuestions.length) {
+        showQuizQuestion();
+      } else {
+        document.getElementById('quizContainer').style.display = 'none';
+        
+        const finishPanel = document.getElementById('quizFinishedPanel');
+        finishPanel.style.display = 'flex';
+        
+        document.getElementById('quizFinalScoreText').innerText = `You scored ${quizScore} out of ${quizQuestions.length * 100} points!`;
+      }
+    }
+
+    function restartQuiz() {
+      initQuiz();
+    }
+
+    window.onload = () => {
+      initSlides();
+    };
+  </script>
+</body>
+</html>

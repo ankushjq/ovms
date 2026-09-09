@@ -1,0 +1,11 @@
+Question,Answer 1,Answer 2,Answer 3,Answer 4,Time limit (seconds),Correct answer(s)
+What does Electrical Power measure?,The speed of charge flow (current),The rate at which energy is converted,The work output of a single hyperactive hamster,The physical separation distance between plates,20,2
+Which formula is NOT a valid equation for calculating electrical power?,P = V * I,P = I^2 * R,P = V^2 / R,P = I / R^2,30,4
+"If you double the current running through a wire, what happens to the power lost as heat?",It stays the same,It is doubled,It is quadrupled,The wire turns into ice,20,3
+What is the main unit of energy used by utility companies for electricity bills?,Joule (J),Watt (W),Kilowatt-Hour (kWh),Ampere-Hour (Ah),20,3
+"A 1,000 W microwave is run for 15 minutes. How much energy in kWh does it consume?",15 kWh,0.25 kWh,4 kWh,Enough to explode a giant marshmallow,30,2
+At which battery electrode does OXIDATION take place (releasing electrons)?,Cathode (+),Anode (-),Electrolyte,The plastic wrapper,20,2
+What does the AN OX and RED CAT mnemonic stand for in chemistry?,"Anode Oxidation, Reduction Cathode",A confused ox and a sunburned cat,"Acid Oxygen, Red Copper","Align Orbitals, Resistor Capacitance",20,1
+"If three 1.5V cells are connected in SERIES, what is the total voltage of the bank?",1.5V,4.5V,3.0V,0.0V (they cancel each other out),20,2
+"If three 1.5V cells (each 2,000 mAh) are in PARALLEL, what is the total voltage and capacity?","4.5V, 2,000 mAh","1.5V, 6,000 mAh","4.5V, 6,000 mAh","1.5V, 2,000 mAh",30,2
+"If a 1/4 W (0.25W) resistor is dissipating 0.40W of power, what is the expected result?",It will increase its resistance value to compensate,It will act as a battery and charge up,"It will overheat, smoke, and burn out",It will summon the local fire department,20,3

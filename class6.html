@@ -1,0 +1,3259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Olympiad Circuit Lab - Class 6: Motors, Generators &amp; Sensors</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for rendering LaTeX formulas -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    /* ==========================================
+       Design System & Core Variables
+       ========================================== */
+    :root {
+      --color-bg: #0b0f19;
+      --color-surface: #131a2c;
+      --color-surface-hover: #1e2942;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-text-primary: #f3f4f6;
+      --color-text-secondary: #9ca3af;
+      
+      /* Glowing Neon Purple/Violet Theme Colors */
+      --color-primary: hsl(280, 100%, 65%);   /* Neon Purple/Violet */
+      --color-accent: hsl(325, 100%, 60%);    /* Neon Pink/Magenta */
+      --color-success: hsl(145, 100%, 45%);  /* Neon Green */
+      --color-warning: hsl(35, 100%, 50%);   /* Neon Amber / Orange */
+      --color-danger: hsl(0, 100%, 60%);     /* Neon Red */
+      --color-info: hsl(195, 100%, 50%);     /* Electric Blue */
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      
+      --transition-speed: 0.3s;
+      --border-radius: 16px;
+      --shadow-neon: 0 0 20px rgba(168, 85, 247, 0.25);
+      --shadow-danger: 0 0 20px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+      outline: none;
+      color: inherit;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* ==========================================
+       Layout Structure
+       ========================================== */
+    header {
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6));
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .class-switcher-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border: 1px dashed var(--color-border);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .class-switcher-link:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(168, 85, 247, 0.05);
+    }
+
+    .progress-container {
+      width: 180px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-toggle-presenter {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-toggle-presenter:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+    }
+
+    .btn-toggle-presenter.active {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+    }
+
+    .main-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-deck {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #070a12 100%);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1.5rem;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    /* ==========================================
+       Presenter Console Sidebar
+       ========================================== */
+    .presenter-panel {
+      width: 320px;
+      background: #0f1422;
+      border-left: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 9;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .presenter-panel.active {
+      transform: translateX(0);
+      position: relative;
+    }
+
+    .presenter-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .presenter-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .speaker-script-box {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-info);
+      padding: 0.9rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+    }
+
+    .speaker-actions-box {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-accent);
+      padding: 0.9rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* ==========================================
+       Glass Panels & Layout Grids
+       ========================================== */
+    .glass-panel {
+      background: rgba(19, 26, 44, 0.45);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.75rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .slide-title-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .slide-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .slide-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .split-layout-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .split-layout-2 {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .welcome-card {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
+
+    .welcome-card:hover {
+      border-color: var(--color-primary);
+    }
+
+    .welcome-card-icon {
+      font-size: 1.75rem;
+      margin: 0 auto;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(168, 85, 247, 0.08);
+      color: var(--color-primary);
+    }
+
+    .welcome-card-icon.blue {
+      background: rgba(0, 210, 255, 0.08);
+      color: var(--color-info);
+    }
+
+    .welcome-card-icon.purple {
+      background: rgba(236, 72, 153, 0.08);
+      color: var(--color-accent);
+    }
+
+    /* Math equation blocks */
+    .math-callout {
+      background: rgba(168, 85, 247, 0.02);
+      border: 1px solid rgba(168, 85, 247, 0.15);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .warn-callout {
+      background: rgba(245, 158, 11, 0.03);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    /* ==========================================
+       Interactive Workbenches & Controls
+       ========================================== */
+    .cell-workbench {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.25rem;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .cell-visualizer {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 1rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .cell-canvas-container {
+      flex: 1;
+      position: relative;
+      background: #080c14;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 220px;
+    }
+
+    .cell-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .cell-controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      justify-content: space-between;
+    }
+
+    .bb-select-element {
+      background: #141b2e;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
+      outline: none;
+      width: 100%;
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+
+    .bb-select-element:focus {
+      border-color: var(--color-primary);
+    }
+
+    .btn-power-circuit {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #0b0f19;
+      font-weight: 700;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-neon);
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-power-circuit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+    }
+
+    .btn-power-circuit:active {
+      transform: translateY(0);
+    }
+
+    .cell-stats-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+
+    .rc-slider {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      outline: none;
+      border-radius: 3px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    .rc-slider:hover {
+      accent-color: var(--color-accent);
+    }
+
+    /* Sensor tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--color-text-primary);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tab-btn.active {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: rgba(168, 85, 247, 0.05);
+    }
+
+    /* Hands-on Activity Layout */
+    .lab-box {
+      background: rgba(168, 85, 247, 0.02);
+      border-left: 4px solid var(--color-primary);
+      padding: 1rem;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    /* ==========================================
+       Checkpoint Quiz Showdown Styles
+       ========================================== */
+    .quiz-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .quiz-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .quiz-question-container {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+    }
+
+    .quiz-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .quiz-option-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s ease;
+      color: var(--color-text-primary);
+    }
+
+    .quiz-option-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .quiz-option-letter {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--color-primary);
+      font-size: 0.85rem;
+    }
+
+    .quiz-option-btn.correct {
+      background: rgba(16, 185, 129, 0.15) !important;
+      border-color: var(--color-success) !important;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .quiz-option-btn.correct .quiz-option-letter {
+      background: var(--color-success);
+      color: #0b0f19;
+    }
+
+    .quiz-option-btn.wrong {
+      background: rgba(239, 68, 68, 0.15) !important;
+      border-color: var(--color-danger) !important;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .quiz-option-btn.wrong .quiz-option-letter {
+      background: var(--color-danger);
+      color: #0b0f19;
+    }
+
+    .quiz-explanation-card {
+      background: rgba(0, 210, 255, 0.03);
+      border: 1px dashed rgba(0, 210, 255, 0.25);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .quiz-timer-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .quiz-timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--color-primary);
+      transition: width 1s linear;
+    }
+
+    /* Finished panel */
+    .quiz-finished-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ==========================================
+       Footer & Progress Indicators
+       ========================================== */
+    .controls-bar {
+      background: rgba(11, 15, 25, 0.9);
+      border-top: 1px solid var(--color-border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide-indicators {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .indicator-dot.active {
+      background: var(--color-primary);
+      transform: scale(1.3);
+      box-shadow: 0 0 8px var(--color-primary);
+    }
+
+    .navigation-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn-nav svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       Header
+       ========================================== -->
+  <header>
+    <a href="index.html" class="brand">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L2 14h9v8l10-12h-9z"/>
+      </svg>
+      <span class="brand-title">CIRCUIT LAB ⚡ DIV B</span>
+    </a>
+    
+    <div class="header-actions">
+      <a href="class1.html" class="class-switcher-link">Class 1</a>
+      <a href="class2.html" class="class-switcher-link">Class 2</a>
+      <a href="class3.html" class="class-switcher-link">Class 3</a>
+      <a href="class4.html" class="class-switcher-link">Class 4</a>
+      <a href="class5.html" class="class-switcher-link">Class 5</a>
+      <div class="progress-container" title="Course Progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <button class="btn-toggle-presenter" id="presenterToggleBtn" onclick="togglePresenterMode()">
+        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Console</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       Main Workspace
+       ========================================== -->
+  <div class="main-workspace">
+    
+    <!-- Slide Deck Container -->
+    <div class="slide-deck" id="slideDeck">
+
+      <!-- SLIDE 1: Welcome & Overview -->
+      <div class="slide active" id="slide1">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Class 6: Welcome</span>
+          <h2 class="slide-title">Motors, Generators, Sensors &amp; Competition Prep</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            <div>
+              <div class="glass-panel" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(236, 72, 153, 0.05)); margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--color-primary);">Class 6 Core Goals ⚡</h3>
+                <p style="font-size: 0.95rem; line-height: 1.5; color: var(--color-text-secondary);">
+                  Welcome, champions! Today we complete the Science Olympiad Circuit Lab event syllabus. We will study **electromagnetic conversion** (motors that turn current into motion, generators that do the reverse, and transformers that step voltage up/down) and explore **environmental sensors** like LDRs and Thermistors. Finally, we'll cover expert lab station strategies so you can easily tackle the competition's practical troubleshooting stations.
+                </p>
+              </div>
+              
+              <div class="welcome-grid">
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon">⚙️</div>
+                  <h4 style="font-size: 0.95rem;">DC Motors &amp; Sim</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Learn about commutators, brushes, Lorentz force, and view interactive spins.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon blue">🧲</div>
+                  <h4 style="font-size: 0.95rem;">Induction &amp; Grid</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Explore Faraday's &amp; Lenz's Laws, and see step-up/down AC transformer sandboxes.</p>
+                </div>
+                
+                <div class="glass-panel welcome-card">
+                  <div class="welcome-card-icon purple">🌡️</div>
+                  <h4 style="font-size: 0.95rem;">LDR &amp; Thermistors</h4>
+                  <p style="font-size: 0.8rem; color: var(--color-text-secondary);">Trace resistance sweeps on LDRs and Thermistors under changing conditions.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Prerequisite Check Box -->
+            <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: center; gap: 0.75rem;">
+              <h3 style="font-size: 1.1rem; color: var(--color-accent); border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Prerequisite Check</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary);">Review: A $10\ \Omega$ carbon resistor carries $200\text{ mA}$ of current. Calculate its power dissipation. Can it survive if it is rated for $1/4\text{ W}$ ($0.25\text{W}$)?</p>
+              <div style="font-size: 0.88rem; font-weight: 700; color: var(--color-primary); margin-top: 0.5rem; font-family: monospace; line-height: 1.4;">
+                $I = 200\text{ mA} = 0.2\text{ A}$<br>
+                $P = I^2 \times R$<br>
+                $P = (0.2)^2 \times 10 = 0.04 \times 10 = \mathbf{0.40\text{ W}}$<br>
+                Actual power $0.40\text{W} > 0.25\text{W}$ rating!
+              </div>
+              <div class="warn-callout" style="margin-top: 0.5rem; font-size: 0.78rem; border-color: rgba(239, 68, 68, 0.2);">
+                <strong>Burnout Hazard:</strong> The resistor dissipates nearly double its capacity! It will overheat, smoke, and burn out, creating an open circuit. Always check ratings first!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: DC Motors - Harnessing Lorentz Force -->
+      <div class="slide" id="slide2">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 1: Motors</span>
+          <h2 class="slide-title">DC Motors: Electric Flow to Mechanical Spin</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">Lorentz Force &amp; Torque</h4>
+              <p>
+                A **Direct Current (DC) Motor** converts electrical energy into physical rotational motion. It relies on the **Lorentz Force**: when electric current flows through a wire loop located inside a magnetic field, the field pushes on the moving charges.
+              </p>
+              <div class="math-callout" style="color: var(--color-primary); border-color: rgba(168, 85, 247, 0.25);">
+                Lorentz Force Direction:<br>
+                Use **Right-Hand Rule**: Point fingers in direction of current ($I$), curl them to magnetic field ($B$), thumb points to force ($F$).
+              </div>
+              <p>
+                Since current flows in opposite directions on the two sides of a loop, one side is pushed UP and the other is pushed DOWN, creating rotational torque.
+              </p>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-info); font-size: 1rem;">Key Motor Components</h4>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li><strong>Stator</strong>: The outer housing containing permanent magnets that provide a stationary magnetic field.</li>
+                <li><strong>Rotor (Armature)</strong>: The spinning central core wrapped in copper wire coils.</li>
+                <li><strong>Split-Ring Commutator</strong>: The rotating metal ring split in half. It slides against the brushes to reverse current direction every $180^\circ$ of spin.</li>
+                <li><strong>Brushes</strong>: Sliding carbon blocks that conduct current from the external power supply into the rotating commutator.</li>
+              </ul>
+              <div class="warn-callout" style="font-size: 0.8rem;">
+                <strong>🔑 Mnemonic:</strong> The split-ring **Commutator** "commutes" (reverses) the current. Without it, the motor would spin half a turn, get stuck, and sit vibrating!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Generators & Electromagnetic Induction -->
+      <div class="slide" id="slide3">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Generators</span>
+          <h2 class="slide-title">Generators &amp; Electromagnetic Induction</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-success); font-size: 1rem;">Faraday's Law of Induction</h4>
+              <p>
+                An **Electric Generator** is the exact reverse of a motor: it converts mechanical motion (like a spinning wind turbine or hand-crank) into electrical energy.
+              </p>
+              <p>
+                This depends on **Faraday's Law**: moving a magnet relative to a coil of wire (or rotating a coil inside a magnetic field) changes the magnetic field passing through the loop. This change induces an electromotive force (EMF / voltage) that drives current.
+              </p>
+              <div class="math-callout" style="color: var(--color-success); border-color: rgba(34, 197, 94, 0.25);">
+                Faraday's Law Equation:<br>
+                $\mathbf{V_{induced} = -N \frac{\Delta \Phi}{\Delta t}}$<br>
+                Voltage is proportional to number of turns ($N$) and speed of magnetic flux change ($\Delta \Phi / \Delta t$).
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-warning); font-size: 1rem;">Lenz's Law (Opposing Change)</h4>
+              <p>
+                **Lenz's Law** explains the negative sign in Faraday's equation: the direction of an induced current will always produce its own magnetic field that *opposes* the change that created it.
+              </p>
+              <p>
+                This is a result of the **Conservation of Energy**. If the induced field did not oppose the change, it would pull the magnet in faster, creating infinite free energy!
+              </p>
+              <div class="warn-callout" style="font-size: 0.8rem; border-color: rgba(245, 158, 11, 0.15);">
+                <strong>🧪 Real-World Example:</strong> Drop a strong neodymium magnet down a copper pipe. Even though copper is non-magnetic, the moving field induces current loops in the pipe that create a magnetic force pushing UP, making the magnet fall in slow motion!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Transformers & AC Power Grid -->
+      <div class="slide" id="slide4">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 2: Induction &amp; Grid</span>
+          <h2 class="slide-title">Transformers &amp; the AC Power Grid</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">How Transformers Work</h4>
+              <p>
+                A **Transformer** changes the voltage of alternating current (AC) using **mutual induction**. It consists of a primary coil and a secondary coil wound around a common iron core.
+              </p>
+              <p>
+                A changing current in the primary coil creates a changing magnetic field inside the iron core, which then induces a voltage in the secondary coil.
+              </p>
+              <div class="math-callout" style="color: var(--color-primary); border-color: rgba(168, 85, 247, 0.25);">
+                The Transformer Equation:<br>
+                $\mathbf{\frac{V_p}{V_s} = \frac{N_p}{N_s}}$<br>
+                Ratio of voltages equals the ratio of turns. Since energy is conserved ($P_{in} \approx P_{out}$), we have: $V_p I_p = V_s I_s$.
+              </div>
+              <p style="color: var(--color-text-secondary); font-size: 0.82rem;">
+                - **Step-Up**: $N_s > N_p \rightarrow$ Voltage increases, current decreases.<br>
+                - **Step-Down**: $N_s < N_p \rightarrow$ Voltage decreases, current increases.
+              </p>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-accent); font-size: 1rem;">The DC Transformer Trap</h4>
+              <p>
+                <strong>Why only AC?</strong> Transformers *require* a constantly changing magnetic field to induce voltage. 
+              </p>
+              <div class="warn-callout" style="font-size: 0.82rem; border-color: rgba(236, 72, 153, 0.25);">
+                <strong>⚠️ SciOly Test Trap:</strong> If you connect a transformer to a **Direct Current (DC)** source, the magnetic field is constant ($\Delta \Phi / \Delta t = 0$). No voltage will be induced in the secondary coil ($V_s = 0\text{V}$)!
+              </div>
+              <p>
+                <strong>AC Grid Transmission:</strong> Power lines lose power as heat ($P_{loss} = I^2R$). Grids use step-up transformers to boost voltage to hundreds of thousands of volts, dropping current ($I$) to near zero to minimize lines heating up!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Light Dependent Resistors (LDR) -->
+      <div class="slide" id="slide5">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Environmental Sensors</span>
+          <h2 class="slide-title">Light Dependent Resistors (LDR) / Photoresistors</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-accent); font-size: 1rem;">The Photoresistor Mechanism</h4>
+              <p>
+                An **LDR (Light Dependent Resistor)** is a variable resistor whose resistance changes according to light levels. It is made of a high-resistance semiconductor like **Cadmium Sulfide (CdS)**.
+              </p>
+              <p>
+                When photons (light packets) hit the LDR track, they break electrons free from their atoms. This creates free charge carriers, allowing current to flow more easily and reducing the resistance.
+              </p>
+              <div class="math-callout" style="color: var(--color-accent); border-color: rgba(236, 72, 153, 0.25);">
+                💡 Mnemonic: **"Light Down Resistance" (L.D.R.)**<br>
+                - Dark = High Resistance (typically $100\text{ k}\Omega$ to $1\text{ M}\Omega$)<br>
+                - Light = Low Resistance (typically $100\ \Omega$ to $1\text{ k}\Omega$)
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">Schematic Symbol &amp; Uses</h4>
+              <p>
+                The LDR schematic symbol is a standard resistor rectangle (or zig-zag) enclosed in a circle with two arrows pointing inward (representing incoming light rays).
+              </p>
+              <p>
+                <strong>Common Applications:</strong>
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li>Automatic streetlights that turn on at dusk.</li>
+                <li>Solar garden lights (sensing when the sun sets to activate the LED).</li>
+                <li>Camera exposure sensors.</li>
+              </ul>
+              <div class="warn-callout" style="font-size: 0.8rem;">
+                <strong>💡 SciOly Test Trap:</strong> If an LDR is placed in a voltage divider circuit, make sure to read if it is wired to the high side or low side. The output voltage will change in opposite directions as light levels swing!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: Thermistors (Temperature Sensors) -->
+      <div class="slide" id="slide6">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Environmental Sensors</span>
+          <h2 class="slide-title">Thermistors: Thermal Resistors</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-warning); font-size: 1rem;">NTC vs. PTC Curves</h4>
+              <p>
+                A **Thermistor** is a thermally sensitive resistor whose resistance varies dramatically with temperature. Unlike normal metal conductors (which increase resistance slightly when heated), thermistors are custom metal oxide semiconductors with two behaviors:
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li><strong>NTC (Negative Temperature Coefficient)</strong>: Temperature UP $\rightarrow$ Resistance DOWN. This is the most common temperature sensor.</li>
+                <li><strong>PTC (Positive Temperature Coefficient)</strong>: Temperature UP $\rightarrow$ Resistance UP. Often used as a self-resetting overcurrent fuse!</li>
+              </ul>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-info); font-size: 1rem;">Practical Features &amp; Applications</h4>
+              <p>
+                Thermistors have highly non-linear curves (resistance changes exponentially with temperature).
+              </p>
+              <p>
+                <strong>Common Applications:</strong>
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li>Digital clinical thermometers.</li>
+                <li>Engine coolant temperature sensors in cars.</li>
+                <li>In-rush current limiters in power supplies.</li>
+                <li>Battery pack temperature safety monitors.</li>
+              </ul>
+              <div class="warn-callout" style="font-size: 0.8rem; border-color: rgba(0, 210, 255, 0.15);">
+                <strong>🔑 Quick Check:</strong> If you blow hot air onto an NTC thermistor, what happens to the current in the loop? Because temp goes up, resistance goes *down*, meaning the current in the loop will *increase*!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: Potentiometers as Voltage Dividers -->
+      <div class="slide" id="slide7">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 3: Environmental Sensors</span>
+          <h2 class="slide-title">Potentiometers: 3-Terminal Variable Dividers</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">The Wiper Mechanism</h4>
+              <p>
+                A **Potentiometer** is a three-terminal component. Pins 1 and 3 are connected to the two ends of a fixed internal carbon resistive track. Pin 2 is connected to a sliding contact called the **wiper**, which moves when you turn the dial.
+              </p>
+              <p>
+                If you measure resistance between Pin 1 and Pin 3, it is always constant (e.g. $10\text{ k}\Omega$).
+              </p>
+              <p>
+                When you spin the dial, you change the ratio of the two internal resistor halves:
+              </p>
+              <div class="math-callout" style="color: var(--color-primary); border-color: rgba(168, 85, 247, 0.25);">
+                $R_{12} + R_{23} = R_{13}$ (Total Resistance is constant)<br>
+                Turning clockwise increases $R_{12}$ and decreases $R_{23}$.
+              </div>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.88rem; line-height: 1.5;">
+              <h4 style="color: var(--color-accent); font-size: 1rem;">The Voltage Divider Formula</h4>
+              <p>
+                If you connect Pin 1 to a $5\text{V}$ power source, and Pin 3 to Ground ($0\text{V}$), the center wiper pin (Pin 2) acts as a dynamic **voltage divider**. Its output voltage changes smoothly from $0\text{V}$ to $5\text{V}$ as you spin the dial!
+              </p>
+              <div style="background: rgba(255,255,255,0.02); padding: 0.8rem; border-radius: 8px; border-left: 3px solid var(--color-accent);">
+                $$V_{out} = V_{in} \times \frac{R_{23}}{R_{12} + R_{23}} = V_{in} \times \frac{R_{23}}{R_{total}}$$
+              </div>
+              <div class="warn-callout" style="font-size: 0.78rem; border-color: rgba(236, 72, 153, 0.2);">
+                <strong>Test Trap / Setup Rule:</strong> To use a potentiometer as a simple 2-terminal variable resistor (rheostat), you *must* wire the wiper (Pin 2) to one of the outer pins. Leaving the center pin floating makes the dial useless!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: Interactive Simulation 1 - DC Motor Rotator -->
+      <div class="slide" id="slide8">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Interactive DC Motor Rotator</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer">
+              <div class="cell-canvas-container">
+                <canvas class="cell-canvas" id="motorCanvas"></canvas>
+              </div>
+              <div class="cell-stats-card">
+                <div>Applied Voltage: <span id="motorVoltVal" style="color: var(--color-primary);">5.0 V</span></div>
+                <div>Coil Current ($I$): <span id="motorCurrentVal" style="color: var(--color-info);">250 mA</span></div>
+                <div>Rotation Speed: <span id="motorSpeedVal" style="color: var(--color-success); font-weight: bold;">0 RPM</span></div>
+                <div>Commutator Polarity: <span id="motorPolarityVal" style="color: var(--color-warning);">Normal</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Motor Controls</h4>
+              
+              <button class="btn-power-circuit" id="btnMotorPower" onclick="toggleMotorPower()">Power On 🔌</button>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Supply Voltage</span>
+                  <span id="lblMotorVolt">5.0 V</span>
+                </div>
+                <input type="range" class="rc-slider" id="motorVoltSlider" min="0" max="12" step="0.5" value="5" oninput="updateMotorParameters()">
+              </div>
+
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Power Supply Polarity</span>
+                <select class="bb-select-element" id="motorPolaritySelect" onchange="updateMotorParameters()">
+                  <option value="1" selected>Positive Red Left / Black Right (Clockwise)</option>
+                  <option value="-1">Reversed Red Right / Black Left (Counter-Clockwise)</option>
+                </select>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.78rem;">
+                <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                  <input type="checkbox" id="chkShowFields" checked onchange="drawMotor()"> Show Magnetic Field ($B$)
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                  <input type="checkbox" id="chkShowForces" checked onchange="drawMotor()"> Show Lorentz Forces ($F$)
+                </label>
+              </div>
+
+              <div style="font-size: 0.72rem; line-height: 1.35; color: var(--color-text-secondary);">
+                Observe how the split ring commutator flips current direction inside the coil right as it passes vertical. The Lorentz force vector arrows ($F$) update in real-time.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: Interactive Simulation 2 - Faraday Induction -->
+      <div class="slide" id="slide9">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Faraday &amp; Lenz Electromagnetic Induction</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer">
+              <div class="cell-canvas-container" style="cursor: grab;">
+                <canvas class="cell-canvas" id="inductionCanvas"></canvas>
+              </div>
+              <div class="cell-stats-card">
+                <div>Magnet Velocity ($v$): <span id="indVelocity" style="color: var(--color-info);">0.0 cm/s</span></div>
+                <div>Induced EMF (Voltage): <span id="indVoltageVal" style="color: var(--color-primary); font-weight: bold;">0.00 V</span></div>
+                <div>Current Direction: <span id="indCurrentDir" style="color: var(--color-warning);">None</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Induction Settings</h4>
+              
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Coil Loops ($N$)</span>
+                <select class="bb-select-element" id="indLoopsSelect" onchange="updateInductionLoops()">
+                  <option value="1">1 Loop (Low Voltage)</option>
+                  <option value="2" selected>2 Loops (Medium Voltage)</option>
+                  <option value="3">3 Loops (Maximum Voltage)</option>
+                </select>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.78rem;">
+                <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                  <input type="checkbox" id="chkIndShowFlux" checked onchange="drawInduction()"> Show Magnetic Flux Lines
+                </label>
+              </div>
+
+              <div class="warn-callout" style="font-size: 0.75rem; line-height: 1.4; border-color: rgba(34, 197, 94, 0.2);">
+                <strong>Interactive Guide:</strong> Click and drag the **Bar Magnet** back and forth through the center of the coil of wire.
+                <ul style="margin-left: 1rem; margin-top: 0.3rem;">
+                  <li>Moving IN induces voltage in one direction.</li>
+                  <li>Moving OUT induces voltage in the other direction.</li>
+                  <li>Stopping the magnet drops voltage to 0.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 10: Interactive Simulation 3 - Transformer Sandbox -->
+      <div class="slide" id="slide10">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Interactive Transformer Sandbox</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer">
+              <div class="cell-canvas-container">
+                <canvas class="cell-canvas" id="transformerCanvas"></canvas>
+              </div>
+              <div class="cell-stats-card">
+                <div>Primary Input: <span id="transInputVal" style="color: var(--color-info);">120 V AC (60 Hz)</span></div>
+                <div>Turns Ratio ($N_p : N_s$): <span id="transRatioVal" style="color: var(--color-primary);">100 : 200 (Step-Up 1:2)</span></div>
+                <div>Secondary Output: <span id="transOutputVal" style="color: var(--color-success); font-weight: bold;">240.0 V AC</span></div>
+                <div>Status: <span id="transStatusVal" style="color: var(--color-warning);">Normal Operation</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Transformer Configuration</h4>
+              
+              <div class="slider-group">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Input Current Type</span>
+                <select class="bb-select-element" id="transSourceType" onchange="updateTransformerParams()">
+                  <option value="ac" selected>Alternating Current (AC) - Changing Flux</option>
+                  <option value="dc">Direct Current (DC) - Constant Flux</option>
+                </select>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Primary Turns ($N_p$)</span>
+                  <span id="lblTransNp">100 turns</span>
+                </div>
+                <input type="range" class="rc-slider" id="transNpSlider" min="50" max="200" step="10" value="100" oninput="updateTransformerParams()">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Secondary Turns ($N_s$)</span>
+                  <span id="lblTransNs">200 turns</span>
+                </div>
+                <input type="range" class="rc-slider" id="transNsSlider" min="50" max="200" step="10" value="200" oninput="updateTransformerParams()">
+              </div>
+
+              <div style="font-size: 0.72rem; line-height: 1.35; color: var(--color-text-secondary);">
+                Toggle between AC and DC. Under AC, current changes back and forth, transferring energy to the secondary bulb. Under DC, the magnetic field in the core is static, resulting in **exactly 0V** output at the secondary!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 11: Interactive Simulation 4 - Environmental Sensors Sandbox -->
+      <div class="slide" id="slide11">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Simulation Lab</span>
+          <h2 class="slide-title">Environmental Sensors Sandbox</h2>
+        </div>
+        <div class="slide-content">
+          <div class="cell-workbench">
+            <div class="cell-visualizer">
+              <div class="tab-bar">
+                <button class="tab-btn active" id="tabBtnLDR" onclick="switchSensorTab('ldr')">LDR (Light Dependent)</button>
+                <button class="tab-btn" id="tabBtnTherm" onclick="switchSensorTab('therm')">Thermistor (Temperature)</button>
+              </div>
+              <div class="cell-canvas-container" style="flex: 1; min-height: 180px;">
+                <canvas class="cell-canvas" id="sensorCanvas"></canvas>
+              </div>
+              <div class="cell-stats-card">
+                <div>Sensor Type: <span id="lblSensorName" style="color: var(--color-primary); font-weight: bold;">LDR</span></div>
+                <div>Sensor Resistance: <span id="lblSensorResistance" style="color: var(--color-success); font-weight: bold; font-family: monospace;">500,000 Ω</span></div>
+                <div>Mnemonic Check: <span id="lblSensorMnemonic" style="color: var(--color-text-secondary); font-size: 0.8rem;">More light = Less Resistance</span></div>
+              </div>
+            </div>
+            
+            <div class="glass-panel cell-controls-panel">
+              <!-- LDR CONTROLS PANEL -->
+              <div id="sensorControlsLDR" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Light Intensity</h4>
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Flashlight Light Level</span>
+                    <span id="lblSensorLux">10 Lux</span>
+                  </div>
+                  <input type="range" class="rc-slider" id="sensorLuxSlider" min="0" max="1000" step="5" value="10" oninput="updateSensorSim()">
+                </div>
+                <div style="font-size: 0.72rem; line-height: 1.4; color: var(--color-text-secondary);">
+                  Slide the light control to illuminate the LDR track. Notice the exponential resistance drop! In pitch black (0 Lux) resistance goes to half a megaohm.
+                </div>
+              </div>
+
+              <!-- THERMISTOR CONTROLS PANEL (Hidden initially) -->
+              <div id="sensorControlsTherm" style="display: none; flex-direction: column; gap: 1.25rem;">
+                <h4 style="font-size: 1.05rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">Temperature Controls</h4>
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Applied Heat / Cold</span>
+                    <span id="lblSensorTemp">25 °C</span>
+                  </div>
+                  <input type="range" class="rc-slider" id="sensorTempSlider" min="-10" max="100" step="1" value="25" oninput="updateSensorSim()">
+                </div>
+                <div class="slider-group">
+                  <span style="font-size: 0.8rem; font-weight: bold; color: var(--color-text-secondary);">Thermistor Material Coefficient</span>
+                  <select class="bb-select-element" id="sensorThermTypeSelect" onchange="updateSensorSim()">
+                    <option value="ntc" selected>NTC (Temp Up -> Resistance Down)</option>
+                    <option value="ptc">PTC (Temp Up -> Resistance Up)</option>
+                  </select>
+                </div>
+                <div style="font-size: 0.72rem; line-height: 1.4; color: var(--color-text-secondary);">
+                  NTC thermistors drop resistance exponentially when heated. PTC thermistors increase resistance when heated, often acting as resettable safety breakers.
+                </div>
+              </div>
+
+              <div style="font-size: 0.72rem; color: var(--color-accent); line-height: 1.35; padding-top: 0.5rem; border-top: 1px dashed var(--color-border);">
+                <strong>Line Graph:</strong> The canvas displays a real-time plot of the sensor's characteristic resistance curve. Adjust sliders to sweep values.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 12: Competition Mastery - Mock Lab Stations -->
+      <div class="slide" id="slide12">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Part 4: Lab Competition Prep</span>
+          <h2 class="slide-title">Competition Mastery: Cracking Mock Lab Stations</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-equal">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.85rem; line-height: 1.45;">
+              <h4 style="color: var(--color-primary); font-size: 1rem;">The "Mystery Box" Challenge</h4>
+              <p>
+                A standard Science Olympiad practical station gives you a cardboard box with three external banana jack terminals (Labeled $A, B, C$) with a hidden component inside. You must use a multimeter to determine what is inside:
+              </p>
+              <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li><strong>Resistor</strong>: Measures the same resistance value in both directions ($A\rightarrow B$ and $B\rightarrow A$).</li>
+                <li><strong>Diode/LED</strong>: Measures extremely low resistance one way (Forward Bias), and infinite resistance when DMM probes are reversed (Reverse Bias).</li>
+                <li><strong>Capacitor</strong>: Resistance starts low (charging) and climbs to infinity ($OL$).</li>
+                <li><strong>Open Circuit</strong>: Displays $OL$ (overload/infinity) in both directions.</li>
+              </ul>
+            </div>
+
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.85rem; line-height: 1.45;">
+              <h4 style="color: var(--color-accent); font-size: 1rem;">Troubleshooting Breadboard Faults</h4>
+              <p>
+                If your target circuit fails to function during a lab test, run these quick sanity checks under time pressure:
+              </p>
+              <ol style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; color: var(--color-text-secondary);">
+                <li><strong>Check Power Rails</strong>: Measure voltage across the power bus bars. If it reads $0\text{V}$, there is a **short circuit** directly bridging power to ground!</li>
+                <li><strong>Polarity Errors</strong>: Look closely at diodes, LEDs, and capacitors. Are their anodes (longer pins) oriented towards the positive voltage source?</li>
+                <li><strong>Floating Contacts</strong>: Verify that pins reside in the exact same 5-pin vertical columns. Pushing wires into adjacent columns creates open circuits!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 13: Hands-On Component Lab -->
+      <div class="slide" id="slide13">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Hands-On Task</span>
+          <h2 class="slide-title">Hands-On: Calibrating a Potentiometer Divider</h2>
+        </div>
+        <div class="slide-content">
+          <div class="split-layout-2">
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.85rem; line-height: 1.45;">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary);">Step-by-Step Calibration Lab</h3>
+              <p>
+                In this task, we will wire a $10\text{ k}\Omega$ rotary potentiometer as a voltage divider and calibrate its physical dial position to produce exactly $2.50\text{ V}$ from a $5.00\text{ V}$ supply.
+              </p>
+              
+              <div class="lab-box">
+                <span style="font-weight: bold; color: var(--color-primary);">🛠️ Required Materials:</span>
+                <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.2rem; color: var(--color-text-secondary);">
+                  <li>Solderless Breadboard &amp; Jumper Wires</li>
+                  <li>$10\text{ k}\Omega$ Potentiometer</li>
+                  <li>$5\text{V}$ Power Source (or $5\text{V}$ regulator rail)</li>
+                  <li>Digital Multimeter (DMM)</li>
+                </ul>
+              </div>
+
+              <div class="lab-box" style="border-left-color: var(--color-accent);">
+                <span style="font-weight: bold; color: var(--color-accent);">📝 Setup Instructions:</span>
+                <ol style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.3rem; color: var(--color-text-secondary);">
+                  <li>Plug the three pins of the potentiometer into separate vertical rows on your breadboard.</li>
+                  <li>Connect Pin 1 of the potentiometer to the $5\text{V}$ red power rail using a jumper.</li>
+                  <li>Connect Pin 3 of the potentiometer to the ground blue rail using a jumper.</li>
+                  <li>Turn your DMM dial to **DC Volts (V)**. Connect the red probe to Pin 2 (center wiper pin) and the black probe to the ground rail.</li>
+                  <li>Carefully turn the potentiometer dial until the multimeter reads exactly $2.50\text{ V}$.</li>
+                </ol>
+              </div>
+            </div>
+            
+            <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.85rem; line-height: 1.45;">
+              <h3 style="font-size: 1.1rem; color: var(--color-info); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem;">The Mathematics Check</h3>
+              <p>
+                Since $V_{in} = 5.0\text{V}$ and we want $V_{out} = 2.5\text{V}$, let's use the voltage divider equation to find the internal resistances:
+              </p>
+              <div style="background: rgba(255,255,255,0.02); padding: 0.8rem; border-radius: 8px; font-family: monospace;">
+                $V_{out} = V_{in} \times \frac{R_{23}}{R_{total}}$<br>
+                $2.50\text{ V} = 5.00\text{ V} \times \frac{R_{23}}{10\text{ k}\Omega}$<br>
+                $\frac{2.50}{5.00} = \frac{R_{23}}{10\text{ k}\Omega}$<br>
+                $0.50 = \frac{R_{23}}{10\text{ k}\Omega}$<br>
+                $R_{23} = 5.0\text{ k}\Omega$
+              </div>
+              <p style="color: var(--color-text-secondary);">
+                Since $R_{12} + R_{23} = 10\text{ k}\Omega$, if $R_{23} = 5.0\text{ k}\Omega$, then $R_{12}$ must also equal $5.0\text{ k}\Omega$. The potentiometer is split exactly in half!
+              </p>
+              
+              <div class="warn-callout" style="font-size: 0.78rem; border-color: rgba(0, 210, 255, 0.2);">
+                <strong>Troubleshooting Tip:</strong> If your DMM display reads negative voltages (e.g. $-2.50\text{V}$), check your probes. You have plugged the DMM positive probe to ground and black probe to the wiper, or vice-versa!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 14: Checkpoint Quiz Showdown -->
+      <div class="slide" id="slide14">
+        <div class="slide-title-wrapper">
+          <span class="slide-tag">Interactive Challenge</span>
+          <h2 class="slide-title">Class 6: Quiz Showdown 🏆</h2>
+        </div>
+        <div class="slide-content">
+          <div class="glass-panel" style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; position: relative;">
+            
+            <!-- Quiz Active Screen -->
+            <div class="quiz-card" id="quizContainer">
+              <div class="quiz-header-row">
+                <span id="quizQuestionNum" style="font-weight: 700; color: var(--color-primary); font-size: 0.95rem;">Question 1 of 10</span>
+                <span id="quizScore" style="font-weight: bold; font-family: monospace; color: var(--color-success); font-size: 1rem;">Score: 0 pts</span>
+              </div>
+              
+              <div class="quiz-question-container">
+                <h3 id="quizQuestionText" style="font-size: 1.15rem; line-height: 1.5; color: var(--color-text-primary);">Question text goes here?</h3>
+              </div>
+              
+              <div class="quiz-options-grid" id="quizOptions">
+                <!-- Buttons generated dynamically -->
+              </div>
+              
+              <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem;">
+                <div class="quiz-explanation-card" id="quizExplanation">
+                  <strong style="color: var(--color-info);">Explanation:</strong> <span id="quizExplanationText">Answer explanation goes here.</span>
+                </div>
+                <button class="btn-power-circuit" id="btnQuizNext" style="display: none; align-self: flex-end;" onclick="nextQuizQuestion()">Next Question ➡️</button>
+                
+                <div class="quiz-timer-container">
+                  <div class="quiz-timer-bar" id="quizTimerBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Finished Panel -->
+            <div class="quiz-finished-panel" id="quizFinishedPanel" style="display: none;">
+              <span style="font-size: 3rem;">🏆</span>
+              <h2 style="font-size: 2rem; color: var(--color-primary);">Quiz Showdown Completed!</h2>
+              <p id="quizFinalScoreText" style="font-size: 1.15rem; color: var(--color-text-secondary);">You scored 0 out of 1000 points!</p>
+              <button class="btn-power-circuit" style="margin-top: 1rem;" onclick="restartQuiz()">Restart Quiz Showdown 🔄</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Presenter Console Panel -->
+    <div class="presenter-panel" id="presenterPanel">
+      <div class="presenter-header">
+        <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H5v-2h7v2zm5-4H5v-2h12v2zm0-4H5V7h12v2z"/>
+        </svg>
+        <span>Presenter Notes</span>
+      </div>
+      <div class="presenter-body" id="presenterBody">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       Footer Controls
+       ========================================== -->
+  <div class="controls-bar">
+    <div class="slide-indicators" id="slideIndicators">
+      <!-- Dots loaded dynamically -->
+    </div>
+    
+    <div style="font-size: 0.8rem; color: var(--color-text-secondary); font-family: monospace;">
+      Use Left/Right Arrows or Spacebar to navigate. Press 'P' to toggle presenter scripts.
+    </div>
+    
+    <div class="navigation-buttons">
+      <button class="btn-nav" id="btnPrev" onclick="navigateSlide(-1)" title="Previous Slide (Left Arrow)">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59L14 6z"/></svg>
+      </button>
+      <button class="btn-nav" id="btnNext" onclick="navigateSlide(1)" title="Next Slide (Right Arrow/Space)">
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       Slide JavaScript Logic
+       ========================================== -->
+  <script>
+    // ==========================================
+    // Slide Navigation & State
+    // ==========================================
+    const totalSlides = 14;
+    let currentSlide = 1;
+    let presenterModeActive = false;
+
+    // Speaker Scripts dictionary matching slide IDs
+    const presenterNotes = {
+      1: {
+        script: "Welcome back everyone! Today is the final class of our Circuit Lab foundations series. We are wrapping up with Motors, Generators, Transformers, Environmental Sensors, and competition-level troubleshooting. This is a very hands-on class, with four custom widgets showing interactive spins and magnet slides. Let's do a quick entry check—who can solve the power dissipation problem on the right?",
+        actions: "Welcome students as they filter in. Call out the resistor math checklist, and ask students to type whether the resistor survives in the chat."
+      },
+      2: {
+        script: "First, let's understand DC Motors. A motor converts electricity to mechanical motion. It operates on the Lorentz Force, which dictates that a current-carrying wire inside a magnetic field experiences a force. We use the Right-Hand Rule to determine the force's direction. Go over stator, armature coil, split-ring commutator, and carbon brushes. Explain why the commutator is essential to prevent lockup.",
+        actions: "Describe motor parts on the slide. Emphasize that the split-ring commutator flips current direction every half spin to maintain continuous rotation."
+      },
+      3: {
+        script: "Now, let's reverse the process. A generator takes motion and converts it into electricity. This depends on Faraday's Law of induction: a changing magnetic field inside a loop induces a voltage. We also study Lenz's Law, which states the induced current creates its own magnetic field that opposes the original change. This is conservation of energy in action!",
+        actions: "Introduce Faraday's formula. Explain the concept of magnetic flux changing over time, and work through the Lenz's Law slow-fall tube demo."
+      },
+      4: {
+        script: "Now we study Transformers. A transformer changes AC voltage using mutual induction. If we have more turns on the secondary than primary, it is a step-up transformer, increasing voltage and dropping current. Power in equals power out: Vp * Ip = Vs * Is. The main test trap: transformers require AC because they need a changing magnetic field to induce voltage. If you connect them to DC, the secondary output is exactly zero!",
+        actions: "Introduce the turns ratio formula. Highlight why power conservation forces current to drop when voltage rises. Explain the long-distance transmission current reduction grid."
+      },
+      5: {
+        script: "Let's study sensors! A Light Dependent Resistor, or LDR, is a photoresistor made of Cadmium Sulfide. Its resistance changes based on light levels. Introduce the mnemonic: Light Down Resistance. In the dark, resistance is huge—hundreds of thousands of ohms. Under a bright light, it drops to a few hundred. This acts like a light-activated switch.",
+        actions: "Explain the LDR semiconductor mechanism. Draw the schematic symbol with incoming arrows, and list everyday street light applications."
+      },
+      6: {
+        script: "Thermistors are temperature sensors. We look at two main categories: NTC and PTC. NTC stands for Negative Temperature Coefficient: when temperature increases, resistance goes down. PTC is the opposite: temperature up, resistance up. NTC is very common for thermometers, while PTC is used as a self-resetting fuse that cuts current when things get hot.",
+        actions: "Differentiate NTC vs PTC curves. Explain that NTC behavior is standard in most temperature reading circuits. Run a quick mental check about air temp and loop current."
+      },
+      7: {
+        script: "Let's review the Potentiometer. It is a 3-terminal variable resistor. If you wire the two outer terminals to 5V and Ground, the middle wiper terminal outputs a voltage from 0V to 5V depending on knob position. Go over the voltage divider equation. Remind them of the test trap: to use a pot as a simple rheostat, you must tie the center pin to one side!",
+        actions: "Draw a potentiometer internal layout. Show how it divides the track into R12 and R23, and detail the divider equation."
+      },
+      8: {
+        script: "Now, let's interact with our DC Motor simulator! Click 'Power On'. Watch the coil begin to spin in the magnetic field. Drag the voltage slider up to increase speed, and toggle the polarity select to reverse the direction. Note the current arrows and green Lorentz force vectors flipping exactly when the commutator split ring passes the brushes!",
+        actions: "Toggle motor power on. Slide voltage up/down. Change polarity select to reverse direction. Toggle checkboxes to hide/show B-field lines and F-forces vectors to show coil mechanics."
+      },
+      9: {
+        script: "Next is the Faraday Induction Simulator. Click and drag the red/blue Bar Magnet back and forth through the wire coil. Watch the analog galvanometer needle swing left and right, and see the light bulb flash! Notice that when the magnet stops moving, the needle drops to zero, and the bulb goes dark. Increase loops to see how it scales up induced voltage.",
+        actions: "Drag the magnet horizontally through the coil. Move it slowly, then quickly. Toggle the number of coil loops from 1 to 3 to demonstrate Faraday's loop count scaling."
+      },
+      10: {
+        script: "Let's demonstrate mutual induction in our Transformer Sandbox. Toggle the input source between AC and DC. Under AC, you can see current pulses circulating around the core and the secondary bulb glowing brightly. Adjust the turns sliders to see step-up or step-down voltage changes. Now switch to DC. The current stops alternating, the core magnetic field freezes, and the secondary bulb goes completely dark!",
+        actions: "Show AC operation, demonstrate step-up (e.g. 100 to 200 turns) and step-down ratios. Switch to DC to show the secondary output voltage dropping to 0V and explain the zero-flux change."
+      },
+      11: {
+        script: "Let's play with our Environmental Sensors Sandbox. Switch between the LDR and Thermistor tabs. Move the sliders to adjust light levels and temperature, and observe how the calculated resistance changes. Look at the line graph to see how the NTC/PTC curves and LDR curves are plotted in real-time.",
+        actions: "Switch between tabs. Slide Lux up/down, showing the LDR resistance curve. Switch to Thermistor, toggle NTC vs PTC, and slide temperature up/down to show the resistance curves."
+      },
+      12: {
+        script: "Practical test day is all about strategy! Let's go over how to solve a 'Mystery Box' station using a DMM. Measure resistance: if it's identical both ways, it's a resistor; if it conducts only one way, it's a diode. Go over breadboard troubleshooting rules: checking for short circuits across power rails, and preventing floating contacts.",
+        actions: "Explain how to identify unknown components. Describe the DMM probe check, and layout logical breadboard diagnosis steps."
+      },
+      13: {
+        script: "Here is today's hands-on calibration lab. Students will build a voltage divider using a 10K potentiometer. They will power it with 5V, connect a DMM to the wiper pin, and turn the dial until they read exactly 2.50V. Walk them through the math on the board: when calibrated to 2.5V, the potentiometer resistance track is split exactly in half.",
+        actions: "Explain the breadboard connections. Detail the multimeter probe locations and review the math proving R12 and R23 are equal at 2.5V output."
+      },
+      14: {
+        script: "Finally, let's test our knowledge with the Class 6 Quiz Showdown! We have 10 high-quality multiple choice questions covering motors, generators, transformers, sensors, and mock testing skills. Ready your calculators and pencil sheets, and let's go!",
+        actions: "Launch the interactive checkpoint quiz. Walk through the questions, discuss distractions, and reveal correct answers with descriptions."
+      }
+    };
+
+    function initSlides() {
+      // Generate indicators
+      const indicatorContainer = document.getElementById('slideIndicators');
+      indicatorContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'indicator-dot' + (i === 1 ? ' active' : '');
+        dot.onclick = () => jumpToSlide(i);
+        indicatorContainer.appendChild(dot);
+      }
+      updateNavigationState();
+      updatePresenterNotes();
+    }
+
+    function navigateSlide(direction) {
+      const next = currentSlide + direction;
+      if (next >= 1 && next <= totalSlides) {
+        jumpToSlide(next);
+      }
+    }
+
+    function jumpToSlide(slideNum) {
+      // Stop active animation loops/intervals
+      if (quizTimerInterval) clearInterval(quizTimerInterval);
+      stopMotorLoop();
+      stopInductionLoop();
+      stopTransformerLoop();
+      stopSensorLoop();
+
+      // Hide all slides
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach(s => s.classList.remove('active'));
+
+      // Show target slide
+      const target = document.getElementById(`slide${slideNum}`);
+      if (target) {
+        target.classList.add('active');
+        currentSlide = slideNum;
+      }
+
+      // Update progress bar
+      const bar = document.getElementById('progressBar');
+      if (bar) {
+        bar.style.width = `${((currentSlide - 1) / (totalSlides - 1)) * 100}%`;
+      }
+
+      // Update indicator dots
+      const dots = document.querySelectorAll('.indicator-dot');
+      dots.forEach((d, idx) => {
+        if (idx + 1 === currentSlide) {
+          d.classList.add('active');
+        } else {
+          d.classList.remove('active');
+        }
+      });
+
+      // Update presenter notes
+      updatePresenterNotes();
+      updateNavigationState();
+
+      // Trigger slide specific initializations
+      if (currentSlide === 8) {
+        initMotorCanvas();
+        startMotorLoop();
+      } else if (currentSlide === 9) {
+        initInductionCanvas();
+        startInductionLoop();
+      } else if (currentSlide === 10) {
+        initTransformerCanvas();
+        startTransformerLoop();
+      } else if (currentSlide === 11) {
+        initSensorCanvas();
+        startSensorLoop();
+      } else if (currentSlide === 14) {
+        initQuiz();
+      }
+    }
+
+    function updateNavigationState() {
+      const prev = document.getElementById('btnPrev');
+      const next = document.getElementById('btnNext');
+      if (prev) prev.style.opacity = currentSlide === 1 ? '0.4' : '1';
+      if (next) next.style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+    }
+
+    function togglePresenterMode() {
+      presenterModeActive = !presenterModeActive;
+      const btn = document.getElementById('presenterToggleBtn');
+      const panel = document.getElementById('presenterPanel');
+      if (btn) btn.classList.toggle('active', presenterModeActive);
+      if (panel) panel.classList.toggle('active', presenterModeActive);
+      
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+        if (currentSlide === 8) initMotorCanvas();
+        if (currentSlide === 9) initInductionCanvas();
+        if (currentSlide === 10) initTransformerCanvas();
+        if (currentSlide === 11) initSensorCanvas();
+      }, 350);
+    }
+
+    function updatePresenterNotes() {
+      const body = document.getElementById('presenterBody');
+      if (!body) return;
+      
+      const notes = presenterNotes[currentSlide];
+      if (notes) {
+        body.innerHTML = `
+          <div class="speaker-script-box">
+            <h4 style="color:var(--color-primary); font-size:0.85rem; text-transform:uppercase; margin-bottom:0.4rem; letter-spacing:0.05em;">🗣️ Script (What to say)</h4>
+            <p>${notes.script}</p>
+          </div>
+          <div class="speaker-actions-box">
+            <h4 style="color:var(--color-accent); font-size:0.85rem; text-transform:uppercase; margin-bottom:0.4rem; letter-spacing:0.05em;">🛠️ Actions (What to do)</h4>
+            <p>${notes.actions}</p>
+          </div>
+        `;
+      } else {
+        body.innerHTML = `<p style="color:var(--color-text-secondary)">No notes available for this slide.</p>`;
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        navigateSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        navigateSlide(-1);
+      } else if (e.key.toLowerCase() === 'p') {
+        togglePresenterMode();
+      }
+    });
+
+
+    // ==========================================
+    // Simulation 1: DC Motor Rotator Logic
+    // ==========================================
+    let motorCanvas = document.getElementById('motorCanvas');
+    let motorCtx = motorCanvas.getContext('2d');
+    let motorPowerActive = false;
+    let motorAngle = 0; // Rotation angle in radians
+    let motorSpeed = 0; // Current speed (rad/sec)
+    let motorVoltage = 5.0;
+    let motorPolarity = 1;
+    let motorLoopId = null;
+    let motorLastTime = 0;
+
+    function initMotorCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = motorCanvas.parentNode.getBoundingClientRect();
+      motorCanvas.width = rect.width * dpr;
+      motorCanvas.height = rect.height * dpr;
+      motorCtx.scale(dpr, dpr);
+      motorCanvas.style.width = rect.width + 'px';
+      motorCanvas.style.height = rect.height + 'px';
+      drawMotor();
+    }
+
+    function toggleMotorPower() {
+      motorPowerActive = !motorPowerActive;
+      const btn = document.getElementById('btnMotorPower');
+      if (motorPowerActive) {
+        btn.innerText = "Power Off 🛑";
+        btn.style.background = "linear-gradient(135deg, var(--color-danger), #b91c1c)";
+        btn.style.boxShadow = "0 0 15px rgba(239, 68, 68, 0.4)";
+      } else {
+        btn.innerText = "Power On 🔌";
+        btn.style.background = "linear-gradient(135deg, var(--color-primary), var(--color-accent))";
+        btn.style.boxShadow = "var(--shadow-neon)";
+      }
+    }
+
+    function updateMotorParameters() {
+      motorVoltage = parseFloat(document.getElementById('motorVoltSlider').value);
+      document.getElementById('lblMotorVolt').innerText = `${motorVoltage.toFixed(1)} V`;
+      document.getElementById('motorVoltVal').innerText = `${motorVoltage.toFixed(1)} V`;
+      
+      motorPolarity = parseInt(document.getElementById('motorPolaritySelect').value);
+      
+      // Calculate current (R_coil = 20 ohms)
+      const current = motorPowerActive ? (motorVoltage / 20) * 1000 : 0;
+      document.getElementById('motorCurrentVal').innerText = `${current.toFixed(0)} mA`;
+      drawMotor();
+    }
+
+    function startMotorLoop() {
+      if (!motorLoopId) {
+        motorLastTime = performance.now();
+        motorAnimationLoop(motorLastTime);
+      }
+    }
+
+    function stopMotorLoop() {
+      if (motorLoopId) {
+        cancelAnimationFrame(motorLoopId);
+        motorLoopId = null;
+      }
+    }
+
+    function motorAnimationLoop(ts) {
+      const dt = (ts - motorLastTime) / 1000;
+      motorLastTime = ts;
+
+      // Physics integration
+      const targetSpeed = motorPowerActive ? (motorVoltage * 2 * motorPolarity) : 0;
+      const accel = motorPowerActive ? 5.0 : 2.0; // Acceleration/deceleration coefficients
+      
+      motorSpeed += (targetSpeed - motorSpeed) * accel * dt;
+      motorAngle += motorSpeed * dt;
+      
+      // Keep angle in [0, 2*PI]
+      motorAngle = motorAngle % (Math.PI * 2);
+      if (motorAngle < 0) motorAngle += Math.PI * 2;
+
+      // Update UI displays
+      const rpm = Math.abs(motorSpeed * 30 / Math.PI);
+      document.getElementById('motorSpeedVal').innerText = `${rpm.toFixed(0)} RPM`;
+      
+      const current = motorPowerActive ? (motorVoltage / 20) * 1000 : 0;
+      document.getElementById('motorCurrentVal').innerText = `${current.toFixed(0)} mA`;
+      
+      // Commutator flips polarity when cos(angle) crosses 0 (i.e. angle is near 90 or 270 deg)
+      const cosVal = Math.cos(motorAngle);
+      const polText = cosVal > 0 ? (motorPolarity === 1 ? "Normal (+ / -)" : "Flipped (- / +)") : (motorPolarity === 1 ? "Flipped (- / +)" : "Normal (+ / -)");
+      document.getElementById('motorPolarityVal').innerText = motorPowerActive ? polText : "Disconnected";
+
+      drawMotor();
+
+      motorLoopId = requestAnimationFrame(motorAnimationLoop);
+    }
+
+    function drawMotor() {
+      const cw = motorCanvas.width / (window.devicePixelRatio || 1);
+      const ch = motorCanvas.height / (window.devicePixelRatio || 1);
+      if (cw === 0) return;
+      motorCtx.clearRect(0, 0, cw, ch);
+
+      const showBField = document.getElementById('chkShowFields').checked;
+      const showForces = document.getElementById('chkShowForces').checked;
+
+      // 1. Draw Stator Magnets (North on left, South on right) - ENLARGED
+      // North Magnet
+      motorCtx.fillStyle = "#ef4444";
+      motorCtx.fillRect(15, ch/2 - 60, 55, 120);
+      motorCtx.fillStyle = "#ffffff";
+      motorCtx.font = "bold 16px sans-serif";
+      motorCtx.textAlign = "center";
+      motorCtx.fillText("N", 42, ch/2 + 6);
+      
+      // South Magnet
+      motorCtx.fillStyle = "#3b82f6";
+      motorCtx.fillRect(cw - 70, ch/2 - 60, 55, 120);
+      motorCtx.fillStyle = "#ffffff";
+      motorCtx.fillText("S", cw - 42, ch/2 + 6);
+
+      // 2. Draw Magnetic Field lines B (Left to Right)
+      if (showBField) {
+        motorCtx.strokeStyle = "rgba(56, 189, 248, 0.38)"; // Brighter cyan, 38% opacity
+        motorCtx.lineWidth = 2;
+        motorCtx.setLineDash([5, 5]);
+        
+        for (let y = ch/2 - 45; y <= ch/2 + 45; y += 22) {
+          motorCtx.beginPath();
+          motorCtx.moveTo(70, y);
+          motorCtx.lineTo(cw - 70, y);
+          motorCtx.stroke();
+          
+          // Draw arrowhead
+          motorCtx.fillStyle = "rgba(56, 189, 248, 0.55)";
+          motorCtx.beginPath();
+          motorCtx.moveTo(cw - 82, y - 4);
+          motorCtx.lineTo(cw - 72, y);
+          motorCtx.lineTo(cw - 82, y + 4);
+          motorCtx.fill();
+        }
+        motorCtx.setLineDash([]); // Reset
+      }
+
+      // Draw battery hookup wires (Aligned with enlarged brushes)
+      motorCtx.strokeStyle = "rgba(255,255,255,0.18)";
+      motorCtx.lineWidth = 2.5;
+      // Left wire
+      motorCtx.beginPath();
+      motorCtx.moveTo(cw/2 - 60, ch - 20);
+      motorCtx.lineTo(cw/2 - 60, ch/2 + 45);
+      motorCtx.lineTo(cw/2 - 20, ch/2);
+      motorCtx.stroke();
+      // Right wire
+      motorCtx.beginPath();
+      motorCtx.moveTo(cw/2 + 60, ch - 20);
+      motorCtx.lineTo(cw/2 + 60, ch/2 + 45);
+      motorCtx.lineTo(cw/2 + 20, ch/2);
+      motorCtx.stroke();
+
+      // 3. Draw brushes (stationary blocks touching commutator split ring) - ENLARGED
+      motorCtx.fillStyle = "#facc15"; // Gold brushes
+      // Left brush (touches commutator at radius 15)
+      motorCtx.fillRect(cw/2 - 20, ch/2 - 10, 5, 20);
+      // Right brush (touches commutator at radius 15)
+      motorCtx.fillRect(cw/2 + 15, ch/2 - 10, 5, 20);
+
+      // Save context to rotate armature
+      motorCtx.save();
+      motorCtx.translate(cw/2, ch/2);
+      motorCtx.rotate(motorAngle);
+
+      // 4. Draw split-ring commutator (rotating arcs in the center) - ENLARGED
+      motorCtx.strokeStyle = "#e2e8f0";
+      motorCtx.lineWidth = 4;
+      // Draw split rings with gaps
+      const gapAngle = 0.25; // Rads
+      // Arc A
+      motorCtx.beginPath();
+      motorCtx.arc(0, 0, 15, gapAngle, Math.PI - gapAngle);
+      motorCtx.stroke();
+      // Arc B
+      motorCtx.beginPath();
+      motorCtx.arc(0, 0, 15, Math.PI + gapAngle, Math.PI * 2 - gapAngle);
+      motorCtx.stroke();
+
+      // Connect coils to commutator - ENLARGED
+      motorCtx.strokeStyle = "#d97706"; // Copper color
+      motorCtx.lineWidth = 3;
+      motorCtx.beginPath();
+      motorCtx.moveTo(-15, 0);
+      motorCtx.lineTo(-80, 0);
+      motorCtx.moveTo(15, 0);
+      motorCtx.lineTo(80, 0);
+      motorCtx.stroke();
+
+      // 5. Draw Armature Coil Loop (Rotating Rect) - ENLARGED
+      motorCtx.strokeStyle = "#f59e0b"; // Glowing copper coil
+      motorCtx.lineWidth = 4;
+      motorCtx.shadowColor = "#f59e0b";
+      motorCtx.shadowBlur = motorPowerActive ? 10 : 0;
+      
+      // Enlarged loop width 160, height 80
+      motorCtx.strokeRect(-80, -40, 160, 80);
+      motorCtx.shadowBlur = 0; // Reset shadow
+
+      // Draw iron core (inside coil) - ENLARGED
+      motorCtx.fillStyle = "rgba(100, 116, 139, 0.45)";
+      motorCtx.fillRect(-55, -25, 110, 50);
+
+      // Draw current flow directional arrows on the coil - ENLARGED & POPPING
+      const curDir = motorPowerActive ? (Math.cos(motorAngle) > 0 ? motorPolarity : -motorPolarity) : 0;
+      if (curDir !== 0) {
+        motorCtx.fillStyle = "#ffffff";
+        const drawArrow = (x, y, dx, dy) => {
+          motorCtx.beginPath();
+          motorCtx.moveTo(x, y);
+          // Scale arrow up (make length 16, width 7 on each side, total width 14)
+          motorCtx.lineTo(x - dx*16 + dy*7, y - dy*16 - dx*7);
+          motorCtx.lineTo(x - dx*16 - dy*7, y - dy*16 + dx*7);
+          motorCtx.closePath();
+          motorCtx.fill();
+          
+          // Draw thin black border around white arrowheads to make them pop
+          motorCtx.strokeStyle = "#000000";
+          motorCtx.lineWidth = 1.2;
+          motorCtx.stroke();
+        };
+
+        if (curDir > 0) {
+          // Clockwise current flow
+          drawArrow(-30, -40, 1, 0);
+          drawArrow(30, -40, 1, 0);
+          drawArrow(80, -15, 0, 1);
+          drawArrow(80, 15, 0, 1);
+          drawArrow(30, 40, -1, 0);
+          drawArrow(-30, 40, -1, 0);
+          drawArrow(-80, 15, 0, -1);
+          drawArrow(-80, -15, 0, -1);
+        } else {
+          // Counter-clockwise current flow
+          drawArrow(30, -40, -1, 0);
+          drawArrow(-30, -40, -1, 0);
+          drawArrow(-80, -15, 0, 1);
+          drawArrow(-80, 15, 0, 1);
+          drawArrow(-30, 40, 1, 0);
+          drawArrow(30, 40, 1, 0);
+          drawArrow(80, 15, 0, -1);
+          drawArrow(80, -15, 0, -1);
+        }
+      }
+
+      motorCtx.restore(); // Restore to world coordinates (no rotation)
+
+      // 6. Draw Lorentz Force vectors (Forces are always vertical in this setup) - ENLARGED
+      if (showForces && motorPowerActive && Math.abs(motorSpeed) > 0.1) {
+        const leftX = cw/2 - 80 * Math.cos(motorAngle);
+        const leftY = ch/2 - 80 * Math.sin(motorAngle);
+        
+        const rightX = cw/2 + 80 * Math.cos(motorAngle);
+        const rightY = ch/2 + 80 * Math.sin(motorAngle);
+
+        const leftForceDir = Math.cos(motorAngle) > 0 ? motorPolarity : -motorPolarity;
+        
+        motorCtx.lineWidth = 4;
+        motorCtx.fillStyle = "#22c55e"; // Green force vectors
+        motorCtx.strokeStyle = "#22c55e";
+
+        // Draw left side force vector (Green Arrow)
+        if (leftForceDir !== 0) {
+          const arrowLen = 45 * (motorVoltage / 12) + 20; 
+          const fY = leftForceDir > 0 ? -arrowLen : arrowLen; // UP vs DOWN
+          
+          motorCtx.beginPath();
+          motorCtx.moveTo(leftX, leftY);
+          motorCtx.lineTo(leftX, leftY + fY);
+          motorCtx.stroke();
+          
+          motorCtx.beginPath();
+          motorCtx.moveTo(leftX, leftY + fY);
+          motorCtx.lineTo(leftX - 6, leftY + fY - Math.sign(fY)*8);
+          motorCtx.lineTo(leftX + 6, leftY + fY - Math.sign(fY)*8);
+          motorCtx.fill();
+          
+          motorCtx.fillStyle = "#22c55e";
+          motorCtx.font = "bold 12px monospace";
+          motorCtx.fillText("F", leftX + 12, leftY + fY/2 + 4);
+        }
+
+        // Draw right side force vector (opposite direction)
+        const rightForceDir = -leftForceDir;
+        if (rightForceDir !== 0) {
+          const arrowLen = 45 * (motorVoltage / 12) + 20;
+          const fY = rightForceDir > 0 ? -arrowLen : arrowLen;
+          
+          motorCtx.beginPath();
+          motorCtx.moveTo(rightX, rightY);
+          motorCtx.lineTo(rightX, rightY + fY);
+          motorCtx.stroke();
+          
+          motorCtx.beginPath();
+          motorCtx.moveTo(rightX, rightY + fY);
+          motorCtx.lineTo(rightX - 6, rightY + fY - Math.sign(fY)*8);
+          motorCtx.lineTo(rightX + 6, rightY + fY - Math.sign(fY)*8);
+          motorCtx.fill();
+          
+          motorCtx.fillStyle = "#22c55e";
+          motorCtx.font = "bold 12px monospace";
+          motorCtx.fillText("F", rightX + 12, rightY + fY/2 + 4);
+        }
+      }
+    }
+
+
+    // ==========================================
+    // Simulation 2: Faraday Induction Logic
+    // ==========================================
+    let inductionCanvas = document.getElementById('inductionCanvas');
+    let inductionCtx = inductionCanvas.getContext('2d');
+    let indLoopId = null;
+    let indLoops = 2; // Default loops
+    
+    // Magnet state
+    let magnetX = 60; // Draggable X
+    let magnetY = 120; // Fixed Y (coil axis)
+    let prevMagnetX = 60;
+    
+    let isDraggingMagnet = false;
+    let magnetWidth = 120;
+    let magnetHeight = 45;
+    
+    // Calculated values
+    let indVoltage = 0.0;
+    let indFlux = 0.0;
+    let indVelocityVal = 0.0;
+    let bulbGlow = 0.0;
+
+    function initInductionCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = inductionCanvas.parentNode.getBoundingClientRect();
+      inductionCanvas.width = rect.width * dpr;
+      inductionCanvas.height = rect.height * dpr;
+      inductionCtx.scale(dpr, dpr);
+      inductionCanvas.style.width = rect.width + 'px';
+      inductionCanvas.style.height = rect.height + 'px';
+      
+      magnetY = rect.height / 2;
+      magnetX = 60;
+      prevMagnetX = 60;
+
+      // Mouse drag event listeners
+      inductionCanvas.addEventListener('mousedown', onMagnetMouseDown);
+      inductionCanvas.addEventListener('mousemove', onMagnetMouseMove);
+      window.addEventListener('mouseup', onMagnetMouseUp);
+
+      // Touch controls
+      inductionCanvas.addEventListener('touchstart', onMagnetTouchStart);
+      inductionCanvas.addEventListener('touchmove', onMagnetTouchMove);
+      window.addEventListener('touchend', onMagnetMouseUp);
+
+      drawInduction();
+    }
+
+    function updateInductionLoops() {
+      indLoops = parseInt(document.getElementById('indLoopsSelect').value);
+      drawInduction();
+    }
+
+    function onMagnetMouseDown(e) {
+      const rect = inductionCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      if (clickX >= magnetX - magnetWidth/2 && clickX <= magnetX + magnetWidth/2 &&
+          clickY >= magnetY - magnetHeight/2 && clickY <= magnetY + magnetHeight/2) {
+        isDraggingMagnet = true;
+        inductionCanvas.style.cursor = 'grabbing';
+      }
+    }
+
+    function onMagnetMouseMove(e) {
+      if (!isDraggingMagnet) return;
+      const rect = inductionCanvas.getBoundingClientRect();
+      let clickX = e.clientX - rect.left;
+      
+      const cw = inductionCanvas.width / (window.devicePixelRatio || 1);
+      if (clickX < magnetWidth/2) clickX = magnetWidth/2;
+      if (clickX > cw - magnetWidth/2) clickX = cw - magnetWidth/2;
+      
+      magnetX = clickX;
+    }
+
+    function onMagnetTouchStart(e) {
+      if (e.touches.length === 0) return;
+      const rect = inductionCanvas.getBoundingClientRect();
+      const clickX = e.touches[0].clientX - rect.left;
+      const clickY = e.touches[0].clientY - rect.top;
+
+      if (clickX >= magnetX - magnetWidth/2 && clickX <= magnetX + magnetWidth/2 &&
+          clickY >= magnetY - magnetHeight/2 && clickY <= magnetY + magnetHeight/2) {
+        isDraggingMagnet = true;
+        e.preventDefault();
+      }
+    }
+
+    function onMagnetTouchMove(e) {
+      if (!isDraggingMagnet || e.touches.length === 0) return;
+      const rect = inductionCanvas.getBoundingClientRect();
+      let clickX = e.touches[0].clientX - rect.left;
+      const cw = inductionCanvas.width / (window.devicePixelRatio || 1);
+      
+      if (clickX < magnetWidth/2) clickX = magnetWidth/2;
+      if (clickX > cw - magnetWidth/2) clickX = cw - magnetWidth/2;
+      
+      magnetX = clickX;
+      e.preventDefault();
+    }
+
+    function onMagnetMouseUp() {
+      isDraggingMagnet = false;
+      inductionCanvas.style.cursor = 'grab';
+    }
+
+    function startInductionLoop() {
+      if (!indLoopId) {
+        indLoopId = setInterval(inductionTick, 40);
+      }
+    }
+
+    function stopInductionLoop() {
+      if (indLoopId) {
+        clearInterval(indLoopId);
+        indLoopId = null;
+      }
+    }
+
+    function inductionTick() {
+      const dx = magnetX - prevMagnetX;
+      prevMagnetX = magnetX;
+      
+      indVelocityVal = dx * 25; 
+      
+      const cw = inductionCanvas.width / (window.devicePixelRatio || 1);
+      const coilCenterX = cw * 0.7;
+      
+      const poleX = magnetX + magnetWidth/2;
+      const dist = poleX - coilCenterX;
+      
+      const widthCoeff = 65.0;
+      const fluxFactor = 1 / (1 + (dist * dist) / (widthCoeff * widthCoeff));
+      
+      const dFluxDx = - (2 * dist / (widthCoeff * widthCoeff)) * fluxFactor * fluxFactor;
+      
+      const scaleFactor = 35.0;
+      indVoltage = -indLoops * dFluxDx * indVelocityVal * scaleFactor;
+      
+      if (indVoltage > 7.5) indVoltage = 7.5;
+      if (indVoltage < -7.5) indVoltage = -7.5;
+
+      document.getElementById('indVelocity').innerText = `${Math.abs(indVelocityVal).toFixed(1)} cm/s`;
+      document.getElementById('indVoltageVal').innerText = `${indVoltage.toFixed(2)} V`;
+      
+      let dirText = "None";
+      if (indVoltage > 0.05) dirText = "Clockwise (CW) 🔄";
+      else if (indVoltage < -0.05) dirText = "Counter-Clockwise (CCW) 🔄";
+      document.getElementById('indCurrentDir').innerText = dirText;
+
+      bulbGlow = (indVoltage * indVoltage) / 12;
+      if (bulbGlow > 1.0) bulbGlow = 1.0;
+
+      drawInduction();
+    }
+
+    function drawInduction() {
+      const cw = inductionCanvas.width / (window.devicePixelRatio || 1);
+      const ch = inductionCanvas.height / (window.devicePixelRatio || 1);
+      if (cw === 0) return;
+      inductionCtx.clearRect(0, 0, cw, ch);
+      
+      const showFlux = document.getElementById('chkIndShowFlux').checked;
+      const coilCenterX = cw * 0.7;
+
+      // 1. Draw volt meter (Galvanometer) at top center - ENLARGED
+      const meterX = cw/2 - 50;
+      const meterY = 50;
+      const meterRadius = 35;
+      
+      inductionCtx.fillStyle = "#1e293b";
+      inductionCtx.beginPath();
+      inductionCtx.arc(meterX, meterY, meterRadius, Math.PI, 0);
+      inductionCtx.fill();
+      
+      inductionCtx.strokeStyle = "rgba(255,255,255,0.4)";
+      inductionCtx.lineWidth = 1.2;
+      inductionCtx.beginPath();
+      // Center (0V)
+      inductionCtx.moveTo(meterX, meterY - meterRadius);
+      inductionCtx.lineTo(meterX, meterY - meterRadius + 5);
+      // Left (-5V)
+      inductionCtx.moveTo(meterX - meterRadius * Math.cos(Math.PI/6), meterY - meterRadius * Math.sin(Math.PI/6));
+      inductionCtx.lineTo(meterX - (meterRadius-5) * Math.cos(Math.PI/6), meterY - (meterRadius-5) * Math.sin(Math.PI/6));
+      // Right (+5V)
+      inductionCtx.moveTo(meterX + meterRadius * Math.cos(Math.PI/6), meterY - meterRadius * Math.sin(Math.PI/6));
+      inductionCtx.lineTo(meterX + (meterRadius-5) * Math.cos(Math.PI/6), meterY - (meterRadius-5) * Math.sin(Math.PI/6));
+      inductionCtx.stroke();
+      
+      const needleAngle = Math.PI/2 + (indVoltage / 7.5) * (Math.PI/3);
+      inductionCtx.strokeStyle = "#ef4444"; 
+      inductionCtx.lineWidth = 3;
+      inductionCtx.beginPath();
+      inductionCtx.moveTo(meterX, meterY);
+      inductionCtx.lineTo(meterX - (meterRadius - 6) * Math.cos(needleAngle), meterY - (meterRadius - 6) * Math.sin(needleAngle));
+      inductionCtx.stroke();
+      
+      inductionCtx.fillStyle = "#ffffff";
+      inductionCtx.beginPath();
+      inductionCtx.arc(meterX, meterY, 4, 0, Math.PI*2);
+      inductionCtx.fill();
+
+      // 2. Draw light bulb on the top right - ENLARGED
+      const bulbX = cw * 0.82;
+      const bulbY = 45;
+      
+      if (bulbGlow > 0.02) {
+        const radGlow = inductionCtx.createRadialGradient(bulbX, bulbY, 2, bulbX, bulbY, 45 * bulbGlow);
+        radGlow.addColorStop(0, `rgba(253, 224, 71, ${0.85 * bulbGlow})`);
+        radGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        inductionCtx.fillStyle = radGlow;
+        inductionCtx.beginPath();
+        inductionCtx.arc(bulbX, bulbY, 45 * bulbGlow, 0, Math.PI*2);
+        inductionCtx.fill();
+      }
+      
+      inductionCtx.strokeStyle = "#94a3b8";
+      inductionCtx.lineWidth = 2.5;
+      inductionCtx.fillStyle = bulbGlow > 0.05 ? "#fde047" : "#334155";
+      inductionCtx.beginPath();
+      inductionCtx.arc(bulbX, bulbY - 4, 14, 0.2*Math.PI, 0.8*Math.PI, true);
+      inductionCtx.lineTo(bulbX - 5, bulbY + 12);
+      inductionCtx.lineTo(bulbX + 5, bulbY + 12);
+      inductionCtx.closePath();
+      inductionCtx.fill();
+      inductionCtx.stroke();
+      
+      inductionCtx.strokeStyle = bulbGlow > 0.05 ? "#ef4444" : "#64748b";
+      inductionCtx.lineWidth = 1.2;
+      inductionCtx.beginPath();
+      inductionCtx.moveTo(bulbX - 5, bulbY);
+      inductionCtx.lineTo(bulbX - 2, bulbY - 7);
+      inductionCtx.lineTo(bulbX + 2, bulbY - 7);
+      inductionCtx.lineTo(bulbX + 5, bulbY);
+      inductionCtx.stroke();
+
+      // 3. Draw connection wires from meter to bulb to coil - ENLARGED
+      inductionCtx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+      inductionCtx.lineWidth = 2.5;
+      inductionCtx.beginPath();
+      inductionCtx.moveTo(meterX - 15, meterY);
+      inductionCtx.lineTo(meterX - 15, meterY + 40);
+      inductionCtx.lineTo(coilCenterX - 15, meterY + 40);
+      inductionCtx.lineTo(coilCenterX - 15, magnetY - 50);
+      
+      inductionCtx.moveTo(coilCenterX + 15, magnetY + 50);
+      inductionCtx.lineTo(coilCenterX + 15, magnetY + 70);
+      inductionCtx.lineTo(bulbX - 6, magnetY + 70);
+      inductionCtx.lineTo(bulbX - 6, bulbY + 12);
+      
+      inductionCtx.moveTo(bulbX + 6, bulbY + 12);
+      inductionCtx.lineTo(bulbX + 6, meterY + 15);
+      inductionCtx.lineTo(meterX + 15, meterY + 15);
+      inductionCtx.lineTo(meterX + 15, meterY);
+      inductionCtx.stroke();
+
+      // 4. Draw Coil loops Turn Backside - ENLARGED
+      inductionCtx.strokeStyle = "#c2410c";
+      inductionCtx.lineWidth = 5.5;
+      for (let i = 0; i < indLoops; i++) {
+        const offset = (i - (indLoops - 1)/2) * 22;
+        inductionCtx.beginPath();
+        inductionCtx.ellipse(coilCenterX + offset, magnetY, 15, 50, 0, Math.PI/2, Math.PI*1.5);
+        inductionCtx.stroke();
+      }
+
+      // 5. Draw Bar Magnet - ENLARGED (Width 120, Height 45)
+      inductionCtx.save();
+      inductionCtx.shadowColor = "#000";
+      inductionCtx.shadowBlur = 10;
+      
+      inductionCtx.fillStyle = "#ef4444";
+      inductionCtx.fillRect(magnetX, magnetY - magnetHeight/2, magnetWidth/2, magnetHeight);
+      
+      inductionCtx.fillStyle = "#3b82f6";
+      inductionCtx.fillRect(magnetX - magnetWidth/2, magnetY - magnetHeight/2, magnetWidth/2, magnetHeight);
+      
+      inductionCtx.shadowBlur = 0;
+      inductionCtx.restore();
+
+      inductionCtx.fillStyle = "#ffffff";
+      inductionCtx.font = "bold 16px sans-serif";
+      inductionCtx.textAlign = "center";
+      inductionCtx.fillText("S", magnetX - magnetWidth/4, magnetY + 5);
+      inductionCtx.fillText("N", magnetX + magnetWidth/4, magnetY + 5);
+
+      // 6. Draw front turns of the coil (drawn over magnet) - ENLARGED
+      inductionCtx.strokeStyle = "#ea580c"; 
+      for (let i = 0; i < indLoops; i++) {
+        const offset = (i - (indLoops - 1)/2) * 22;
+        inductionCtx.beginPath();
+        inductionCtx.ellipse(coilCenterX + offset, magnetY, 15, 50, 0, Math.PI*1.5, Math.PI/2);
+        inductionCtx.stroke();
+      }
+
+      // 7. Draw Magnetic Flux Lines of the Magnet - ENLARGED
+      if (showFlux) {
+        inductionCtx.strokeStyle = "rgba(14, 165, 233, 0.32)"; // Light sky blue, 32% opacity
+        inductionCtx.lineWidth = 1.2;
+        
+        const drawFluxLoop = (rx, ry) => {
+          inductionCtx.beginPath();
+          inductionCtx.ellipse(magnetX, magnetY, rx, ry, 0, 0, Math.PI*2);
+          inductionCtx.stroke();
+        };
+
+        drawFluxLoop(80, 28);
+        drawFluxLoop(130, 60);
+        drawFluxLoop(190, 100);
+      }
+    }
+
+
+    // ==========================================
+    // Simulation 3: Transformer Sandbox Logic
+    // ==========================================
+    let transformerCanvas = document.getElementById('transformerCanvas');
+    let transformerCtx = transformerCanvas.getContext('2d');
+    let transLoopId = null;
+    let transAnimTime = 0;
+    let transSourceType = 'ac';
+    let transNp = 100;
+    let transNs = 200;
+    let transLastTime = 0;
+    let transOutputVolt = 0;
+
+    function initTransformerCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = transformerCanvas.parentNode.getBoundingClientRect();
+      transformerCanvas.width = rect.width * dpr;
+      transformerCanvas.height = rect.height * dpr;
+      transformerCtx.scale(dpr, dpr);
+      transformerCanvas.style.width = rect.width + 'px';
+      transformerCanvas.style.height = rect.height + 'px';
+      drawTransformer();
+    }
+
+    function updateTransformerParams() {
+      transSourceType = document.getElementById('transSourceType').value;
+      transNp = parseInt(document.getElementById('transNpSlider').value);
+      transNs = parseInt(document.getElementById('transNsSlider').value);
+      
+      document.getElementById('lblTransNp').innerText = `${transNp} turns`;
+      document.getElementById('lblTransNs').innerText = `${transNs} turns`;
+      
+      const ratio = (transNp / 10).toFixed(0) + " : " + (transNs / 10).toFixed(0);
+      const stepType = transNs > transNp ? "Step-Up" : transNs < transNp ? "Step-Down" : "1:1 Isolation";
+      document.getElementById('transRatioVal').innerText = `${transNp} : ${transNs} (${stepType})`;
+      
+      if (transSourceType === 'ac') {
+        document.getElementById('transInputVal').innerText = "120 V AC (60 Hz)";
+        transOutputVolt = 120 * (transNs / transNp);
+        document.getElementById('transOutputVal').innerText = `${transOutputVolt.toFixed(1)} V AC`;
+        document.getElementById('transStatusVal').innerText = "Normal Operation";
+        document.getElementById('transStatusVal').style.color = "var(--color-success)";
+      } else {
+        document.getElementById('transInputVal').innerText = "12 V DC (Steady)";
+        transOutputVolt = 0.0;
+        document.getElementById('transOutputVal').innerText = "0.0 V DC ⚠️";
+        document.getElementById('transStatusVal').innerText = "Zero Flux Change (dFlux/dt = 0)";
+        document.getElementById('transStatusVal').style.color = "var(--color-danger)";
+      }
+      
+      drawTransformer();
+    }
+
+    function startTransformerLoop() {
+      if (!transLoopId) {
+        transLastTime = performance.now();
+        transAnimationLoop(transLastTime);
+      }
+    }
+
+    function stopTransformerLoop() {
+      if (transLoopId) {
+        cancelAnimationFrame(transLoopId);
+        transLoopId = null;
+      }
+    }
+
+    function transAnimationLoop(ts) {
+      const dt = (ts - transLastTime) / 1000;
+      transLastTime = ts;
+      
+      transAnimTime += dt;
+      
+      updateTransformerParams();
+      drawTransformer();
+      
+      transLoopId = requestAnimationFrame(transAnimationLoop);
+    }
+
+    function drawTransformer() {
+      const cw = transformerCanvas.width / (window.devicePixelRatio || 1);
+      const ch = transformerCanvas.height / (window.devicePixelRatio || 1);
+      if (cw === 0) return;
+      transformerCtx.clearRect(0, 0, cw, ch);
+
+      // Coordinates
+      const coreW = 230;
+      const coreH = 105;
+      const thick = 20;
+      const coreX = cw / 2 - coreW / 2;
+      const coreY = ch / 2 - 68; // Shifted up slightly to fit oscilloscope
+
+      // Calculate real-time current states
+      // Primary current oscillates as a sine wave under AC, steady 1.0 under DC
+      const ip = transSourceType === 'ac' ? Math.sin(transAnimTime * 8) : 1.0;
+      // Secondary current is out of phase (derivative of primary flux) under AC, exactly 0.0 under DC
+      const is = transSourceType === 'ac' ? Math.cos(transAnimTime * 8) * (transNs / transNp) : 0.0;
+
+      // 1. Draw Iron Core (Gray rectangular ring)
+      transformerCtx.fillStyle = "#475569"; // Slate gray core
+      transformerCtx.strokeStyle = "#334155";
+      transformerCtx.lineWidth = 2.5;
+      
+      // Outer rect
+      transformerCtx.beginPath();
+      transformerCtx.roundRect(coreX, coreY, coreW, coreH, 8);
+      // Inner cutout (drawn in opposite direction for clip / hollow effect)
+      transformerCtx.roundRect(coreX + thick, coreY + thick, coreW - thick*2, coreH - thick*2, 4);
+      transformerCtx.fill('evenodd');
+      transformerCtx.stroke();
+
+      // 2. Draw Magnetic Flux Lines arrows circulating in the core
+      if (transSourceType === 'ac') {
+        const fluxStrength = ip; // Flux is proportional to primary current
+        if (Math.abs(fluxStrength) > 0.05) {
+          transformerCtx.strokeStyle = `rgba(34, 197, 94, ${Math.abs(fluxStrength) * 0.8})`; // Green, 80% peak opacity
+          transformerCtx.lineWidth = 2.5;
+          transformerCtx.setLineDash([6, 6]);
+          
+          transformerCtx.beginPath();
+          transformerCtx.roundRect(coreX + thick/2, coreY + thick/2, coreW - thick, coreH - thick, 6);
+          transformerCtx.stroke();
+          transformerCtx.setLineDash([]);
+          
+          transformerCtx.fillStyle = `rgba(34, 197, 94, ${Math.abs(fluxStrength) * 0.9})`; // Arrows, 90% peak opacity
+          const arrowDir = Math.sign(fluxStrength);
+          const topX = cw/2;
+          const topY = coreY + thick/2;
+          
+          transformerCtx.beginPath();
+          transformerCtx.moveTo(topX + arrowDir * 6, topY);
+          transformerCtx.lineTo(topX - arrowDir * 3, topY - 4);
+          transformerCtx.lineTo(topX - arrowDir * 3, topY + 4);
+          transformerCtx.fill();
+        }
+      } else {
+        // DC creates a static magnetic field
+        transformerCtx.strokeStyle = "rgba(34, 197, 94, 0.35)"; // Steady, 35% opacity
+        transformerCtx.lineWidth = 1.5;
+        transformerCtx.beginPath();
+        transformerCtx.roundRect(coreX + thick/2, coreY + thick/2, coreW - thick, coreH - thick, 6);
+        transformerCtx.stroke();
+        
+        // Show static arrow
+        transformerCtx.fillStyle = "rgba(34, 197, 94, 0.5)"; // Steady arrow, 50% opacity
+        const topX = cw/2;
+        const topY = coreY + thick/2;
+        transformerCtx.beginPath();
+        transformerCtx.moveTo(topX + 6, topY);
+        transformerCtx.lineTo(topX - 3, topY - 4);
+        transformerCtx.lineTo(topX - 3, topY + 4);
+        transformerCtx.fill();
+      }
+
+      // 3. Draw Primary Coil (Left bar of core)
+      const leftBarX = coreX + thick/2;
+      const startCoilY = coreY + 12;
+      const endCoilY = coreY + coreH - 12;
+      const coilH = endCoilY - startCoilY;
+      
+      const numPriTurns = Math.round(transNp / 20); // visual representation
+      transformerCtx.strokeStyle = "#ea580c"; // Copper wire
+      transformerCtx.lineWidth = 3.5;
+      
+      for (let i = 0; i < numPriTurns; i++) {
+        const cy = startCoilY + (i / (numPriTurns - 1)) * coilH;
+        transformerCtx.beginPath();
+        transformerCtx.ellipse(leftBarX, cy, thick * 0.7, 4, 0.1, -Math.PI/2, Math.PI/2);
+        transformerCtx.stroke();
+      }
+
+      // 4. Draw Secondary Coil (Right bar of core)
+      const rightBarX = coreX + coreW - thick/2;
+      const numSecTurns = Math.round(transNs / 20);
+      transformerCtx.strokeStyle = "#ea580c";
+      transformerCtx.lineWidth = 2.5;
+      
+      for (let i = 0; i < numSecTurns; i++) {
+        const cy = startCoilY + (i / (numSecTurns - 1)) * coilH;
+        transformerCtx.beginPath();
+        transformerCtx.ellipse(rightBarX, cy, thick * 0.7, 3, -0.1, Math.PI/2, Math.PI * 1.5);
+        transformerCtx.stroke();
+      }
+
+      // 5. Draw Wires and Labels
+      transformerCtx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+      transformerCtx.lineWidth = 2.2;
+      
+      const srcX = coreX - 55;
+      const srcY = coreY + coreH/2;
+      transformerCtx.beginPath();
+      transformerCtx.moveTo(leftBarX - 10, startCoilY);
+      transformerCtx.lineTo(srcX, startCoilY);
+      transformerCtx.lineTo(srcX, srcY - 12);
+      
+      transformerCtx.moveTo(leftBarX - 10, endCoilY);
+      transformerCtx.lineTo(srcX, endCoilY);
+      transformerCtx.lineTo(srcX, srcY + 12);
+      transformerCtx.stroke();
+      
+      transformerCtx.fillStyle = "#1e293b";
+      transformerCtx.beginPath();
+      transformerCtx.arc(srcX, srcY, 12, 0, Math.PI*2);
+      transformerCtx.fill();
+      transformerCtx.stroke();
+      
+      transformerCtx.fillStyle = "#ffffff";
+      transformerCtx.font = "bold 9px monospace";
+      transformerCtx.textAlign = "center";
+      if (transSourceType === 'ac') {
+        transformerCtx.fillText("~", srcX, srcY + 3);
+        transformerCtx.font = "8px monospace";
+        transformerCtx.fillText("120V AC", srcX, srcY + 22);
+      } else {
+        transformerCtx.fillText("DC", srcX, srcY + 3);
+        transformerCtx.font = "8px monospace";
+        transformerCtx.fillText("12V DC", srcX, srcY + 22);
+      }
+
+      // Secondary side loop to load (Light bulb)
+      const loadX = coreX + coreW + 55;
+      const loadY = coreY + coreH/2;
+      transformerCtx.beginPath();
+      transformerCtx.moveTo(rightBarX + 10, startCoilY);
+      transformerCtx.lineTo(loadX, startCoilY);
+      transformerCtx.lineTo(loadX, loadY - 12);
+      
+      transformerCtx.moveTo(rightBarX + 10, endCoilY);
+      transformerCtx.lineTo(loadX, endCoilY);
+      transformerCtx.lineTo(loadX, loadY + 12);
+      transformerCtx.stroke();
+
+      // 6. Draw Wire Current Arrows (Real-time flow indicator)
+      const drawWireArrow = (x, y, dx, dy, intensity) => {
+        if (Math.abs(intensity) < 0.05) return;
+        const dir = Math.sign(intensity);
+        transformerCtx.fillStyle = "#ffffff";
+        transformerCtx.beginPath();
+        transformerCtx.moveTo(x, y);
+        const adx = dx * dir;
+        const ady = dy * dir;
+        transformerCtx.lineTo(x - adx*8 + ady*4.5, y - ady*8 - adx*4.5);
+        transformerCtx.lineTo(x - adx*8 - ady*4.5, y - ady*8 + adx*4.5);
+        transformerCtx.closePath();
+        transformerCtx.fill();
+        
+        transformerCtx.strokeStyle = "#000000";
+        transformerCtx.lineWidth = 0.9;
+        transformerCtx.stroke();
+      };
+
+      // Primary arrows
+      drawWireArrow((srcX + leftBarX - 10) / 2, startCoilY, 1, 0, ip);
+      drawWireArrow((srcX + leftBarX - 10) / 2, endCoilY, -1, 0, ip);
+      // Secondary arrows
+      drawWireArrow((rightBarX + 10 + loadX) / 2, startCoilY, 1, 0, is);
+      drawWireArrow((rightBarX + 10 + loadX) / 2, endCoilY, -1, 0, is);
+
+      // 7. Draw light bulb (Pulsing glow)
+      let bulbGlowCoeff = 0;
+      if (transSourceType === 'ac') {
+        // Glow is proportional to secondary current squared (heating effect)
+        bulbGlowCoeff = Math.min(1.5, is * is * 0.45);
+      }
+      
+      if (bulbGlowCoeff > 0.04) {
+        const radGlow = transformerCtx.createRadialGradient(loadX, loadY, 2, loadX, loadY, 38 * bulbGlowCoeff);
+        radGlow.addColorStop(0, `rgba(253, 224, 71, ${0.75 * Math.min(1.0, bulbGlowCoeff)})`);
+        radGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        transformerCtx.fillStyle = radGlow;
+        transformerCtx.beginPath();
+        transformerCtx.arc(loadX, loadY, 38 * bulbGlowCoeff, 0, Math.PI*2);
+        transformerCtx.fill();
+      }
+
+      transformerCtx.fillStyle = bulbGlowCoeff > 0.04 ? "#fde047" : "#334155";
+      transformerCtx.beginPath();
+      transformerCtx.arc(loadX, loadY - 4, 11, 0.2*Math.PI, 0.8*Math.PI, true);
+      transformerCtx.lineTo(loadX - 4, loadY + 8);
+      transformerCtx.lineTo(loadX + 4, loadY + 8);
+      transformerCtx.closePath();
+      transformerCtx.fill();
+      transformerCtx.stroke();
+      
+      transformerCtx.fillStyle = "#ffffff";
+      transformerCtx.font = "8px monospace";
+      if (transSourceType === 'ac') {
+        // Output voltage fluctuates with secondary current
+        const instVolt = Math.abs(is * 120);
+        transformerCtx.fillText(`${instVolt.toFixed(0)}V AC`, loadX, loadY + 18);
+      } else {
+        transformerCtx.fillText("0 V DC", loadX, loadY + 18);
+      }
+
+      // 8. Draw Real-time Oscilloscope Waveforms Screen
+      const graphW = 200;
+      const graphH = 42;
+      const graphX = cw/2 - graphW/2;
+      const graphY = ch - graphH - 6;
+
+      // Draw Screen Box
+      transformerCtx.fillStyle = "rgba(15, 23, 42, 0.75)";
+      transformerCtx.beginPath();
+      transformerCtx.roundRect(graphX, graphY, graphW, graphH, 4);
+      transformerCtx.fill();
+      transformerCtx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+      transformerCtx.lineWidth = 1;
+      transformerCtx.stroke();
+
+      // Draw Center Grid Line
+      transformerCtx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      transformerCtx.setLineDash([3, 3]);
+      transformerCtx.beginPath();
+      transformerCtx.moveTo(graphX, graphY + graphH/2);
+      transformerCtx.lineTo(graphX + graphW, graphY + graphH/2);
+      transformerCtx.stroke();
+      transformerCtx.setLineDash([]);
+
+      // Plot Waveforms
+      transformerCtx.lineWidth = 1.8;
+      
+      if (transSourceType === 'ac') {
+        // Plot Primary Voltage (Cyan wave)
+        transformerCtx.strokeStyle = "#38bdf8";
+        transformerCtx.beginPath();
+        for (let dx = 0; dx < graphW; dx++) {
+          const val = Math.sin(transAnimTime * 8 - dx * 0.1);
+          const px = graphX + dx;
+          const py = graphY + graphH/2 - val * (graphH/2.5 - 2);
+          if (dx === 0) transformerCtx.moveTo(px, py);
+          else transformerCtx.lineTo(px, py);
+        }
+        transformerCtx.stroke();
+
+        // Plot Secondary Voltage (Orange wave - out of phase and scaled by ratio)
+        transformerCtx.strokeStyle = "#fb923c";
+        transformerCtx.beginPath();
+        const vRatio = transNs / transNp;
+        for (let dx = 0; dx < graphW; dx++) {
+          const val = Math.cos(transAnimTime * 8 - dx * 0.1) * Math.min(1.2, vRatio * 0.55);
+          const px = graphX + dx;
+          const py = graphY + graphH/2 - val * (graphH/2.5 - 2);
+          if (dx === 0) transformerCtx.moveTo(px, py);
+          else transformerCtx.lineTo(px, py);
+        }
+        transformerCtx.stroke();
+      } else {
+        // DC Mode: Flatlines
+        // Primary voltage is flat positive (Cyan)
+        transformerCtx.strokeStyle = "#38bdf8";
+        transformerCtx.beginPath();
+        transformerCtx.moveTo(graphX, graphY + graphH/2 - 6);
+        transformerCtx.lineTo(graphX + graphW, graphY + graphH/2 - 6);
+        transformerCtx.stroke();
+
+        // Secondary voltage is flat exactly zero (Orange)
+        transformerCtx.strokeStyle = "#fb923c";
+        transformerCtx.beginPath();
+        transformerCtx.moveTo(graphX, graphY + graphH/2);
+        transformerCtx.lineTo(graphX + graphW, graphY + graphH/2);
+        transformerCtx.stroke();
+      }
+
+      // Legend Texts
+      transformerCtx.font = "bold 7px sans-serif";
+      transformerCtx.textAlign = "left";
+      transformerCtx.fillStyle = "#38bdf8";
+      transformerCtx.fillText("Vp (Primary)", graphX + 5, graphY + 9);
+      
+      transformerCtx.textAlign = "right";
+      transformerCtx.fillStyle = "#fb923c";
+      transformerCtx.fillText("Vs (Secondary)", graphX + graphW - 5, graphY + 9);
+    }
+
+
+    // ==========================================
+    // Simulation 4: Environmental Sensors Sandbox
+    // ==========================================
+    let sensorCanvas = document.getElementById('sensorCanvas');
+    let sensorCtx = sensorCanvas.getContext('2d');
+    let activeSensorTab = 'ldr'; // 'ldr' or 'therm'
+    let sensorLoopId = null;
+
+    let sensorHistory = [];
+    const maxHistoryPoints = 60;
+
+    function initSensorCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = sensorCanvas.parentNode.getBoundingClientRect();
+      sensorCanvas.width = rect.width * dpr;
+      sensorCanvas.height = rect.height * dpr;
+      sensorCtx.scale(dpr, dpr);
+      sensorCanvas.style.width = rect.width + 'px';
+      sensorCanvas.style.height = rect.height + 'px';
+      
+      sensorHistory = [];
+      updateSensorSim();
+    }
+
+    function switchSensorTab(tabName) {
+      activeSensorTab = tabName;
+      
+      const btnLDR = document.getElementById('tabBtnLDR');
+      const btnTherm = document.getElementById('tabBtnTherm');
+      const ctrlLDR = document.getElementById('sensorControlsLDR');
+      const ctrlTherm = document.getElementById('sensorControlsTherm');
+
+      if (tabName === 'ldr') {
+        btnLDR.classList.add('active');
+        btnTherm.classList.remove('active');
+        ctrlLDR.style.display = 'flex';
+        ctrlTherm.style.display = 'none';
+        
+        document.getElementById('lblSensorName').innerText = "LDR (Photoresistor)";
+        document.getElementById('lblSensorMnemonic').innerText = "🔑 Mnemonic: Light Up ➔ Resistance Down (L.D.R.)";
+      } else {
+        btnLDR.classList.remove('active');
+        btnTherm.classList.add('active');
+        ctrlLDR.style.display = 'none';
+        ctrlTherm.style.display = 'flex';
+        
+        document.getElementById('lblSensorName').innerText = "Thermistor (Thermal Resistor)";
+        document.getElementById('lblSensorMnemonic').innerText = "🔑 Check: NTC behavior means Temp Up ➔ Resistance Down";
+      }
+      
+      sensorHistory = []; // Reset chart
+      updateSensorSim();
+    }
+
+    function startSensorLoop() {
+      if (!sensorLoopId) {
+        sensorLoopId = setInterval(updateSensorSim, 100);
+      }
+    }
+
+    function stopSensorLoop() {
+      if (sensorLoopId) {
+        clearInterval(sensorLoopId);
+        sensorLoopId = null;
+      }
+    }
+
+    function calculateLDRResistance(lux) {
+      return 500000 * Math.pow(lux + 1, -0.8);
+    }
+
+    function calculateThermistorResistance(temp, type) {
+      if (type === 'ntc') {
+        const R0 = 10000;
+        const T0 = 25 + 273.15; 
+        const Beta = 3800;
+        const TK = temp + 273.15;
+        return R0 * Math.exp(Beta * (1/TK - 1/T0));
+      } else {
+        const R0 = 1000;
+        return R0 * Math.exp(0.04 * (temp - 25));
+      }
+    }
+
+    function updateSensorSim() {
+      const cw = sensorCanvas.width / (window.devicePixelRatio || 1);
+      const ch = sensorCanvas.height / (window.devicePixelRatio || 1);
+      if (cw === 0) return; 
+
+      let inputVal = 0;
+      let resistance = 0;
+      
+      if (activeSensorTab === 'ldr') {
+        const lux = parseFloat(document.getElementById('sensorLuxSlider').value);
+        document.getElementById('lblSensorLux').innerText = `${lux} Lux`;
+        resistance = calculateLDRResistance(lux);
+        inputVal = lux;
+      } else {
+        const temp = parseFloat(document.getElementById('sensorTempSlider').value);
+        const type = document.getElementById('sensorThermTypeSelect').value;
+        document.getElementById('lblSensorTemp').innerText = `${temp} °C`;
+        resistance = calculateThermistorResistance(temp, type);
+        inputVal = temp;
+      }
+
+      let rText = "";
+      if (resistance >= 1000000) rText = `${(resistance/1000000).toFixed(2)} MΩ`;
+      else if (resistance >= 1000) rText = `${(resistance/100).toFixed(0)/10} kΩ`;
+      else rText = `${resistance.toFixed(0)} Ω`;
+      document.getElementById('lblSensorResistance').innerText = rText;
+
+      sensorHistory.push({ input: inputVal, r: resistance });
+      if (sensorHistory.length > maxHistoryPoints) {
+        sensorHistory.shift();
+      }
+
+      drawSensorSandbox();
+    }
+
+    function drawSensorSandbox() {
+      const cw = sensorCanvas.width / (window.devicePixelRatio || 1);
+      const ch = sensorCanvas.height / (window.devicePixelRatio || 1);
+      if (cw === 0) return;
+      sensorCtx.clearRect(0, 0, cw, ch);
+
+      const midX = cw * 0.45;
+      
+      sensorCtx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+      sensorCtx.lineWidth = 1;
+      sensorCtx.beginPath();
+      sensorCtx.moveTo(midX, 0);
+      sensorCtx.lineTo(midX, ch);
+      sensorCtx.stroke();
+
+      const compX = midX / 2;
+      const compY = ch / 2;
+
+      if (activeSensorTab === 'ldr') {
+        const lux = parseFloat(document.getElementById('sensorLuxSlider').value);
+        
+        if (lux > 5) {
+          const beamGlow = sensorCtx.createRadialGradient(compX, compY - 45, 5, compX, compY, 90);
+          beamGlow.addColorStop(0, `rgba(253, 224, 71, ${0.4 * (lux/1000)})`);
+          beamGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+          sensorCtx.fillStyle = beamGlow;
+          sensorCtx.beginPath();
+          sensorCtx.arc(compX, compY, 90, 0, Math.PI*2);
+          sensorCtx.fill();
+        }
+
+        // Ceramic disc - ENLARGED
+        sensorCtx.fillStyle = "#e2e8f0";
+        sensorCtx.strokeStyle = "#cbd5e1";
+        sensorCtx.lineWidth = 2.5;
+        sensorCtx.beginPath();
+        sensorCtx.arc(compX, compY, 32, 0, Math.PI*2);
+        sensorCtx.fill();
+        sensorCtx.stroke();
+
+        // Copper track zigzag - ENLARGED & THICKER
+        sensorCtx.strokeStyle = "#ea580c";
+        sensorCtx.lineWidth = 4;
+        sensorCtx.beginPath();
+        sensorCtx.moveTo(compX - 22, compY - 12);
+        sensorCtx.lineTo(compX - 11, compY - 12);
+        sensorCtx.lineTo(compX - 11, compY);
+        sensorCtx.lineTo(compX + 11, compY);
+        sensorCtx.lineTo(compX + 11, compY + 12);
+        sensorCtx.lineTo(compX + 22, compY + 12);
+        sensorCtx.stroke();
+
+        // Metal terminals - ENLARGED
+        sensorCtx.fillStyle = "#94a3b8";
+        sensorCtx.fillRect(compX - 29, compY - 15, 8, 30);
+        sensorCtx.fillRect(compX + 21, compY - 15, 8, 30);
+
+        // Terminal lead wires - ENLARGED
+        sensorCtx.strokeStyle = "#64748b";
+        sensorCtx.lineWidth = 2.5;
+        sensorCtx.beginPath();
+        sensorCtx.moveTo(compX - 25, compY + 15);
+        sensorCtx.lineTo(compX - 25, compY + 55);
+        sensorCtx.moveTo(compX + 25, compY + 15);
+        sensorCtx.lineTo(compX + 25, compY + 55);
+        sensorCtx.stroke();
+
+        // Flashlight Emoji - ENLARGED
+        sensorCtx.font = "26px sans-serif";
+        sensorCtx.fillText("🔦", compX - 13, compY - 48);
+
+      } else {
+        const temp = parseFloat(document.getElementById('sensorTempSlider').value);
+        const thermType = document.getElementById('sensorThermTypeSelect').value;
+        
+        let rColor = 0;
+        let bColor = 0;
+        if (temp > 25) rColor = Math.min(255, (temp-25)*3.5);
+        else bColor = Math.min(255, (25-temp)*8);
+        
+        if (rColor > 5 || bColor > 5) {
+          const thermalGlow = sensorCtx.createRadialGradient(compX, compY, 2, compX, compY, 75);
+          thermalGlow.addColorStop(0, `rgba(${rColor}, 50, ${bColor}, 0.25)`);
+          thermalGlow.addColorStop(1, 'rgba(0,0,0,0)');
+          sensorCtx.fillStyle = thermalGlow;
+          sensorCtx.beginPath();
+          sensorCtx.arc(compX, compY, 75, 0, Math.PI*2);
+          sensorCtx.fill();
+        }
+
+        // Leads - ENLARGED
+        sensorCtx.strokeStyle = "#64748b";
+        sensorCtx.lineWidth = 2.2;
+        sensorCtx.beginPath();
+        sensorCtx.moveTo(compX - 8, compY + 10);
+        sensorCtx.lineTo(compX - 8, compY + 55);
+        sensorCtx.moveTo(compX + 8, compY + 10);
+        sensorCtx.lineTo(compX + 8, compY + 55);
+        sensorCtx.stroke();
+
+        // Epoxy body - ENLARGED
+        sensorCtx.fillStyle = thermType === 'ntc' ? "#0284c7" : "#0d9488";
+        sensorCtx.strokeStyle = "#0369a1";
+        sensorCtx.lineWidth = 2.5;
+        sensorCtx.beginPath();
+        sensorCtx.ellipse(compX, compY, 14, 20, 0, 0, Math.PI*2);
+        sensorCtx.fill();
+        sensorCtx.stroke();
+
+        // Temperature label inside body - ENLARGED & CENTERED
+        sensorCtx.fillStyle = "#ffffff";
+        sensorCtx.font = "bold 12px monospace";
+        sensorCtx.textAlign = "center";
+        sensorCtx.fillText(`${temp.toFixed(0)}°C`, compX, compY + 4);
+      }
+
+      // Chart - ENLARGED labels and axes
+      const chartX = midX + 30;
+      const chartY = 30;
+      const chartW = cw - chartX - 20;
+      const chartH = ch - chartY - 45;
+
+      sensorCtx.strokeStyle = "rgba(255,255,255,0.2)";
+      sensorCtx.lineWidth = 2.2;
+      sensorCtx.beginPath();
+      sensorCtx.moveTo(chartX, chartY);
+      sensorCtx.lineTo(chartX, chartY + chartH);
+      sensorCtx.lineTo(chartX + chartW, chartY + chartH);
+      sensorCtx.stroke();
+
+      sensorCtx.fillStyle = "rgba(255,255,255,0.45)";
+      sensorCtx.font = "10px sans-serif";
+      sensorCtx.textAlign = "center";
+      
+      const xLabelText = activeSensorTab === 'ldr' ? 'Light Intensity (Lux)' : 'Temperature (°C)';
+      sensorCtx.fillText(xLabelText, chartX + chartW/2, chartY + chartH + 28);
+      
+      sensorCtx.save();
+      sensorCtx.translate(chartX - 22, chartY + chartH/2);
+      sensorCtx.rotate(-Math.PI/2);
+      sensorCtx.fillText("Resistance (kΩ)", 0, 0);
+      sensorCtx.restore();
+
+      if (sensorHistory.length >= 2) {
+        sensorCtx.strokeStyle = "var(--color-primary)";
+        sensorCtx.lineWidth = 3.5;
+        sensorCtx.beginPath();
+
+        const rMaxLimit = activeSensorTab === 'ldr' ? 100000 : 50000; 
+        
+        sensorHistory.forEach((pt, idx) => {
+          const px = chartX + (idx / (maxHistoryPoints - 1)) * chartW;
+          const logVal = Math.log10(Math.max(1, pt.r));
+          const maxLog = Math.log10(rMaxLimit);
+          const minLog = Math.log10(10); 
+          
+          let yFactor = (logVal - minLog) / (maxLog - minLog);
+          yFactor = Math.max(0, Math.min(1, yFactor));
+          
+          const py = chartY + chartH - yFactor * chartH;
+          
+          if (idx === 0) sensorCtx.moveTo(px, py);
+          else sensorCtx.lineTo(px, py);
+        });
+        
+        sensorCtx.stroke();
+        
+        const lastIdx = sensorHistory.length - 1;
+        const lastPt = sensorHistory[lastIdx];
+        const lastPX = chartX + (lastIdx / (maxHistoryPoints - 1)) * chartW;
+        const logVal = Math.log10(Math.max(1, lastPt.r));
+        const maxLog = Math.log10(rMaxLimit);
+        const minLog = Math.log10(10);
+        let yFactor = (logVal - minLog) / (maxLog - minLog);
+        yFactor = Math.max(0, Math.min(1, yFactor));
+        const lastPY = chartY + chartH - yFactor * chartH;
+        
+        sensorCtx.fillStyle = "var(--color-success)";
+        sensorCtx.beginPath();
+        sensorCtx.arc(lastPX, lastPY, 5.5, 0, Math.PI*2);
+        sensorCtx.fill();
+      }
+    }
+
+
+    // ==========================================
+    // Slide 14: Checkpoint Quiz Showdown Logic
+    // ==========================================
+    const quizQuestions = [
+      {
+        q: "What force is responsible for causing a current-carrying wire loop to rotate inside a magnetic field?",
+        opts: ["Coulomb force", "Lorentz force", "Frictional drag", "The Force of gravity"],
+        correct: 1,
+        exp: "Lorentz Force represents the force on moving charge carriers inside a magnetic field (F = I * L x B). This pushes the left and right sides of the coil in opposite vertical directions."
+      },
+      {
+        q: "What component in a DC motor acts as a rotating switch, reversing current polarity every half-turn?",
+        opts: ["Rotor coil armature", "Carbon brushes", "Split-ring commutator", "Stator permanent magnets"],
+        correct: 2,
+        exp: "The split-ring Commutator rotates with the coil, switching contact between the positive and negative brushes to flip current direction every 180 degrees, ensuring continuous spin direction."
+      },
+      {
+        q: "Which fundamental law describes how a changing magnetic field induces an electromotive force (EMF) in a coil?",
+        opts: ["Ohm's Law", "Faraday's Law of Induction", "Coulomb's Law", "Lenz's Law"],
+        correct: 1,
+        exp: "Faraday's Law of Induction dictates that voltage is induced in a coil proportional to the speed of change of magnetic flux passing through it."
+      },
+      {
+        q: "Lenz's Law states that the direction of an induced current will always...",
+        opts: ["Oppose the change in magnetic flux that created it", "Align with the magnetic north pole", "Flow clockwise", "Flow to the lowest resistance branch"],
+        correct: 0,
+        exp: "Lenz's Law represents the Conservation of Energy: the induced current produces a magnetic field that acts against the original field's movement."
+      },
+      {
+        q: "What happens to the resistance of a Negative Temperature Coefficient (NTC) Thermistor as temperature INCREASES?",
+        opts: ["It increases", "It decreases", "It stays exactly the same", "It oscillates rapidly"],
+        correct: 1,
+        exp: "Negative Temperature Coefficient (NTC) means resistance drops as temperature rises, which is standard behavior for thermal sensors."
+      },
+      {
+        q: "How many pins must be connected to use a potentiometer as a variable voltage divider?",
+        opts: ["Just 1 pin", "Exactly 2 pins", "All 3 pins", "No pins (it works wirelessly)"],
+        correct: 2,
+        exp: "A voltage divider configuration requires all 3 terminals: outer pins connected to supply and ground, and center wiper pin providing the variable output."
+      },
+      {
+        q: "How does a Light Dependent Resistor (LDR) behave when you block all light from hitting it?",
+        opts: ["Its resistance drops to zero", "Its resistance increases dramatically", "It begins to glow in the dark", "It acts as a battery cell"],
+        correct: 1,
+        exp: "Recall: Light Down Resistance (L.D.R.). Therefore, in complete darkness, the resistance climbs to its maximum, typically 100k ohms or higher."
+      },
+      {
+        q: "In a lab mystery box, a component only allows current to flow in one direction. What is it?",
+        opts: ["Resistor", "Capacitor", "Diode or LED", "SPST Switch"],
+        correct: 2,
+        exp: "Diodes and LEDs are one-way valves. In forward bias they allow current to flow, but in reverse bias they block it, behaving as open circuits."
+      },
+      {
+        q: "When using a digital multimeter (DMM) to measure the voltage drop across a resistor, how must the probes be connected?",
+        opts: ["In series (breaking the circuit)", "In parallel (across the resistor)", "Directly to the battery terminals", "Wrapped around the resistor leads"],
+        correct: 1,
+        exp: "Voltmeters must have very high resistance and be connected in PARALLEL across the target component to read voltage drop without diverting current."
+      },
+      {
+        q: "Why do transformers only operate on Alternating Current (AC) and not Direct Current (DC)?",
+        opts: ["AC voltage is always higher than DC", "DC creates a steady field, so there is no flux change to induce voltage", "DC current burns out the transformer's iron core", "AC stands for 'Amplified Current' which transformers need"],
+        correct: 1,
+        exp: "Faraday's Law requires a changing magnetic field (dFlux/dt) to induce voltage. Since DC is steady, the magnetic field is constant (dFlux/dt = 0) and no voltage is induced in the secondary coil."
+      }
+    ];
+
+    let quizCurrentIdx = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+    let quizTimerInterval = null;
+    let quizTimeRemaining = 30;
+
+    function initQuiz() {
+      quizCurrentIdx = 0;
+      quizScore = 0;
+      quizAnswered = false;
+      
+      document.getElementById('quizContainer').style.display = 'flex';
+      document.getElementById('quizFinishedPanel').style.display = 'none';
+      
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      quizAnswered = false;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      document.getElementById('quizQuestionNum').innerText = `Question ${quizCurrentIdx + 1} of ${quizQuestions.length}`;
+      document.getElementById('btnQuizNext').style.display = 'none';
+      document.getElementById('quizExplanation').style.display = 'none';
+
+      const qData = quizQuestions[quizCurrentIdx];
+      document.getElementById('quizQuestionText').innerText = qData.q;
+
+      const optContainer = document.getElementById('quizOptions');
+      optContainer.innerHTML = '';
+      
+      qData.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.onclick = () => selectQuizOption(idx);
+        
+        const letter = String.fromCharCode(65 + idx);
+        btn.innerHTML = `<span class="quiz-option-letter">${letter}</span> <span>${opt}</span>`;
+        optContainer.appendChild(btn);
+      });
+
+      startQuizTimer();
+    }
+
+    function startQuizTimer() {
+      if (quizTimerInterval) clearInterval(quizTimerInterval);
+      
+      quizTimeRemaining = 30;
+      const bar = document.getElementById('quizTimerBar');
+      bar.style.width = '100%';
+      bar.style.background = 'var(--color-primary)';
+
+      quizTimerInterval = setInterval(() => {
+        quizTimeRemaining--;
+        bar.style.width = `${(quizTimeRemaining / 30) * 100}%`;
+        
+        if (quizTimeRemaining <= 10) {
+          bar.style.background = 'var(--color-danger)';
+        }
+
+        if (quizTimeRemaining <= 0) {
+          clearInterval(quizTimerInterval);
+          revealQuizCorrectAnswer(-1);
+        }
+      }, 1000);
+    }
+
+    function selectQuizOption(selectedIdx) {
+      if (quizAnswered) return;
+      clearInterval(quizTimerInterval);
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      quizAnswered = true;
+
+      const btns = document.querySelectorAll('.quiz-option-btn');
+      
+      if (selectedIdx === qData.correct) {
+        quizScore += 100;
+        btns[selectedIdx].classList.add('correct');
+      } else {
+        if (selectedIdx !== -1) {
+          btns[selectedIdx].classList.add('wrong');
+        }
+        btns[qData.correct].classList.add('correct');
+      }
+
+      revealQuizCorrectAnswer(selectedIdx);
+    }
+
+    function revealQuizCorrectAnswer(selectedIdx) {
+      quizAnswered = true;
+      document.getElementById('quizScore').innerText = `Score: ${quizScore} pts`;
+      
+      const qData = quizQuestions[quizCurrentIdx];
+      const expCard = document.getElementById('quizExplanation');
+      const expText = document.getElementById('quizExplanationText');
+      
+      expText.innerText = qData.exp;
+      expCard.style.display = 'block';
+
+      const nextBtn = document.getElementById('btnQuizNext');
+      nextBtn.style.display = 'block';
+      if (quizCurrentIdx === quizQuestions.length - 1) {
+        nextBtn.innerText = "Finish Quiz";
+      } else {
+        nextBtn.innerText = "Next Question";
+      }
+    }
+
+    function nextQuizQuestion() {
+      quizCurrentIdx++;
+      if (quizCurrentIdx < quizQuestions.length) {
+        showQuizQuestion();
+      } else {
+        document.getElementById('quizContainer').style.display = 'none';
+        
+        const finishPanel = document.getElementById('quizFinishedPanel');
+        finishPanel.style.display = 'flex';
+        
+        document.getElementById('quizFinalScoreText').innerText = `You scored ${quizScore} out of ${quizQuestions.length * 100} points!`;
+      }
+    }
+
+    function restartQuiz() {
+      initQuiz();
+    }
+
+    window.onload = () => {
+      initSlides();
+      
+      window.onresize = () => {
+        if (currentSlide === 8) initMotorCanvas();
+        if (currentSlide === 9) initInductionCanvas();
+        if (currentSlide === 10) initTransformerCanvas();
+        if (currentSlide === 11) initSensorCanvas();
+      };
+    };
+  </script>
+</body>
+</html>
