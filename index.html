@@ -3,660 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Science Olympiad Circuit Lab - Portal Dashboard</title>
-  
-  <!-- Modern Google Fonts -->
+  <meta http-equiv="refresh" content="0; url=2026-27/circuitlab/">
+  <title>OVMS Science Olympiad - Study Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    window.location.replace("2026-27/circuitlab/");
+  </script>
   <style>
-    /* ==========================================
-       Design System & Core Variables
-       ========================================== */
     :root {
-      --color-bg: #0b0f19;
-      --color-surface: #131a2c;
-      --color-surface-hover: #1e2942;
-      --color-border: rgba(255, 255, 255, 0.08);
-      --color-text-primary: #f3f4f6;
-      --color-text-secondary: #9ca3af;
-      
-      /* Neon Electric Theme Colors */
-      --color-primary: hsl(195, 100%, 50%); /* Electric Blue */
-      --color-accent: hsl(280, 100%, 65%);  /* Neon Purple */
-      --color-success: hsl(145, 100%, 45%); /* Neon Green */
-      --color-warning: hsl(35, 100%, 50%);  /* Neon Amber */
-      
-      --font-display: 'Space Grotesk', sans-serif;
-      --font-body: 'Outfit', sans-serif;
-      
-      --transition-speed: 0.3s;
-      --border-radius: 20px;
+      --bg: #0b0f19;
+      --surface: #131a2c;
+      --primary: hsl(195, 100%, 50%);
+      --accent: hsl(280, 100%, 65%);
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--color-bg);
-      color: var(--color-text-primary);
-      font-family: var(--font-body);
+      background: radial-gradient(circle at 50% 50%, #111827 0%, #070a12 100%);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      align-items: center;
-      position: relative;
-      overflow-x: hidden;
-      background: radial-gradient(circle at 50% 50%, #111827 0%, #070a12 100%);
-    }
-
-    /* Subtle background grid lines */
-    body::before {
-      content: "";
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 40px 40px;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .container {
-      max-width: 1200px;
-      width: 100%;
-      padding: 3rem 2rem;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    /* ==========================================
-       Dashboard Header
-       ========================================== */
-    header {
       text-align: center;
+      padding: 2rem;
+    }
+    .card {
+      background: rgba(19, 26, 44, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
     }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: rgba(0, 210, 255, 0.08);
+    .badge {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--primary);
+      font-weight: 700;
+      background: rgba(0, 210, 255, 0.1);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
       border: 1px solid rgba(0, 210, 255, 0.2);
-      box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
-      animation: float 4s ease-in-out infinite alternate;
     }
-
-    .brand-logo svg {
-      width: 44px;
-      height: 44px;
-      fill: var(--color-primary);
-      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.6));
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-8px); }
-    }
-
     h1 {
-      font-family: var(--font-display);
-      font-size: 3rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      background: linear-gradient(135deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: -0.03em;
-      margin-top: 0.5rem;
     }
-
-    .subtitle {
-      font-size: 1.15rem;
-      color: var(--color-text-secondary);
-      max-width: 600px;
+    p {
+      color: var(--text-muted);
       line-height: 1.6;
     }
-
-    /* ==========================================
-       Class Cards Grid
-       ========================================== */
-     .dashboard-grid {
-       display: grid;
-       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-       gap: 2.5rem;
-       width: 100%;
-     }
-
-    .class-card {
-      background: rgba(19, 26, 44, 0.45);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--color-border);
-      border-radius: var(--border-radius);
-      padding: 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .class-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-      opacity: 0.3;
-      transition: opacity var(--transition-speed) ease;
-    }
-
-    .class-card:hover {
-      border-color: rgba(0, 210, 255, 0.3);
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 210, 255, 0.05);
-      background: rgba(19, 26, 44, 0.6);
-    }
-
-    .class-card:hover::before {
-      opacity: 1;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .class-tag {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--color-accent);
-    }
-
-    .card-icon {
-      font-size: 2rem;
-      animation: pulse 2s infinite ease-in-out;
-    }
-
-     .class-card.blue .class-tag {
-       color: var(--color-accent);
-     }
-
-     .class-card.blue:hover {
-       border-color: rgba(176, 38, 255, 0.3);
-       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(176, 38, 255, 0.05);
-     }
-
-     .class-card.green .class-tag {
-       color: var(--color-success);
-     }
-
-     .class-card.green:hover {
-       border-color: rgba(16, 185, 129, 0.3);
-       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(16, 185, 129, 0.05);
-     }
-
-     .class-card.green .topics-list li::before {
-       content: "⚡";
-       color: var(--color-success);
-     }
-
-    h2 {
-      font-family: var(--font-display);
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--color-text-primary);
-    }
-
-    .class-desc {
-      font-size: 0.95rem;
-      color: var(--color-text-secondary);
-      line-height: 1.6;
-    }
-
-    .topics-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .topics-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--color-text-primary);
-      border-bottom: 1px solid var(--color-border);
-      padding-bottom: 0.4rem;
-    }
-
-    .topics-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .topics-list li {
-      font-size: 0.9rem;
-      color: var(--color-text-secondary);
-      display: flex;
+    .btn {
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .topics-list li::before {
-      content: "⚡";
-      color: var(--color-primary);
-      font-size: 0.8rem;
-    }
-
-    .class-card.blue .topics-list li::before {
-      content: "🧠";
-      color: var(--color-accent);
-    }
-
-    .btn-start {
-      margin-top: auto;
-      background: linear-gradient(135deg, var(--color-primary), rgba(0, 210, 255, 0.7));
+      background: linear-gradient(135deg, var(--primary), hsl(210, 100%, 55%));
       color: #0b0f19;
       font-weight: 700;
-      padding: 1rem;
+      padding: 0.9rem 1.8rem;
       border-radius: 12px;
-      text-align: center;
       text-decoration: none;
-      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
-      transition: all 0.2s ease;
-      display: block;
-      font-size: 1rem;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-
-     .class-card.blue .btn-start {
-       background: linear-gradient(135deg, var(--color-accent), rgba(176, 38, 255, 0.7));
-       box-shadow: 0 4px 15px rgba(176, 38, 255, 0.2);
-     }
-
-     .class-card.green .btn-start {
-       background: linear-gradient(135deg, var(--color-success), rgba(16, 185, 129, 0.7));
-       box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-       color: #0b0f19;
-     }
-
-     .btn-start:hover {
-       transform: translateY(-2px);
-       box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
-     }
-
-     .class-card.blue .btn-start:hover {
-       box-shadow: 0 6px 20px rgba(176, 38, 255, 0.4);
-     }
-
-     .class-card.green .btn-start:hover {
-       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-     }
-
-      .class-card.orange .class-tag {
-        color: var(--color-warning);
-      }
-
-      .class-card.orange:hover {
-        border-color: rgba(245, 158, 11, 0.3);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(245, 158, 11, 0.05);
-      }
-
-      .class-card.orange .topics-list li::before {
-        content: "🔌";
-        color: var(--color-warning);
-      }
-
-      .class-card.orange .btn-start {
-        background: linear-gradient(135deg, var(--color-warning), rgba(245, 158, 11, 0.7));
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
-        color: #0b0f19;
-      }
-
-      .class-card.orange .btn-start:hover {
-        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-      }
-
-       /* YELLOW THEME (Module 5) */
-       .class-card.yellow .class-tag {
-         color: hsl(50, 100%, 55%);
-       }
-
-       .class-card.yellow:hover {
-         border-color: rgba(253, 224, 71, 0.3);
-         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(253, 224, 71, 0.05);
-       }
-
-       .class-card.yellow .topics-list li::before {
-         content: "🔋";
-         color: hsl(50, 100%, 55%);
-       }
-
-       .class-card.yellow .btn-start {
-         background: linear-gradient(135deg, hsl(50, 100%, 55%), rgba(253, 224, 71, 0.7));
-         box-shadow: 0 4px 15px rgba(253, 224, 71, 0.2);
-         color: #0b0f19;
-       }
-
-       .class-card.yellow .btn-start:hover {
-         box-shadow: 0 6px 20px rgba(253, 224, 71, 0.4);
-       }
-
-       /* PURPLE THEME (Module 6) */
-       .class-card.purple .class-tag {
-         color: hsl(280, 100%, 65%);
-       }
-
-       .class-card.purple:hover {
-         border-color: rgba(168, 85, 247, 0.3);
-         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(168, 85, 247, 0.05);
-       }
-
-       .class-card.purple::before {
-         background: linear-gradient(90deg, hsl(280, 100%, 65%), hsl(325, 100%, 60%));
-       }
-
-       .class-card.purple .topics-list li::before {
-         content: "⚙️";
-         color: hsl(280, 100%, 65%);
-       }
-
-       .class-card.purple .btn-start {
-         background: linear-gradient(135deg, hsl(280, 100%, 65%), rgba(168, 85, 247, 0.7));
-         box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
-         color: #0b0f19;
-       }
-
-       /* CYAN THEME (Module 7) */
-       .class-card.cyan .class-tag {
-         color: hsl(195, 100%, 50%);
-       }
-
-       .class-card.cyan:hover {
-         border-color: rgba(0, 210, 255, 0.3);
-         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 210, 255, 0.05);
-       }
-
-       .class-card.cyan::before {
-         background: linear-gradient(90deg, hsl(195, 100%, 50%), hsl(280, 100%, 65%));
-       }
-
-       .class-card.cyan .topics-list li::before {
-         content: "🎯";
-         color: hsl(195, 100%, 50%);
-       }
-
-       .class-card.cyan .btn-start {
-         background: linear-gradient(135deg, hsl(195, 100%, 50%), rgba(0, 210, 255, 0.7));
-         box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
-         color: #0b0f19;
-       }
-
-       .class-card.cyan .btn-start:hover {
-         box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
-       }
-
-    .btn-start:active {
-      transform: translateY(0);
-    }
-
-    /* ==========================================
-       Dashboard Footer
-       ========================================== */
-    footer {
-      font-size: 0.85rem;
-      color: var(--color-text-secondary);
-      text-align: center;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    @media (max-width: 768px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-      h1 {
-        font-size: 2.25rem;
-      }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
     }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    
-    <header>
-      <div class="brand-logo">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 2L2 14h9v8l10-12h-9z"/>
-        </svg>
-      </div>
-      <h1>Circuit Lab Study Portal</h1>
-      <p class="subtitle">Official Science Olympiad Division B syllabus curriculum dashboards. Master theoretical electrical physics and solve simulation-based practical lab stations.</p>
-    </header>
-
-    <div class="dashboard-grid">
-      
-      <!-- CLASS 1 CARD -->
-      <div class="class-card">
-        <div class="card-header">
-          <span class="class-tag">Module 01</span>
-          <span class="card-icon">🔋</span>
-        </div>
-        <h2>Class 1: Circuit Foundations</h2>
-        <p class="class-desc">
-          Build the core electrical foundation. Discover how voltage, current, and resistance interact, calculate equivalent resistances, and study historical pioneers.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage</div>
-          <ul class="topics-list">
-            <li>Fundamental properties (Charge, Current, Voltage, Resistance)</li>
-            <li>Ohm's Law calculations ($V = I \times R$ and the milliamp trap)</li>
-            <li>Series vs. Parallel pathway configuration behavior</li>
-            <li>Historical Pioneers (Franklin, Volta, Coulomb, Ampère, Ohm, Faraday)</li>
-            <li>Interactive Ohm's Law and AC/DC Current Flow Simulators</li>
-          </ul>
-        </div>
-        
-        <a href="class1.html" class="btn-start">Launch Class 1 Slides ⚡</a>
-      </div>
-
-      <!-- CLASS 2 CARD -->
-      <div class="class-card blue">
-        <div class="card-header">
-          <span class="class-tag">Module 02</span>
-          <span class="card-icon">🧠</span>
-        </div>
-        <h2>Class 2: Logic & Electromagnetism</h2>
-        <p class="class-desc">
-          Give circuits a brain and study electromagnetic force. Master the logic of binary gates, build virtual electromagnets, and understand circuit protection mechanisms.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage</div>
-          <ul class="topics-list">
-            <li>Binary Logic Basics ($0$ and $1$ electrical states)</li>
-            <li>The 7 core logic gates (AND, OR, NOT, NAND, NOR, XOR, XNOR)</li>
-            <li>Electromagnet design, variable control, and relay switches</li>
-            <li>Circuit Safety: Cumulative household load fuse blowout protection</li>
-            <li>Interactive Gate Playground, Magnet sandbox, Relay simulator, & Quiz</li>
-          </ul>
-        </div>
-        
-        <a href="class2.html" class="btn-start">Launch Class 2 Slides 🧠</a>
-      </div>
-
-      <!-- CLASS 3 CARD -->
-      <div class="class-card green">
-        <div class="card-header">
-          <span class="class-tag">Module 03</span>
-          <span class="card-icon">⚡</span>
-        </div>
-        <h2>Class 3: Advanced Lab & Laws</h2>
-        <p class="class-desc">
-          Master resistor decoding, apply conservation laws to loops, and learn to safely measure voltage, current, and resistance using a digital multimeter.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage</div>
-          <ul class="topics-list">
-            <li>Resistor Color Codes (4-band and 5-band value/tolerance decoding)</li>
-            <li>Kirchhoff's Laws (KCL junction rule and KVL loop calculations)</li>
-            <li>Multimeter operation (Series ammeter vs. Parallel voltmeter rules)</li>
-            <li>Wheatstone Bridges (Derivation and balanced-state calculations)</li>
-            <li>Interactive Resistor Decoder, Kirchhoff Solver, & Multimeter probe sandbox</li>
-          </ul>
-        </div>
-        
-        <a href="class3.html" class="btn-start">Launch Class 3 Slides ⚡</a>
-      </div>
-
-      <!-- CLASS 4 CARD -->
-      <div class="class-card orange">
-        <div class="card-header">
-          <span class="class-tag">Module 04</span>
-          <span class="card-icon">🔌</span>
-        </div>
-        <h2>Class 4: Capacitance &amp; Prototyping</h2>
-        <p class="class-desc">
-          Explore charge storage, master timing loops via RC time constants, and learn the layout and safety rules of solderless breadboard building.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage</div>
-          <ul class="topics-list">
-            <li>Capacitors: Electrostatic fields, step-by-step plate charging, and capacitance ($C = Q/V$)</li>
-            <li>Physical Sandbox: Plate Area ($A$), separation ($d$), and Dielectric ($\kappa$) molecular polarization</li>
-            <li>Capacitor configurations: Series vs. Parallel equivalent math rules (opposite of resistors!)</li>
-            <li>RC Timing: Resistor-Capacitor time constant ($\tau = RC$) and interactive graph plots</li>
-            <li>LED and Diode safety: Forward voltage drop, biasing, and current-limiting math</li>
-            <li>Breadboard Lab: Solderless vertical row columns vs. horizontal power rails rules</li>
-            <li>Interactive step charging, plates geometry sandbox, and breadboard blowout station</li>
-          </ul>
-        </div>
-        
-        <a href="class4.html" class="btn-start">Launch Class 4 Slides 🔌</a>
-      </div>
-
-      <!-- CLASS 5 CARD -->
-      <div class="class-card yellow">
-        <div class="card-header">
-          <span class="class-tag">Module 05</span>
-          <span class="card-icon">🔋</span>
-        </div>
-        <h2>Class 5: Power, Energy &amp; Batteries</h2>
-        <p class="class-desc">
-          Master electrical power equations, calculate energy usage and utility bills, explore battery chemical cells, and learn to prevent component heat burnout.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage</div>
-          <ul class="topics-list">
-            <li>Electrical Power equations ($P = V \times I = I^2 \times R = V^2 / R$)</li>
-            <li>Electrical Energy &amp; Time ($E = P \times t$, Joules vs. Watt-hours vs. Kilowatt-hours)</li>
-            <li>Utility Bill Math (kilowatt-hour usage and cost analysis for home appliances)</li>
-            <li>Voltaic Cell Chemistry: Anode, Cathode, Electrolyte, and chemical electron pump</li>
-            <li>Primary (disposable) vs. Secondary (rechargeable) battery cell types</li>
-            <li>Battery Configurations: Series voltage boost vs. Parallel capacity boost</li>
-            <li>Resistor Power Safety (under-rated component burnout and heat dissipation)</li>
-            <li>Interactive Voltaic Sandbox, Resistor Burnout, and Home Appliance Utility Billing Meter</li>
-          </ul>
-        </div>
-        
-        <a href="class5.html" class="btn-start">Launch Class 5 Slides 🔋</a>
-      </div>
-
-      <!-- CLASS 6 CARD -->
-      <div class="class-card purple">
-        <div class="card-header">
-          <span class="class-tag">Module 06</span>
-          <span class="card-icon">⚙️</span>
-        </div>
-        <h2>Class 6: Motors, Generators &amp; Sensors</h2>
-        <p class="class-desc">
-          Master the mechanics of DC motors, study electromagnetic induction generators, explore environmental LDR and thermistor sensors, and prepare for competition mock lab stations.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage</div>
-          <ul class="topics-list">
-            <li>DC Motors physics (Lorentz Force, stator, armature rotor, commutator, brushes)</li>
-            <li>Generators &amp; Induction (Faraday's Law of induction and Lenz's Law of opposing flux)</li>
-            <li>Light Dependent Resistors (LDR CdS track physics and exponential sweeps)</li>
-            <li>Thermistors (NTC temperature sensors vs PTC resettable safety fuses)</li>
-            <li>Potentiometers (Wiper divider mathematics and rheostat setup rules)</li>
-            <li>Mock Lab Competition Station strategies (Mystery box and breadboard troubleshooting)</li>
-            <li>Interactive Motor, Faraday Induction, and Sensor sweeps sandbox labs</li>
-          </ul>
-        </div>
-        
-        <a href="class6.html" class="btn-start">Launch Class 6 Slides ⚙️</a>
-      </div>
-
-      <!-- CLASS 7 CARD -->
-      <div class="class-card cyan">
-        <div class="card-header">
-          <span class="class-tag">Module 07</span>
-          <span class="card-icon">🎯</span>
-        </div>
-        <h2>Class 7: Core Circuits Master Review</h2>
-        <p class="class-desc">
-          Master the four pillars of circuit analysis: series/parallel resistance and capacitance, power dissipation safety equations, and Kirchhoff's Current and Voltage Laws.
-        </p>
-        
-        <div class="topics-section">
-          <div class="topics-title">Syllabus Coverage (70-Min Master Review)</div>
-          <ul class="topics-list">
-            <li>Series vs. Parallel Resistance ($R_{\text{eq}}$ shortcuts and equal parallel resistor rules)</li>
-            <li>Series vs. Parallel Capacitance (Electrostatic $Q=CV$, plate geometry, "Opposite Rule")</li>
-            <li>Resistive Power Equations ($P = VI = I^2 R = V^2 / R$, energy $E=Pt$, thermal safety)</li>
-            <li>Kirchhoff's Laws (KCL Conservation of Charge &amp; KVL Conservation of Energy)</li>
-            <li>Illustrated Worked Competition Problems with step-by-step revealed solutions</li>
-            <li>Interactive R/C Equivalent, Power Thermal Safety, &amp; KCL/KVL Loop Simulators</li>
-            <li>Live 10-Question Kahoot! Quiz with copy-pasteable CSV import table</li>
-          </ul>
-        </div>
-        
-        <a href="class7.html" class="btn-start">Launch Class 7 Slides 🎯</a>
-      </div>
-
-    </div>
-
-    <footer>
-      Science Olympiad Division B (6th–8th Grade) - Circuit Lab Dashboard
-    </footer>
-
+  <div class="card">
+    <span class="badge">Science Olympiad Division B</span>
+    <h1>OVMS Study Portal</h1>
+    <p>Redirecting you to the 2026–2027 Circuit Lab curriculum portal...</p>
+    <a href="2026-27/circuitlab/" class="btn">Enter 2026–27 Circuit Lab ⚡</a>
   </div>
-
 </body>
 </html>
