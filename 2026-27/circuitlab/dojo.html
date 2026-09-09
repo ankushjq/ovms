@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circuit Lab Dojo - Science Olympiad Practice Arena</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti for celebratory triumphs -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --color-bg: #070a13;
+      --color-surface: #0f172a;
+      --color-surface-card: rgba(18, 26, 47, 0.7);
+      --color-surface-hover: #1e293b;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-glow: rgba(0, 210, 255, 0.25);
+      
+      --color-text-primary: #f8fafc;
+      --color-text-secondary: #94a3b8;
+      --color-text-muted: #64748b;
+      
+      /* Neon Electric Colors */
+      --color-cyan: hsl(192, 100%, 50%);
+      --color-purple: hsl(275, 100%, 65%);
+      --color-green: hsl(145, 100%, 48%);
+      --color-gold: hsl(45, 100%, 55%);
+      --color-orange: hsl(25, 100%, 55%);
+      --color-red: hsl(0, 100%, 62%);
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      
+      --shadow-glow: 0 0 25px rgba(0, 210, 255, 0.15);
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(0, 210, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 85% 60%, rgba(168, 85, 247, 0.06) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* Top Navigation Bar */
+    header.dojo-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 10, 19, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.03);
+      transition: var(--transition);
+    }
+    .back-link:hover {
+      color: var(--color-cyan);
+      border-color: var(--color-cyan);
+      background: rgba(0, 210, 255, 0.08);
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .logo-badge .icon {
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.5));
+    }
+    .logo-badge .highlight {
+      background: linear-gradient(135deg, var(--color-cyan), var(--color-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Student Status Bar in Header */
+    .user-profile-bar {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-border);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .stat-chip.streak {
+      color: var(--color-orange);
+      border-color: rgba(249, 115, 22, 0.3);
+      background: rgba(249, 115, 22, 0.08);
+    }
+    .stat-chip.xp {
+      color: var(--color-gold);
+      border-color: rgba(234, 179, 8, 0.3);
+      background: rgba(234, 179, 8, 0.08);
+    }
+    .stat-chip.sound-toggle {
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition);
+    }
+    .stat-chip.sound-toggle:hover {
+      border-color: var(--color-cyan);
+      background: rgba(0, 210, 255, 0.1);
+    }
+
+    .student-name-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-family: inherit;
+      width: 140px;
+      transition: var(--transition);
+    }
+    .student-name-input:focus {
+      outline: none;
+      border-color: var(--color-cyan);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+    }
+
+    /* Main Container */
+    main.dojo-container {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* Belt Progression Hero Banner */
+    .hero-belt-banner {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(24, 34, 60, 0.85));
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .hero-belt-banner::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -20%;
+      width: 50%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 210, 255, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .belt-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 1;
+    }
+    .belt-tag-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-cyan);
+    }
+    .current-belt-title {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .belt-badge-pill {
+      font-size: 1.1rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .belt-subtitle {
+      color: var(--color-text-secondary);
+      font-size: 1.05rem;
+      max-width: 600px;
+    }
+
+    /* Belt Track & Milestones */
+    .belt-track-container {
+      width: 100%;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 12%;
+      background: linear-gradient(90deg, var(--color-cyan), var(--color-purple));
+      border-radius: var(--radius-full);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
+    }
+    .belt-milestones {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .belt-milestones span.active {
+      color: var(--color-cyan);
+      font-weight: 700;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 1;
+      min-width: 220px;
+    }
+    .btn-claim-cert {
+      background: linear-gradient(135deg, var(--color-gold), hsl(35, 100%, 50%));
+      color: #0b0f19;
+      font-weight: 800;
+      border: none;
+      padding: 0.85rem 1.4rem;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.25);
+    }
+    .btn-claim-cert:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4);
+    }
+    .btn-reset-data {
+      background: transparent;
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-reset-data:hover {
+      color: var(--color-red);
+      border-color: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    /* Trials Grid */
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-desc {
+      color: var(--color-text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .trials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .trial-card {
+      background: var(--color-surface-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .trial-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-glow);
+      box-shadow: var(--shadow-card), 0 0 20px rgba(0, 210, 255, 0.08);
+      background: rgba(18, 26, 47, 0.85);
+    }
+    .trial-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--belt-accent, var(--color-cyan));
+    }
+
+    .trial-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .trial-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--belt-accent, var(--color-cyan));
+    }
+    .trial-xp-reward {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-gold);
+    }
+    .trial-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .trial-desc {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .trial-stats-bar {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      border-top: 1px solid var(--color-border);
+      padding-top: 0.75rem;
+    }
+    .btn-enter-trial {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      text-decoration: none;
+      width: 100%;
+    }
+    .trial-card:hover .btn-enter-trial {
+      background: linear-gradient(135deg, var(--belt-accent, var(--color-cyan)), hsl(210, 100%, 50%));
+      color: #0b0f19;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
+    }
+
+    /* Trophy & Badge Showcase */
+    .badge-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .badge-item {
+      background: var(--color-surface-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.6rem;
+      transition: var(--transition);
+      opacity: 0.45;
+      filter: grayscale(80%);
+    }
+    .badge-item.unlocked {
+      opacity: 1;
+      filter: grayscale(0%);
+      border-color: rgba(234, 179, 8, 0.4);
+      background: rgba(234, 179, 8, 0.04);
+      box-shadow: 0 0 15px rgba(234, 179, 8, 0.1);
+    }
+    .badge-icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.2rem;
+    }
+    .badge-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+    }
+    .badge-condition {
+      font-size: 0.78rem;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+    .badge-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+    .badge-item.unlocked .badge-status {
+      color: var(--color-green);
+    }
+    .badge-item:not(.unlocked) .badge-status {
+      color: var(--color-text-muted);
+    }
+
+    /* Modal Styles (Trial Interactive Arena) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(7, 10, 19, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.2rem;
+      transition: var(--transition);
+    }
+    .btn-close-modal:hover {
+      color: var(--color-text-primary);
+    }
+
+    .modal-body {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Interactive Game Arena Inside Modal */
+    .arena-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+    }
+    .hud-metric {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .hud-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      letter-spacing: 0.08em;
+    }
+    .hud-value {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--color-cyan);
+    }
+
+    .arena-timer-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .arena-timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--color-green), var(--color-gold));
+      transition: width 0.1s linear;
+    }
+
+    .arena-prompt-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .prompt-category {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-cyan);
+      font-weight: 700;
+    }
+    .prompt-question {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--color-text-primary);
+    }
+
+    /* Resistor Graphic Canvas */
+    #resistorCanvas {
+      background: transparent;
+      border-radius: var(--radius-sm);
+      margin: 0.5rem 0;
+    }
+
+    .arena-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+    }
+    .arena-choice-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .arena-choice-btn:hover {
+      background: rgba(0, 210, 255, 0.12);
+      border-color: var(--color-cyan);
+      transform: translateY(-2px);
+    }
+    .arena-choice-btn.correct {
+      background: rgba(34, 197, 94, 0.2) !important;
+      border-color: var(--color-green) !important;
+      color: #4ade80 !important;
+    }
+    .arena-choice-btn.incorrect {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: var(--color-red) !important;
+      color: #f87171 !important;
+    }
+
+    .arena-feedback {
+      min-height: 1.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    /* Certificate Box */
+    .certificate-card {
+      background: #0d121f;
+      border: 2px solid var(--color-gold);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      box-shadow: 0 0 35px rgba(234, 179, 8, 0.15);
+    }
+    .cert-school {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-gold);
+      font-weight: 800;
+    }
+    .cert-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .cert-student-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--color-cyan);
+      border-bottom: 2px solid rgba(0, 210, 255, 0.3);
+      padding-bottom: 0.25rem;
+      min-width: 250px;
+    }
+    .cert-code-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--color-gold);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn-copy-code {
+      background: rgba(234, 179, 8, 0.2);
+      border: 1px solid var(--color-gold);
+      color: var(--color-gold);
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .btn-copy-code:hover {
+      background: var(--color-gold);
+      color: #0b0f19;
+    }
+
+    /* Footer */
+    footer.dojo-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--color-border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      header.dojo-nav {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: flex-start;
+      }
+      .user-profile-bar {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .hero-belt-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .trials-grid {
+        grid-template-columns: 1fr;
+      }
+      .arena-options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Dojo Navigation -->
+  <header class="dojo-nav">
+    <div class="brand-group">
+      <a href="index.html" class="back-link">← Circuit Lab Hub</a>
+      <div class="logo-badge">
+        <span class="icon">🥋</span>
+        <span>Circuit Lab <span class="highlight">Dojo</span></span>
+      </div>
+    </div>
+
+    <div class="user-profile-bar">
+      <input type="text" id="studentNameInput" class="student-name-input" placeholder="Enter Your Name" title="Your name for certificates and badges">
+      
+      <div class="stat-chip streak" title="Consecutive Practice Days">
+        <span>🔥</span>
+        <span id="streakCount">1</span> Day
+      </div>
+
+      <div class="stat-chip xp" title="Total Dojo Experience Points">
+        <span>⭐</span>
+        <span id="xpCount">0</span> XP
+      </div>
+
+      <div class="stat-chip sound-toggle" id="soundToggleBtn" title="Toggle Sound FX">
+        <span id="soundIcon">🔊</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Arena Container -->
+  <main class="dojo-container">
+
+    <!-- Hero Belt Progression Banner -->
+    <section class="hero-belt-banner">
+      <div class="belt-info">
+        <div class="belt-tag-line">
+          <span>⚡ Science Olympiad Mastery Arena</span>
+        </div>
+        <h1 class="current-belt-title">
+          <span id="beltRankIcon">🥋</span>
+          <span id="beltRankName">White Belt</span>
+          <span class="belt-badge-pill" id="beltRankTitle">"The Spark"</span>
+        </h1>
+        <p class="belt-subtitle" id="beltSubtitle">
+          Master metric prefixes, fundamental unit traps, and Ohm's Law mental math to earn your Yellow Belt.
+        </p>
+        
+        <div class="belt-track-container">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="beltProgressBar" style="width: 10%;"></div>
+          </div>
+          <div class="belt-milestones">
+            <span class="active" id="mWhite">White</span>
+            <span id="mYellow">Yellow (150 XP)</span>
+            <span id="mOrange">Orange (350 XP)</span>
+            <span id="mGreen">Green (600 XP)</span>
+            <span id="mBlue">Blue (900 XP)</span>
+            <span id="mPurple">Purple (1250 XP)</span>
+            <span id="mBlack">Black Belt (1700 XP)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-claim-cert" id="openCertBtn">
+          <span>📜</span> View Certificate
+        </button>
+        <button class="btn-reset-data" id="resetProgressBtn" title="Reset local storage progress">
+          Reset Progress
+        </button>
+      </div>
+    </section>
+
+    <!-- Trials Arena Section -->
+    <section>
+      <div class="section-title-row">
+        <div>
+          <h2 class="section-title"><span>⚔️</span> Dojo Training Trials</h2>
+          <p class="section-desc">Procedurally generated speed stations with zero multiple-choice memorization.</p>
+        </div>
+      </div>
+
+      <div class="trials-grid">
+
+        <!-- TRIAL 1: Metric Units & Prefixes -->
+        <div class="trial-card" style="--belt-accent: hsl(0, 0%, 90%);">
+          <div class="trial-header">
+            <span class="trial-badge">White Belt Trial</span>
+            <span class="trial-xp-reward">+30 XP</span>
+          </div>
+          <h3 class="trial-title">Metric Prefixes & Unit Traps</h3>
+          <p class="trial-desc">
+            Middle schoolers lose points on units. Convert between milliamps ($\text{mA}$), microfarads ($\mu\text{F}$), and kilohms ($\text{k}\Omega$) in rapid succession.
+          </p>
+          <div class="trial-stats-bar">
+            <span>🎯 5 Questions</span>
+            <span>⏱️ 45 Seconds</span>
+            <span>Trap Radar</span>
+          </div>
+          <button class="btn-enter-trial" onclick="startTrial('units')">Enter Trial ⚡</button>
+        </div>
+
+        <!-- TRIAL 2: Ohm's Law Speed Rush -->
+        <div class="trial-card" style="--belt-accent: hsl(50, 100%, 55%);">
+          <div class="trial-header">
+            <span class="trial-badge">Yellow Belt Trial</span>
+            <span class="trial-xp-reward">+50 XP</span>
+          </div>
+          <h3 class="trial-title">Ohm's Law Speed Rush ($V=IR$)</h3>
+          <p class="trial-desc">
+            Rapidly compute Voltage, Current, or Resistance. Solve before the clock runs out to keep your combo multiplier alive!
+          </p>
+          <div class="trial-stats-bar">
+            <span>🎯 8 Questions</span>
+            <span>⏱️ 60 Seconds</span>
+            <span>Mental Math</span>
+          </div>
+          <button class="btn-enter-trial" onclick="startTrial('ohms')">Enter Trial ⚡</button>
+        </div>
+
+        <!-- TRIAL 3: Resistor Color Band Decoder -->
+        <div class="trial-card" style="--belt-accent: hsl(25, 100%, 55%);">
+          <div class="trial-header">
+            <span class="trial-badge">Orange Belt Trial</span>
+            <span class="trial-xp-reward">+70 XP</span>
+          </div>
+          <h3 class="trial-title">Resistor Band Decoder</h3>
+          <p class="trial-desc">
+            A photorealistic resistor appears with randomized color bands. Decode its nominal resistance and tolerance band before time expires.
+          </p>
+          <div class="trial-stats-bar">
+            <span>🎯 5 Resistors</span>
+            <span>⏱️ Visual Decoder</span>
+            <span>4-Band System</span>
+          </div>
+          <button class="btn-enter-trial" onclick="startTrial('resistor')">Enter Trial ⚡</button>
+        </div>
+
+        <!-- TRIAL 4: Pathway Navigator -->
+        <div class="trial-card" style="--belt-accent: hsl(145, 100%, 48%);">
+          <div class="trial-header">
+            <span class="trial-badge">Green Belt Trial</span>
+            <span class="trial-xp-reward">+90 XP</span>
+          </div>
+          <h3 class="trial-title">Series & Parallel Pathways</h3>
+          <p class="trial-desc">
+            Find equivalent resistance ($R_{\text{eq}}$) for series loops, parallel ladders, and identical resistor shortcut configurations.
+          </p>
+          <div class="trial-stats-bar">
+            <span>🎯 6 Problems</span>
+            <span>⏱️ 90 Seconds</span>
+            <span>Shortcut Tactics</span>
+          </div>
+          <button class="btn-enter-trial" onclick="startTrial('pathways')">Enter Trial ⚡</button>
+        </div>
+
+        <!-- TRIAL 5: Logic Matrix -->
+        <div class="trial-card" style="--belt-accent: hsl(210, 100%, 55%);">
+          <div class="trial-header">
+            <span class="trial-badge">Blue Belt Trial</span>
+            <span class="trial-xp-reward">+100 XP</span>
+          </div>
+          <h3 class="trial-title">Logic Gate Matrix Duel</h3>
+          <p class="trial-desc">
+            Given input states $A$ and $B$, evaluate multi-stage AND, OR, NOT, NAND, NOR, and XOR combinations instantly.
+          </p>
+          <div class="trial-stats-bar">
+            <span>🎯 6 Gates</span>
+            <span>⏱️ 60 Seconds</span>
+            <span>Binary Logic</span>
+          </div>
+          <button class="btn-enter-trial" onclick="startTrial('logic')">Enter Trial ⚡</button>
+        </div>
+
+        <!-- TRIAL 6: Black Belt Championship -->
+        <div class="trial-card" style="--belt-accent: hsl(275, 100%, 65%);">
+          <div class="trial-header">
+            <span class="trial-badge">Black Belt Exam</span>
+            <span class="trial-xp-reward">+150 XP</span>
+          </div>
+          <h3 class="trial-title">Division B Grand Championship</h3>
+          <p class="trial-desc">
+            Full 10-station mock station rotation. Combines Kirchhoff's rules, resistor wattages, capacitor charge, and unit conversion traps.
+          </p>
+          <div class="trial-stats-bar">
+            <span>🎯 10 Mixed Stations</span>
+            <span>⏱️ 120 Seconds</span>
+            <span>Gold Trophy</span>
+          </div>
+          <button class="btn-enter-trial" onclick="startTrial('championship')">Enter Trial 🏆</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Badge Showcase Cabinet -->
+    <section>
+      <div class="section-title-row">
+        <div>
+          <h2 class="section-title"><span>🏆</span> Badge Cabinet & Achievements</h2>
+          <p class="section-desc">Showcase your Science Olympiad prowess and earn bragging rights.</p>
+        </div>
+      </div>
+
+      <div class="badge-showcase-grid">
+        <div class="badge-item" id="badge-first-step">
+          <div class="badge-icon">⚡</div>
+          <div class="badge-name">First Spark</div>
+          <div class="badge-condition">Complete your very first Dojo training trial.</div>
+          <div class="badge-status">Locked</div>
+        </div>
+
+        <div class="badge-item" id="badge-speed-demon">
+          <div class="badge-icon">🏎️</div>
+          <div class="badge-name">Lightning Solver</div>
+          <div class="badge-condition">Score 100% in Ohm's Law Speed Rush.</div>
+          <div class="badge-status">Locked</div>
+        </div>
+
+        <div class="badge-item" id="badge-band-master">
+          <div class="badge-icon">🎯</div>
+          <div class="badge-name">Band Virtuoso</div>
+          <div class="badge-condition">Decode 5 resistors without a single error.</div>
+          <div class="badge-status">Locked</div>
+        </div>
+
+        <div class="badge-item" id="badge-logic-brain">
+          <div class="badge-icon">🧠</div>
+          <div class="badge-name">Binary Architect</div>
+          <div class="badge-condition">Conquer the Logic Gate Matrix trial.</div>
+          <div class="badge-status">Locked</div>
+        </div>
+
+        <div class="badge-item" id="badge-streak-fire">
+          <div class="badge-icon">🔥</div>
+          <div class="badge-name">Overclocked</div>
+          <div class="badge-condition">Maintain a 3-day training streak.</div>
+          <div class="badge-status">Locked</div>
+        </div>
+
+        <div class="badge-item" id="badge-black-belt">
+          <div class="badge-icon">🥋</div>
+          <div class="badge-name">Black Belt Master</div>
+          <div class="badge-condition">Reach 1,700 XP and pass the Championship.</div>
+          <div class="badge-status">Locked</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL 1: Interactive Trial Arena -->
+  <div class="modal-overlay" id="trialModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span id="arenaIcon">⚡</span>
+          <span id="arenaTitle">Trial Arena</span>
+        </div>
+        <button class="btn-close-modal" onclick="closeTrialModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- HUD -->
+        <div class="arena-hud">
+          <div class="hud-metric">
+            <span class="hud-label">Progress</span>
+            <span class="hud-value" id="hudQuestionIdx">1 / 5</span>
+          </div>
+          <div class="hud-metric">
+            <span class="hud-label">Time Remaining</span>
+            <span class="hud-value" id="hudTimer">30s</span>
+          </div>
+          <div class="hud-metric">
+            <span class="hud-label">Combo</span>
+            <span class="hud-value" id="hudCombo">x1</span>
+          </div>
+          <div class="hud-metric">
+            <span class="hud-label">Trial Score</span>
+            <span class="hud-value" id="hudScore">0</span>
+          </div>
+        </div>
+
+        <!-- Timer bar -->
+        <div class="arena-timer-bar">
+          <div class="arena-timer-fill" id="arenaTimerFill"></div>
+        </div>
+
+        <!-- Question Prompt Area -->
+        <div class="arena-prompt-box">
+          <div class="prompt-category" id="arenaCategory">CATEGORY</div>
+          <div class="prompt-question" id="arenaQuestion">Question text will appear here...</div>
+          
+          <!-- Optional Resistor Canvas Visual -->
+          <canvas id="resistorCanvas" width="320" height="90" style="display:none;"></canvas>
+        </div>
+
+        <!-- 4 Option Choices -->
+        <div class="arena-options-grid" id="arenaOptionsGrid">
+          <!-- Buttons dynamically injected -->
+        </div>
+
+        <div class="arena-feedback" id="arenaFeedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Certificate & Passcode Generator -->
+  <div class="modal-overlay" id="certModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📜</span> Dojo Rank Certificate & Google Classroom Passcode
+        </div>
+        <button class="btn-close-modal" onclick="closeCertModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="certificate-card">
+          <div class="cert-school">Oak Valley Middle School Science Olympiad</div>
+          <div class="cert-title">Circuit Lab Dojo Certificate</div>
+          <p style="color: var(--color-text-secondary); font-size: 0.95rem;">This certifies that</p>
+          <div class="cert-student-name" id="certStudentName">Science Olympian</div>
+          <p style="color: var(--color-text-secondary); font-size: 0.95rem;">has earned the rank of</p>
+          <div style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--color-gold);" id="certBeltRank">
+            White Belt ("The Spark")
+          </div>
+          <p style="font-size: 0.85rem; color: var(--color-text-muted); max-width: 420px;" id="certSummaryText">
+            Demonstrating proficiency in Division B Circuit Lab syllabus topics, speed calculations, and component diagnostics.
+          </p>
+          
+          <!-- Official Verification Code for Google Classroom -->
+          <div class="cert-code-box">
+            <span id="certCodeText">OVMS-CL-WHITE-0000</span>
+            <button class="btn-copy-code" onclick="copyCertCode()">Copy Passcode</button>
+          </div>
+          <span style="font-size: 0.78rem; color: var(--color-text-muted);">
+            💡 Paste this code or upload a screenshot to Google Classroom for proof of completion.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dojo Footer -->
+  <footer class="dojo-footer">
+    Science Olympiad Division B (Oak Valley Middle School) • Circuit Lab Mastery Dojo Arena
+  </footer>
+
+  <!-- Web Audio API Synthesizer (Zero External Dependencies) -->
+  <script>
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      }
+      playCorrect() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+        osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+        
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+      playIncorrect() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(120, now + 0.25);
+        
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+      playLevelUp() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [440, 554.37, 659.25, 880].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.09);
+          gain.gain.setValueAtTime(0.2, now + i * 0.09);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.3);
+          osc.start(now + i * 0.09);
+          osc.stop(now + i * 0.09 + 0.3);
+        });
+      }
+    }
+    const sound = new SoundEngine();
+
+    // Toggle Sound Button
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    soundToggleBtn.addEventListener('click', () => {
+      sound.enabled = !sound.enabled;
+      soundIcon.textContent = sound.enabled ? '🔊' : '🔇';
+    });
+  </script>
+
+  <!-- Main Dojo Logic & State Manager -->
+  <script>
+    /* =========================================================
+       State Management & Local Storage Persistence
+       ========================================================= */
+    const STORAGE_KEY = 'ovms_circuitlab_dojo_v1';
+
+    const defaultState = {
+      studentName: 'Science Olympian',
+      xp: 0,
+      streak: 1,
+      lastActiveDate: new Date().toISOString().split('T')[0],
+      trialsCompleted: 0,
+      badges: {
+        'first-step': false,
+        'speed-demon': false,
+        'band-master': false,
+        'logic-brain': false,
+        'streak-fire': false,
+        'black-belt': false
+      }
+    };
+
+    let appState = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Check streak date
+          const today = new Date().toISOString().split('T')[0];
+          if (parsed.lastActiveDate !== today) {
+            const lastDate = new Date(parsed.lastActiveDate);
+            const diffDays = Math.floor((new Date(today) - lastDate) / (1000 * 60 * 60 * 24));
+            if (diffDays === 1) {
+              parsed.streak = (parsed.streak || 1) + 1;
+            } else if (diffDays > 1) {
+              parsed.streak = 1;
+            }
+            parsed.lastActiveDate = today;
+          }
+          if (parsed.streak >= 3) parsed.badges['streak-fire'] = true;
+          return { ...defaultState, ...parsed };
+        }
+      } catch (e) {
+        console.error("Failed to parse state", e);
+      }
+      return { ...defaultState };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      updateUI();
+    }
+
+    /* Belt Level Tiers */
+    const BELT_TIERS = [
+      { name: 'White Belt', title: '"The Spark"', minXP: 0, icon: '🥋', color: 'hsl(0, 0%, 90%)', nextXP: 150 },
+      { name: 'Yellow Belt', title: '"Ohm\'s Apprentice"', minXP: 150, icon: '🥋', color: 'hsl(50, 100%, 55%)', nextXP: 350 },
+      { name: 'Orange Belt', title: '"Band Reader"', minXP: 350, icon: '🥋', color: 'hsl(25, 100%, 55%)', nextXP: 600 },
+      { name: 'Green Belt', title: '"Pathway Tracker"', minXP: 600, icon: '🥋', color: 'hsl(145, 100%, 48%)', nextXP: 900 },
+      { name: 'Blue Belt', title: '"Logic Sensei"', minXP: 900, icon: '🥋', color: 'hsl(210, 100%, 55%)', nextXP: 1250 },
+      { name: 'Purple Belt', title: '"Loop Master"', minXP: 1250, icon: '🥋', color: 'hsl(280, 100%, 65%)', nextXP: 1700 },
+      { name: 'Black Belt', title: '"Circuit Master"', minXP: 1700, icon: '🥋', color: 'hsl(0, 0%, 15%)', nextXP: 2500 }
+    ];
+
+    function getCurrentBelt() {
+      for (let i = BELT_TIERS.length - 1; i >= 0; i--) {
+        if (appState.xp >= BELT_TIERS[i].minXP) {
+          return BELT_TIERS[i];
+        }
+      }
+      return BELT_TIERS[0];
+    }
+
+    function updateUI() {
+      // Header values
+      document.getElementById('studentNameInput').value = appState.studentName || '';
+      document.getElementById('streakCount').textContent = appState.streak || 1;
+      document.getElementById('xpCount').textContent = appState.xp || 0;
+
+      // Belt Banner
+      const belt = getCurrentBelt();
+      document.getElementById('beltRankName').textContent = belt.name;
+      document.getElementById('beltRankTitle').textContent = belt.title;
+
+      // Progress bar percentage
+      const currentMin = belt.minXP;
+      const targetMax = belt.nextXP;
+      const pct = Math.min(100, Math.max(5, Math.round(((appState.xp - currentMin) / (targetMax - currentMin)) * 100)));
+      document.getElementById('beltProgressBar').style.width = pct + '%';
+
+      // Update milestones labels
+      document.querySelectorAll('.belt-milestones span').forEach(el => el.classList.remove('active'));
+      if (appState.xp < 150) document.getElementById('mWhite').classList.add('active');
+      else if (appState.xp < 350) document.getElementById('mYellow').classList.add('active');
+      else if (appState.xp < 600) document.getElementById('mOrange').classList.add('active');
+      else if (appState.xp < 900) document.getElementById('mGreen').classList.add('active');
+      else if (appState.xp < 1250) document.getElementById('mBlue').classList.add('active');
+      else if (appState.xp < 1700) document.getElementById('mPurple').classList.add('active');
+      else document.getElementById('mBlack').classList.add('active');
+
+      // Badges
+      for (const [badgeId, isUnlocked] of Object.entries(appState.badges)) {
+        const badgeEl = document.getElementById(`badge-${badgeId}`);
+        if (badgeEl) {
+          if (isUnlocked) {
+            badgeEl.classList.add('unlocked');
+            badgeEl.querySelector('.badge-status').textContent = 'Earned 🌟';
+          } else {
+            badgeEl.classList.remove('unlocked');
+            badgeEl.querySelector('.badge-status').textContent = 'Locked';
+          }
+        }
+      }
+    }
+
+    // Student Name Input Handler
+    document.getElementById('studentNameInput').addEventListener('input', (e) => {
+      appState.studentName = e.target.value.trim() || 'Science Olympian';
+      saveState();
+    });
+
+    // Reset Progress Handler
+    document.getElementById('resetProgressBtn').addEventListener('click', () => {
+      if (confirm("Are you sure you want to reset your Dojo XP, belts, and badges?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        appState = { ...defaultState };
+        saveState();
+      }
+    });
+
+    /* =========================================================
+       Procedural Question Generators for Trials
+       ========================================================= */
+    const RESISTOR_COLORS = [
+      { name: 'Black', hex: '#111827', digit: 0, mult: 1 },
+      { name: 'Brown', hex: '#854d0e', digit: 1, mult: 10 },
+      { name: 'Red', hex: '#dc2626', digit: 2, mult: 100 },
+      { name: 'Orange', hex: '#ea580c', digit: 3, mult: 1000 },
+      { name: 'Yellow', hex: '#facc15', digit: 4, mult: 10000 },
+      { name: 'Green', hex: '#16a34a', digit: 5, mult: 100000 },
+      { name: 'Blue', hex: '#2563eb', digit: 6, mult: 1000000 },
+      { name: 'Violet', hex: '#9333ea', digit: 7, mult: 10000000 },
+      { name: 'Gray', hex: '#6b7280', digit: 8, mult: 100000000 },
+      { name: 'White', hex: '#f9fafb', digit: 9, mult: 1000000000 }
+    ];
+
+    function drawResistor(b1, b2, b3, b4) {
+      const canvas = document.getElementById('resistorCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw leads
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(20, 42, 60, 6);
+      ctx.fillRect(240, 42, 60, 6);
+
+      // Draw body
+      ctx.fillStyle = '#f5d0a9';
+      ctx.beginPath();
+      ctx.roundRect(70, 20, 180, 50, 16);
+      ctx.fill();
+      ctx.strokeStyle = '#d4a373';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw bands
+      const bands = [
+        { x: 95, color: b1.hex },
+        { x: 125, color: b2.hex },
+        { x: 155, color: b3.hex },
+        { x: 215, color: b4 ? b4.hex : '#d4af37' } // Gold tolerance
+      ];
+
+      bands.forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.fillRect(b.x, 20, 14, 50);
+      });
+    }
+
+    function generateTrialQuestions(trialType) {
+      const qList = [];
+
+      if (trialType === 'units') {
+        const unitsBank = [
+          { q: "How many Amperes (A) is 250 mA?", a: "0.25 A", opts: ["0.25 A", "2.5 A", "25 A", "0.025 A"] },
+          { q: "Convert 4.7 kΩ to Ohms (Ω):", a: "4,700 Ω", opts: ["4,700 Ω", "470 Ω", "47,000 Ω", "0.047 Ω"] },
+          { q: "Convert 500 μA into Amperes (A):", a: "0.0005 A", opts: ["0.0005 A", "0.005 A", "0.05 A", "0.5 A"] },
+          { q: "How many Volts (V) is 1.2 kV?", a: "1,200 V", opts: ["1,200 V", "120 V", "12,000 V", "0.012 V"] },
+          { q: "Convert 100 nF (nanofarads) to Microfarads (μF):", a: "0.1 μF", opts: ["0.1 μF", "1 μF", "0.01 μF", "10 μF"] },
+          { q: "Which unit represents the rate of charge flow of 1 Coulomb per second?", a: "1 Ampere", opts: ["1 Ampere", "1 Volt", "1 Ohm", "1 Watt"] }
+        ];
+        return unitsBank.sort(() => Math.random() - 0.5).slice(0, 5);
+      }
+
+      if (trialType === 'ohms') {
+        for (let i = 0; i < 8; i++) {
+          const type = Math.floor(Math.random() * 3);
+          const iVal = (Math.floor(Math.random() * 10) + 1) * 0.5; // e.g. 1.5, 2, 3.5 A
+          const rVal = (Math.floor(Math.random() * 8) + 1) * 2;   // e.g. 4, 8, 10 Ω
+          const vVal = +(iVal * rVal).toFixed(1);
+
+          if (type === 0) {
+            // Find V
+            const ans = `${vVal} V`;
+            const wrong1 = `${+(vVal * 1.5).toFixed(1)} V`;
+            const wrong2 = `${+(vVal * 0.5).toFixed(1)} V`;
+            const wrong3 = `${+(vVal + 4).toFixed(1)} V`;
+            qList.push({
+              q: `A circuit has I = ${iVal} A and R = ${rVal} Ω. What is the Voltage (V)?`,
+              a: ans,
+              opts: [ans, wrong1, wrong2, wrong3].sort(() => Math.random() - 0.5)
+            });
+          } else if (type === 1) {
+            // Find I
+            const ans = `${iVal} A`;
+            const wrong1 = `${+(iVal * 2).toFixed(1)} A`;
+            const wrong2 = `${+(iVal + 1).toFixed(1)} A`;
+            const wrong3 = `${+(iVal * 0.5).toFixed(1)} A`;
+            qList.push({
+              q: `A circuit has V = ${vVal} V and R = ${rVal} Ω. What is the Current (I)?`,
+              a: ans,
+              opts: [ans, wrong1, wrong2, wrong3].sort(() => Math.random() - 0.5)
+            });
+          } else {
+            // Find R
+            const ans = `${rVal} Ω`;
+            const wrong1 = `${rVal * 2} Ω`;
+            const wrong2 = `${rVal + 3} Ω`;
+            const wrong3 = `${Math.max(1, rVal - 2)} Ω`;
+            qList.push({
+              q: `A circuit has V = ${vVal} V and I = ${iVal} A. What is the Resistance (R)?`,
+              a: ans,
+              opts: [ans, wrong1, wrong2, wrong3].sort(() => Math.random() - 0.5)
+            });
+          }
+        }
+        return qList;
+      }
+
+      if (trialType === 'resistor') {
+        for (let i = 0; i < 5; i++) {
+          const b1 = RESISTOR_COLORS[Math.floor(Math.random() * 9) + 1]; // 1-9
+          const b2 = RESISTOR_COLORS[Math.floor(Math.random() * 10)];    // 0-9
+          const multIdx = Math.floor(Math.random() * 5);                 // 0-4 (1 to 10k)
+          const b3 = RESISTOR_COLORS[multIdx];
+
+          const nominal = (b1.digit * 10 + b2.digit) * b3.mult;
+          let label = `${nominal} Ω`;
+          if (nominal >= 1000) label = `${nominal / 1000} kΩ`;
+
+          const wrong1 = `${nominal * 10 >= 1000 ? (nominal * 10)/1000 + ' kΩ' : nominal * 10 + ' Ω'}`;
+          const wrong2 = `${nominal / 10 >= 1000 ? (nominal / 10)/1000 + ' kΩ' : nominal / 10 + ' Ω'}`;
+          const wrong3 = `${(b1.digit * 10 + b2.digit + 5) * b3.mult} Ω`;
+
+          qList.push({
+            q: `Decode this 4-band resistor: [${b1.name} - ${b2.name} - ${b3.name} - Gold]`,
+            a: `${label} (±5%)`,
+            bands: [b1, b2, b3],
+            opts: [`${label} (±5%)`, `${wrong1} (±5%)`, `${wrong2} (±5%)`, `${wrong3} (±10%)`].sort(() => Math.random() - 0.5)
+          });
+        }
+        return qList;
+      }
+
+      if (trialType === 'pathways') {
+        const pathBank = [
+          { q: "Two 100 Ω resistors in SERIES have an equivalent resistance of:", a: "200 Ω", opts: ["200 Ω", "50 Ω", "100 Ω", "25 Ω"] },
+          { q: "Two 100 Ω resistors in PARALLEL have an equivalent resistance of:", a: "50 Ω", opts: ["50 Ω", "200 Ω", "100 Ω", "25 Ω"] },
+          { q: "Three 30 Ω resistors connected in parallel result in Req = :", a: "10 Ω", opts: ["10 Ω", "90 Ω", "15 Ω", "30 Ω"] },
+          { q: "If one bulb burns out in a simple SERIES loop, the other bulbs:", a: "All go dark", opts: ["All go dark", "Stay lit", "Get brighter", "Blink rapidly"] },
+          { q: "If one bulb burns out in a PARALLEL branch, the other branches:", a: "Stay lit at the same brightness", opts: ["Stay lit at the same brightness", "All go dark", "Explode", "Dim by half"] },
+          { q: "Calculate Req for a 6 Ω and 3 Ω resistor connected in PARALLEL:", a: "2 Ω", opts: ["2 Ω", "9 Ω", "18 Ω", "4.5 Ω"] }
+        ];
+        return pathBank.sort(() => Math.random() - 0.5).slice(0, 5);
+      }
+
+      if (trialType === 'logic') {
+        const logicBank = [
+          { q: "If inputs A = 1 and B = 0 enter an AND gate, output Q is:", a: "0", opts: ["0", "1", "High-Z", "Undefined"] },
+          { q: "If inputs A = 0 and B = 1 enter an OR gate, output Q is:", a: "1", opts: ["1", "0", "Floating", "Negative"] },
+          { q: "If inputs A = 1 and B = 1 enter a NAND gate, output Q is:", a: "0", opts: ["0", "1", "Short circuit", "2"] },
+          { q: "If inputs A = 1 and B = 1 enter an XOR gate, output Q is:", a: "0", opts: ["0", "1", "High", "Oscillating"] },
+          { q: "Which gate produces a 1 ONLY when BOTH inputs are identical (0,0 or 1,1)?", a: "XNOR gate", opts: ["XNOR gate", "XOR gate", "AND gate", "OR gate"] },
+          { q: "A NOT gate with an input of 0 outputs:", a: "1", opts: ["1", "0", "Ground", "High-Z"] }
+        ];
+        return logicBank.sort(() => Math.random() - 0.5).slice(0, 5);
+      }
+
+      if (trialType === 'championship') {
+        const champBank = [
+          { q: "Kirchhoff's Current Law (KCL) is based on the conservation of:", a: "Electric Charge", opts: ["Electric Charge", "Energy", "Momentum", "Voltage"] },
+          { q: "Kirchhoff's Voltage Law (KVL) is based on the conservation of:", a: "Energy", opts: ["Energy", "Charge", "Power", "Current"] },
+          { q: "A 1/4-Watt (0.25 W) resistor carries 0.1 A with R = 50 Ω. What is P and is it safe?", a: "P = 0.5 W (Unsafe! Will burn out)", opts: ["P = 0.5 W (Unsafe! Will burn out)", "P = 0.2 W (Safe)", "P = 5 W (Explosion)", "P = 0.05 W (Safe)"] },
+          { q: "Two 10 μF capacitors connected in PARALLEL have total Ceq = :", a: "20 μF", opts: ["20 μF", "5 μF", "10 μF", "2.5 μF"] },
+          { q: "Which terminal of a standard 5mm LED has the longer lead?", a: "Anode (Positive +)", opts: ["Anode (Positive +)", "Cathode (Negative -)", "Ground pin", "Collector"] },
+          { q: "Conventional current flows from:", a: "Positive (+) to Negative (-)", opts: ["Positive (+) to Negative (-)", "Negative (-) to Positive (+)", "Ground to Sky", "Neutral to Live"] },
+          { q: "In an NTC Thermistor, as temperature INCREASES, resistance:", a: "Decreases", opts: ["Decreases", "Increases", "Remains constant", "Drops to zero"] },
+          { q: "A DC ammeter must always be connected in:", a: "Series with the component", opts: ["Series with the component", "Parallel with the component", "Across the power supply", "To ground only"] }
+        ];
+        return champBank.sort(() => Math.random() - 0.5).slice(0, 8);
+      }
+
+      return [];
+    }
+
+    /* =========================================================
+       Trial Arena Game Loop
+       ========================================================= */
+    let currentTrial = null;
+    let questions = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let combo = 1;
+    let trialTimeRemaining = 45;
+    let trialTimerInterval = null;
+    let trialXP = 30;
+
+    function startTrial(trialType) {
+      currentTrial = trialType;
+      questions = generateTrialQuestions(trialType);
+      currentQIndex = 0;
+      score = 0;
+      combo = 1;
+
+      if (trialType === 'units') { trialTimeRemaining = 45; trialXP = 30; document.getElementById('arenaTitle').textContent = 'Metric Units & Prefixes'; }
+      else if (trialType === 'ohms') { trialTimeRemaining = 60; trialXP = 50; document.getElementById('arenaTitle').textContent = 'Ohm\'s Law Speed Rush'; }
+      else if (trialType === 'resistor') { trialTimeRemaining = 60; trialXP = 70; document.getElementById('arenaTitle').textContent = 'Resistor Band Decoder'; }
+      else if (trialType === 'pathways') { trialTimeRemaining = 60; trialXP = 90; document.getElementById('arenaTitle').textContent = 'Series & Parallel Pathways'; }
+      else if (trialType === 'logic') { trialTimeRemaining = 50; trialXP = 100; document.getElementById('arenaTitle').textContent = 'Logic Gate Matrix'; }
+      else if (trialType === 'championship') { trialTimeRemaining = 90; trialXP = 150; document.getElementById('arenaTitle').textContent = 'Grand Championship Trial'; }
+
+      document.getElementById('trialModal').classList.add('active');
+      startTimer();
+      renderQuestion();
+    }
+
+    function closeTrialModal() {
+      clearInterval(trialTimerInterval);
+      document.getElementById('trialModal').classList.remove('active');
+    }
+
+    function startTimer() {
+      clearInterval(trialTimerInterval);
+      const totalTime = trialTimeRemaining;
+      document.getElementById('hudTimer').textContent = `${trialTimeRemaining}s`;
+      document.getElementById('arenaTimerFill').style.width = '100%';
+
+      trialTimerInterval = setInterval(() => {
+        trialTimeRemaining--;
+        document.getElementById('hudTimer').textContent = `${trialTimeRemaining}s`;
+        const pct = Math.max(0, (trialTimeRemaining / totalTime) * 100);
+        document.getElementById('arenaTimerFill').style.width = pct + '%';
+
+        if (trialTimeRemaining <= 0) {
+          clearInterval(trialTimerInterval);
+          finishTrial(false);
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      if (currentQIndex >= questions.length) {
+        clearInterval(trialTimerInterval);
+        finishTrial(true);
+        return;
+      }
+
+      const q = questions[currentQIndex];
+      document.getElementById('hudQuestionIdx').textContent = `${currentQIndex + 1} / ${questions.length}`;
+      document.getElementById('hudCombo').textContent = `x${combo}`;
+      document.getElementById('hudScore').textContent = score;
+      document.getElementById('arenaCategory').textContent = currentTrial.toUpperCase() + ' STATION';
+      document.getElementById('arenaQuestion').textContent = q.q;
+      document.getElementById('arenaFeedback').textContent = '';
+
+      const canvas = document.getElementById('resistorCanvas');
+      if (q.bands) {
+        canvas.style.display = 'block';
+        drawResistor(q.bands[0], q.bands[1], q.bands[2]);
+      } else {
+        canvas.style.display = 'none';
+      }
+
+      const optionsGrid = document.getElementById('arenaOptionsGrid');
+      optionsGrid.innerHTML = '';
+
+      q.opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'arena-choice-btn';
+        btn.textContent = opt;
+        btn.onclick = () => handleChoice(btn, opt, q.a);
+        optionsGrid.appendChild(btn);
+      });
+    }
+
+    function handleChoice(btn, chosen, correct) {
+      // Disable all choice buttons momentarily
+      const allBtns = document.querySelectorAll('.arena-choice-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      if (chosen === correct) {
+        btn.classList.add('correct');
+        sound.playCorrect();
+        score += 10 * combo;
+        combo++;
+        document.getElementById('arenaFeedback').textContent = '⚡ Correct! Strike precision!';
+        document.getElementById('arenaFeedback').style.color = 'var(--color-green)';
+      } else {
+        btn.classList.add('incorrect');
+        sound.playIncorrect();
+        combo = 1;
+        document.getElementById('arenaFeedback').textContent = `❌ Test Trap! Correct answer: ${correct}`;
+        document.getElementById('arenaFeedback').style.color = 'var(--color-red)';
+        allBtns.forEach(b => {
+          if (b.textContent === correct) b.classList.add('correct');
+        });
+      }
+
+      setTimeout(() => {
+        currentQIndex++;
+        renderQuestion();
+      }, 1200);
+    }
+
+    function finishTrial(completed) {
+      const fb = document.getElementById('arenaFeedback');
+      const prevBelt = getCurrentBelt();
+
+      if (completed) {
+        sound.playLevelUp();
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        
+        // Award XP
+        appState.xp += trialXP;
+        appState.trialsCompleted++;
+        
+        // Check Badges
+        appState.badges['first-step'] = true;
+        if (currentTrial === 'ohms' && score >= 80) appState.badges['speed-demon'] = true;
+        if (currentTrial === 'resistor' && combo >= 5) appState.badges['band-master'] = true;
+        if (currentTrial === 'logic') appState.badges['logic-brain'] = true;
+        if (appState.xp >= 1700) appState.badges['black-belt'] = true;
+
+        saveState();
+
+        const newBelt = getCurrentBelt();
+        if (newBelt.name !== prevBelt.name) {
+          fb.innerHTML = `🏆 <strong>LEVEL UP!</strong> You advanced to <strong>${newBelt.name}</strong>! Earned +${trialXP} XP!`;
+        } else {
+          fb.innerHTML = `🎉 <strong>Trial Mastered!</strong> Earned +${trialXP} XP! Total Score: ${score}`;
+        }
+        fb.style.color = 'var(--color-gold)';
+      } else {
+        sound.playIncorrect();
+        fb.innerHTML = `⏱️ <strong>Time Expired!</strong> Practice builds speed. Try again!`;
+        fb.style.color = 'var(--color-orange)';
+      }
+
+      const optionsGrid = document.getElementById('arenaOptionsGrid');
+      optionsGrid.innerHTML = `
+        <button class="arena-choice-btn" style="grid-column: span 2; background: linear-gradient(135deg, var(--color-cyan), var(--color-purple)); color:#0b0f19; font-weight:800;" onclick="closeTrialModal()">
+          Return to Dojo
+        </button>
+      `;
+    }
+
+    /* =========================================================
+       Certificate & Google Classroom Passcode Generator
+       ========================================================= */
+    const certModal = document.getElementById('certModal');
+    const openCertBtn = document.getElementById('openCertBtn');
+
+    openCertBtn.addEventListener('click', () => {
+      const belt = getCurrentBelt();
+      const sName = appState.studentName || 'Science Olympian';
+      
+      document.getElementById('certStudentName').textContent = sName;
+      document.getElementById('certBeltRank').textContent = `${belt.name} (${belt.title})`;
+      
+      // Generate cryptographic-style verification passcode
+      const nameCode = (sName.replace(/[^A-Za-z]/g, '').slice(0, 4) || 'SO').toUpperCase();
+      const beltCode = belt.name.split(' ')[0].slice(0, 3).toUpperCase();
+      const xpHash = (appState.xp * 7 + 1042).toString(16).toUpperCase();
+      const certCode = `OVMS-CL-${beltCode}-${xpHash}-${nameCode}`;
+
+      document.getElementById('certCodeText').textContent = certCode;
+      certModal.classList.add('active');
+    });
+
+    function closeCertModal() {
+      certModal.classList.remove('active');
+    }
+
+    function copyCertCode() {
+      const code = document.getElementById('certCodeText').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("Passcode copied! Paste it in Google Classroom: " + code);
+      });
+    }
+
+    // Initial render
+    updateUI();
+  </script>
+</body>
+</html>

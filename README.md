@@ -6,6 +6,7 @@ Official repository for Oak Valley Middle School Science Olympiad study material
 All materials are hosted and interactive on GitHub Pages:
 - **Main Hub**: [https://ankushjq.github.io/ovms/](https://ankushjq.github.io/ovms/)
 - **2026–2027 Circuit Lab Portal**: [https://ankushjq.github.io/ovms/2026-27/circuitlab/](https://ankushjq.github.io/ovms/2026-27/circuitlab/)
+- **Circuit Lab Practice Dojo**: [https://ankushjq.github.io/ovms/2026-27/circuitlab/dojo.html](https://ankushjq.github.io/ovms/2026-27/circuitlab/dojo.html)
 
 ---
 
